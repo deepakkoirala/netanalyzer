@@ -1,0 +1,12 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="dialogButtonTextSize">14sp</dimen>
+    <dimen name="socialLogoWidth">30dp</dimen>
+    <dimen name="socialLogoHeight">30dp</dimen>
+    <dimen name="splashIconWidth">100dp</dimen>
+    <dimen name="splashIconHeight">100dp</dimen>
+</resources>

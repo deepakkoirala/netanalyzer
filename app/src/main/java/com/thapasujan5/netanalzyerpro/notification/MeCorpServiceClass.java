@@ -1,0 +1,77 @@
+package com.thapasujan5.netanalzyerpro.notification;
+
+import android.app.IntentService;
+import android.content.Intent;
+
+import com.thapasujan5.netanalzyerpro.MainActivity;
+import com.thapasujan5.netanalzyerpro.tools.UserFunctions;
+
+import org.json.JSONObject;
+
+/**
+ * Created by Suzan on 11/7/2015.
+ */
+public class MeCorpServiceClass extends IntentService {
+
+
+    /**
+     * Creates an IntentService.  Invoked by your subclass's constructor.
+     *
+     * @param name Used to name the worker thread, important only for debugging.
+     */
+    public MeCorpServiceClass() {
+        super("ReminderService");
+
+
+    }
+
+    /**
+     * Creates an IntentService.  Invoked by your subclass's constructor.
+     *
+     * @param name Used to name the worker thread, important only for debugging.
+     */
+
+
+    @Override
+    protected void onHandleIntent(Intent intent) {
+
+        try {
+            String intentType = intent.getExtras().getString("caller");
+            if (intentType == null) return;
+            if (intentType.contentEquals("RebootReceiver")) {
+                //Do reboot stuff
+                //handle other types of callers, like a notification.
+                String org, city, country, extIPAdd;
+                boolean data = false;
+                UserFunctions f = new UserFunctions();
+                try {
+                    JSONObject json = f.getOwnInfo();
+                    if (json.getString("status").contentEquals("success")) {
+                        extIPAdd = json.getString("query");
+                        org = json.getString("org");
+                        city = json.getString("city");
+                        country = json.getString("country");
+                        data = true;
+                        new UpdateNotification(getApplicationContext(), extIPAdd, org, city, country);
+                    } else if (json.getString("status").contentEquals("fail")) {
+
+                    }
+
+                } catch (Exception e) {
+                    new UpdateNotification(getApplicationContext(), "Check Network Access !", null, null, null);
+                    runApplication();
+                }
+
+            }
+        } catch (Exception e) {
+
+            runApplication();
+        }
+    }
+
+
+    private void runApplication() {
+        Intent backupIntent = new Intent(getApplicationContext(), MainActivity.class);
+        backupIntent.putExtra("isr", false);
+        startActivity(backupIntent);
+    }}
