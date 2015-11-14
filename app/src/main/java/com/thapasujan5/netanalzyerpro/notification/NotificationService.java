@@ -11,7 +11,7 @@ import org.json.JSONObject;
 /**
  * Created by Suzan on 11/7/2015.
  */
-public class MeCorpServiceClass extends IntentService {
+public class NotificationService extends IntentService {
 
 
     /**
@@ -19,7 +19,7 @@ public class MeCorpServiceClass extends IntentService {
      *
      * @param name Used to name the worker thread, important only for debugging.
      */
-    public MeCorpServiceClass() {
+    public NotificationService() {
         super("ReminderService");
 
 
@@ -52,13 +52,13 @@ public class MeCorpServiceClass extends IntentService {
                         city = json.getString("city");
                         country = json.getString("country");
                         data = true;
-                        new UpdateNotification(getApplicationContext(), extIPAdd, org, city, country);
+                        new Notify(getApplicationContext(), extIPAdd, org, city, country);
                     } else if (json.getString("status").contentEquals("fail")) {
 
                     }
 
                 } catch (Exception e) {
-                    new UpdateNotification(getApplicationContext(), "Check Network Access !", null, null, null);
+                    new Notify(getApplicationContext(), "Check Network Access !", null, null, null);
                     runApplication();
                 }
 
@@ -74,4 +74,5 @@ public class MeCorpServiceClass extends IntentService {
         Intent backupIntent = new Intent(getApplicationContext(), MainActivity.class);
         backupIntent.putExtra("isr", false);
         startActivity(backupIntent);
-    }}
+    }
+}

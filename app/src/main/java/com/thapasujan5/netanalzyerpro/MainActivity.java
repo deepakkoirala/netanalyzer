@@ -2,11 +2,14 @@ package com.thapasujan5.netanalzyerpro;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -46,11 +49,12 @@ import com.thapasujan5.netanalzyerpro.actionMenu.WhatsNew;
 import com.thapasujan5.netanalzyerpro.datastore.Items;
 import com.thapasujan5.netanalzyerpro.datastore.ItemsAdapter;
 import com.thapasujan5.netanalzyerpro.db.DAO;
-import com.thapasujan5.netanalzyerpro.notification.UpdateNotification;
+import com.thapasujan5.netanalzyerpro.notification.Notify;
 import com.thapasujan5.netanalzyerpro.tools.CheckNet;
 import com.thapasujan5.netanalzyerpro.tools.Clipboard;
 import com.thapasujan5.netanalzyerpro.tools.ConnectionDetector;
 import com.thapasujan5.netanalzyerpro.tools.GetDeviceIP;
+import com.thapasujan5.netanalzyerpro.tools.NetworkUtil;
 import com.thapasujan5.netanalzyerpro.tools.ShowToast;
 import com.thapasujan5.netanalzyerpro.tools.UserFunctions;
 
@@ -80,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ArrayList<Items> currentItems;
     ArrayList<Items> dbItems;
     DAO dao;
+    BroadcastReceiver networkStateReceiver;
     String extIPAdd;
 
     boolean intentServiceResult;
@@ -108,46 +113,69 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fab.setVisibility(View.GONE);
         initialize();
         new WhatsNew(this);
+        networkStateReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.w("Network Listener", "Network Type Changed");
+                String status = NetworkUtil.getConnectivityStatusString(context);
+                Toast.makeText(context, status, Toast.LENGTH_LONG).show();
+                onResume();
+            }
+        };
+
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkStateReceiver, filter);
+
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(networkStateReceiver);
+    }
 
     @Override
     protected void onResume() {
         Log.i("s", "onResume");
-        new DBAsync().execute();
-        android.support.v7.app.ActionBar ab = getSupportActionBar();
-        if (connectionDetector.isConnectingToInternet()) {
+        try {
+            new DBAsync().execute();
+            android.support.v7.app.ActionBar ab = getSupportActionBar();
+            if (connectionDetector.isConnectingToInternet()) {
 
-            // Get Local IP either from WIFI or Data
-            // WIFI
-            WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
-            @SuppressWarnings("deprecation")
-            String wifiIP = Formatter.formatIpAddress(wm.getConnectionInfo()
-                    .getIpAddress());
+                // Get Local IP either from WIFI or Data
+                // WIFI
+                WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
+                @SuppressWarnings("deprecation")
+                String wifiIP = Formatter.formatIpAddress(wm.getConnectionInfo()
+                        .getIpAddress());
 
-            if (wifiIP.length() > 7) {
-                intIP = wifiIP;
-            } else {
-                // Data
-                intIP = GetDeviceIP.getDeviceIP();
-            }
-
-            // Set Internal IP
-
-            if (intIP != null) {
-                if (intIP.length() > 7) {
-                    intIP = ", " + intIP;
-                    ab.setSubtitle(Html.fromHtml("<fontcolor='#99ff00'><small>Device:"
-                            + android.os.Build.MODEL + intIP + "</small></fontcolor>"));
+                if (wifiIP.length() > 7) {
+                    intIP = wifiIP;
+                } else {
+                    // Data
+                    intIP = GetDeviceIP.getDeviceIP();
                 }
-            } // Get Ex IP if network is connected
-            new ExternalIPFinder().execute();
 
-        } else {
-            ab.setSubtitle(Html.fromHtml("<fontcolor='#99ff00'><small>"
-                    + android.os.Build.MODEL + "</small</fontcolor>"));
-            tvExIpArea.setText("Disconnected !");
-            tvExIpArea.setVisibility(View.VISIBLE);
+                // Set Internal IP
+
+                if (intIP != null) {
+                    if (intIP.length() > 7) {
+                        intIP = ", " + intIP;
+                        ab.setSubtitle(Html.fromHtml("<fontcolor='#99ff00'><small>Device:"
+                                + android.os.Build.MODEL + intIP + "</small></fontcolor>"));
+                    }
+                } // Get Ex IP if network is connected
+                new ExternalIPFinder().execute();
+
+            } else {
+                ab.setSubtitle(Html.fromHtml("<fontcolor='#99ff00'><small>"
+                        + android.os.Build.MODEL + "</small</fontcolor>"));
+                tvExIpArea.setText("Disconnected !");
+                tvExIpArea.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         super.onResume();
     }
@@ -155,69 +183,77 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initialize() {
         Log.i("f", "initialize");
+        try {
 
-        etSearchBox = (EditText) findViewById(R.id.input);
-        etSearchBox.setOnEditorActionListener(this);
-        // Check if no view has focus:
+            etSearchBox = (EditText) findViewById(R.id.input);
+            etSearchBox.setOnEditorActionListener(this);
+            // Check if no view has focus:
 
-        getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+            getWindow().setSoftInputMode(
+                    WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        ivSearch = (ImageView) findViewById(R.id.find);
-        ivSearch.setOnClickListener(this);
+            ivSearch = (ImageView) findViewById(R.id.find);
+            ivSearch.setOnClickListener(this);
 
-        ivShare = (ImageView) findViewById(R.id.share);
-        ivShare.setOnClickListener(this);
+            ivShare = (ImageView) findViewById(R.id.share);
+            ivShare.setOnClickListener(this);
 
-        ivCopy = (ImageView) findViewById(R.id.copy);
-        ivCopy.setOnClickListener(this);
+            ivCopy = (ImageView) findViewById(R.id.copy);
+            ivCopy.setOnClickListener(this);
 
-        ivClearList = (ImageView) findViewById(R.id.clearlist);
-        ivClearList.setOnClickListener(this);
+            ivClearList = (ImageView) findViewById(R.id.clearlist);
+            ivClearList.setOnClickListener(this);
 
-        tvEntriesCountArea = (TextView) findViewById(R.id.count);
+            tvEntriesCountArea = (TextView) findViewById(R.id.count);
 
-        tvExIpArea = (TextView) findViewById(R.id.extip);
-        tvExIpArea.setOnClickListener(this);
+            tvExIpArea = (TextView) findViewById(R.id.extip);
+            tvExIpArea.setOnClickListener(this);
 
-        rlProgressbarContainer = (RelativeLayout) findViewById(R.id.rvPB);
-        rlProgressbarContainer.setVisibility(View.GONE);
+            rlProgressbarContainer = (RelativeLayout) findViewById(R.id.rvPB);
+            rlProgressbarContainer.setVisibility(View.GONE);
 
-        currentItems = new ArrayList<Items>();
-        dbItems = new ArrayList<Items>();
+            currentItems = new ArrayList<Items>();
+            dbItems = new ArrayList<Items>();
 
-        adapter = new ItemsAdapter(this, R.layout.item_row_list, dbItems);
+            adapter = new ItemsAdapter(this, R.layout.item_row_list, dbItems);
 
-        listview = (ListView) findViewById(R.id.listview);
-        listview.setOnItemClickListener(this);
-        listview.setOnItemLongClickListener(this);
-        listview.setAdapter(adapter);
+            listview = (ListView) findViewById(R.id.listview);
+            listview.setOnItemClickListener(this);
+            listview.setOnItemLongClickListener(this);
+            listview.setAdapter(adapter);
 
-        pbExip = (ProgressBar) findViewById(R.id.pbExip);
-        pbMain = (ProgressBar) findViewById(R.id.progressBar);
+            pbExip = (ProgressBar) findViewById(R.id.pbExip);
+            pbMain = (ProgressBar) findViewById(R.id.progressBar);
 
-        connectionDetector = new ConnectionDetector(getApplicationContext());
+            connectionDetector = new ConnectionDetector(getApplicationContext());
 
-        dao = new DAO(getApplicationContext());
+            dao = new DAO(getApplicationContext());
 
-        new DBAsync().execute();
-        new CheckNet(getApplicationContext());
+            new DBAsync().execute();
+            new CheckNet(getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
 
     private void initFinding() {
-        if (etSearchBox.getText().toString().contentEquals("")) {
-            Toast.makeText(getApplicationContext(), "Nothing  to search...",
-                    Toast.LENGTH_SHORT).show();
-        } else {
-            if (connectionDetector.isConnectingToInternet()) {
-                ivSearch.setEnabled(false);
-                new ServerAsync(etSearchBox.getText().toString()).execute();
-            } else {
-                Toast.makeText(getApplicationContext(), "Disconnected !",
+        try {
+            if (etSearchBox.getText().toString().contentEquals("")) {
+                Toast.makeText(getApplicationContext(), "Nothing  to search...",
                         Toast.LENGTH_SHORT).show();
+            } else {
+                if (connectionDetector.isConnectingToInternet()) {
+                    ivSearch.setEnabled(false);
+                    new ServerAsync(etSearchBox.getText().toString()).execute();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Disconnected !",
+                            Toast.LENGTH_SHORT).show();
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -238,66 +274,70 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         protected Void doInBackground(Void... arg0) {
-            Items item;
-            Date d = new Date();
-            long time = d.getTime();
-
-            InetAddress[] add = null;
-            UserFunctions u = new UserFunctions();
-            JSONObject json;
             try {
-                add = InetAddress.getAllByName(string.trim());
+                Items item;
+                Date d = new Date();
+                long time = d.getTime();
 
-                if (add.length > 0) {
+                InetAddress[] add = null;
+                UserFunctions u = new UserFunctions();
+                JSONObject json;
+                try {
+                    add = InetAddress.getAllByName(string.trim());
 
-                    dao.open();
-                    currentItems.clear();
-                    for (InetAddress inet : add) {
+                    if (add.length > 0) {
 
-                        try {
-                            json = u.getIPInfo(inet.getHostAddress());
-                            if (json != null)
-                                if (json.getString("status").contentEquals(
-                                        "success")) {
-                                    String isp = json.optString("isp"), city = json
-                                            .optString("city"), country = json
-                                            .optString("country");
+                        dao.open();
+                        currentItems.clear();
+                        for (InetAddress inet : add) {
 
-                                    item = new Items(inet.getHostName(),
-                                            inet.getHostAddress(), isp, city
-                                            + " " + country,
-                                            Long.toString(time), json.optString("lat"), json.optString("lon"), json.optString("region"), json.optString("regionName"), json.optString("zip"), json.optString("timezone"));
-                                    dao.addItems(item);
-                                    currentItems.add(new Items(inet
-                                            .getCanonicalHostName(), inet
-                                            .getHostAddress(), isp, city + " "
-                                            + country, Long.toString(time), json.optString("lat"), json.optString("lon"), json.optString("region"), json.optString("regionName"), json.optString("zip"), json.optString("timezone")));
-                                } else if (json.getString("message")
-                                        .contentEquals("private range")) {
-                                    InetAddress ad = InetAddress
-                                            .getByName(string);
-                                    item = new Items(ad.getCanonicalHostName(),
-                                            ad.getHostAddress(), "", "",
-                                            Long.toString(time), "", "", "", "", "", "");
-                                    dao.addItems(item);
-                                    currentItems.add(item);
+                            try {
+                                json = u.getIPInfo(inet.getHostAddress());
+                                if (json != null)
+                                    if (json.getString("status").contentEquals(
+                                            "success")) {
+                                        String isp = json.optString("isp"), city = json
+                                                .optString("city"), country = json
+                                                .optString("country");
 
-                                }
-                        } catch (Exception e) {
-                            InetAddress ad = InetAddress.getByName(string);
-                            item = new Items(ad.getCanonicalHostName(),
-                                    ad.getHostAddress(), "", "",
-                                    Long.toString(time), "", "", "", "", "", "");
-                            dao.open();
-                            dao.addItems(item);
-                            currentItems.add(item);
+                                        item = new Items(inet.getHostName(),
+                                                inet.getHostAddress(), isp, city
+                                                + " " + country,
+                                                Long.toString(time), json.optString("lat"), json.optString("lon"), json.optString("region"), json.optString("regionName"), json.optString("zip"), json.optString("timezone"));
+                                        dao.addItems(item);
+                                        currentItems.add(new Items(inet
+                                                .getCanonicalHostName(), inet
+                                                .getHostAddress(), isp, city + " "
+                                                + country, Long.toString(time), json.optString("lat"), json.optString("lon"), json.optString("region"), json.optString("regionName"), json.optString("zip"), json.optString("timezone")));
+                                    } else if (json.getString("message")
+                                            .contentEquals("private range")) {
+                                        InetAddress ad = InetAddress
+                                                .getByName(string);
+                                        item = new Items(ad.getCanonicalHostName(),
+                                                ad.getHostAddress(), "", "",
+                                                Long.toString(time), "", "", "", "", "", "");
+                                        dao.addItems(item);
+                                        currentItems.add(item);
+
+                                    }
+                            } catch (Exception e) {
+                                InetAddress ad = InetAddress.getByName(string);
+                                item = new Items(ad.getCanonicalHostName(),
+                                        ad.getHostAddress(), "", "",
+                                        Long.toString(time), "", "", "", "", "", "");
+                                dao.open();
+                                dao.addItems(item);
+                                currentItems.add(item);
+                            }
                         }
+                        dao.close();
+                        value = true;
                     }
-                    dao.close();
-                    value = true;
+                } catch (UnknownHostException e) {
+                    error = true;
+                    e.printStackTrace();
                 }
-            } catch (UnknownHostException e) {
-                error = true;
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -306,21 +346,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         protected void onPostExecute(Void result1) {
+            try {
 
-            rlProgressbarContainer.setVisibility(View.GONE);
-            ivSearch.setEnabled(true);
-            if (error) {
-                Toast.makeText(getApplicationContext(),
-                        R.string.oops_something_went_wrong_try_in_a_while_,
-                        Toast.LENGTH_LONG).show();
-                ivCopy.setVisibility(View.GONE);
-                ivShare.setVisibility(View.GONE);
 
-            } else if (value) {
-                new DBAsync().execute();
-                result = ips;
+                rlProgressbarContainer.setVisibility(View.GONE);
+                ivSearch.setEnabled(true);
+                if (error) {
+                    Toast.makeText(getApplicationContext(),
+                            R.string.oops_something_went_wrong_try_in_a_while_,
+                            Toast.LENGTH_LONG).show();
+                    ivCopy.setVisibility(View.GONE);
+                    ivShare.setVisibility(View.GONE);
+
+                } else if (value) {
+                    new DBAsync().execute();
+                    result = ips;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
             super.onPostExecute(result1);
         }
     }
@@ -364,7 +408,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 tvExIpArea.setText("External IP: " + extIPAdd + ", " + org + " "
                         + city + ", " + country);
                 tvExIpArea.setVisibility(View.VISIBLE);
-                new UpdateNotification(MainActivity.this, extIPAdd, org, city, country);
+                new Notify(MainActivity.this, extIPAdd, org, city, country);
             } else {
                 if (connectionDetector.isConnectingToInternet()) {
                     tvExIpArea.setText("Check Internet Access !");

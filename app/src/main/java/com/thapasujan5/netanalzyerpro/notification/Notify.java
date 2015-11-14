@@ -12,8 +12,8 @@ import com.thapasujan5.netanalzyerpro.MainActivity;
 /**
  * Created by Suzan on 11/7/2015.
  */
-public class UpdateNotification {
-    public UpdateNotification(Context context, String extIPAdd, String org, String city, String country) {
+public class Notify {
+    public Notify(Context context, String extIPAdd, String org, String city, String country) {
         // Prepare intent which is triggered if the
         // notification is selected
         Intent intent = new Intent(context, MainActivity.class);
@@ -29,6 +29,7 @@ public class UpdateNotification {
                     .setContentTitle("External IP: " + extIPAdd)
                     .setContentText(org + " "
                             + city + ", " + country).build();
+
             ;
         } else {
             noti = new Notification.Builder(context).setTicker("ISP Information").setSmallIcon(R.mipmap.ic_launcher)
