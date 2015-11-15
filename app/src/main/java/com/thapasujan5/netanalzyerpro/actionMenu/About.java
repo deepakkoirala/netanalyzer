@@ -65,6 +65,19 @@ public class About {
             }
         });
 
+        ImageView ivYT = (ImageView) d.findViewById(R.id.ivYouTubeLogo);
+        ivYT.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                context.startActivity(SocialIntentProvider
+                        .getOpenYoutubeIntent(context,
+                                null,
+                                context.getString(R.string.youtubeChannelID)));
+
+            }
+        });
+
 
         ImageView ivProfilepic = (ImageView) d.findViewById(R.id.ivProfilePic);
         ivProfilepic.setOnClickListener(new OnClickListener() {
@@ -73,7 +86,9 @@ public class About {
             public void onClick(View v) {
                 final Dialog d = new Dialog(context);
                 ImageView img = new ImageView(context);
-                img.setImageResource(R.mipmap.profile_picture_full);
+
+                img.setImageResource(R.drawable.profile_picture_full);
+                d.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 RelativeLayout pictureHolder = new RelativeLayout(context);
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                         RelativeLayout.LayoutParams.MATCH_PARENT,

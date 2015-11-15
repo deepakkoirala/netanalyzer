@@ -1,11 +1,12 @@
 <resources>
     <string name="app_name">Net Analyzer Pro</string>
-    <string name="version">1.2.2</string>
+    <string name="version">1.2.4</string>
     <string name="phone">+61452065052</string>
     <string name="email">thapasujan5@gmail.com</string>
     <string name="fbID">1230665286</string>
     <string name="fbName">sujanthapa55</string>
     <string name="twitterID">thapasujan5</string>
+    <string name="youtubeChannelID">https://www.youtube.com/channel/UCWHwD_GvYj8i8-8I4ulkchA</string>
     <string name="pro_version_packagename">com.thapasujan5.netanalyzerpro</string>
     <string name="isp_check">Checking your Internet Provider</string>
     <string name="EditTextHeader">Search any IP or DNS Name</string>
@@ -15,7 +16,7 @@
     <string name="ivClearDesc">Clear</string>
     <string name="ivShareDesc">Share</string>
     <string name="ivCopyDesc">Copy</string>
-    <string name="newFeatures">- Performance Improvements.\n- Dynamic OnGoing Notification.\n- Minor Bugs Fixed.</string>
+    <string name="newFeatures">- Performance Improvements.\nMore ISP Details.\nUI Changes.</string>
     <string name="oops_something_went_wrong_try_in_a_while_">Oops! We can\'t figure out what\'s that.</string>
     <string name="feedbackSubject">Subject of Feedback</string>
     <string name="feedbackDetails">Feedback Details</string>

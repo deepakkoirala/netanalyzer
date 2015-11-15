@@ -53,6 +53,7 @@ public class NotificationService extends IntentService {
                         country = json.getString("country");
                         data = true;
                         new Notify(getApplicationContext(), extIPAdd, org, city, country);
+
                     } else if (json.getString("status").contentEquals("fail")) {
 
                     }

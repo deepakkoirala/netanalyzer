@@ -86,7 +86,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     DAO dao;
     BroadcastReceiver networkStateReceiver;
     String extIPAdd;
-
     boolean intentServiceResult;
 
     @Override
@@ -101,85 +100,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Snackbar.make(view, "Proceed to share all data", Snackbar.LENGTH_LONG)
+                        .setAction("Let's Go", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                if (dbItems.size() > 0) {
+                                    Intent sendIntent = new Intent();
+                                    sendIntent.setAction(Intent.ACTION_SEND);
+                                    sendIntent.putExtra(Intent.EXTRA_TEXT, getAllData());
+                                    sendIntent.setType("text/plain");
+                                    startActivity(Intent.createChooser(sendIntent, "Share using"));
+                                    overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+                                } else {
+                                    new ShowToast(getApplicationContext(), "There's nothing to share ! Add some first.",
+                                            Color.WHITE, R.drawable.action_bar_bg, 0,
+                                            Toast.LENGTH_SHORT, Gravity.BOTTOM);
+                                }
+
+                            }
+                        }).show();
             }
         });
-        fab.setVisibility(View.GONE);
+        //fab.setVisibility(View.GONE);
+
         initialize();
         new WhatsNew(this);
-        networkStateReceiver = new BroadcastReceiver() {
 
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Log.w("Network Listener", "Network Type Changed");
-                String status = NetworkUtil.getConnectivityStatusString(context);
-                Toast.makeText(context, status, Toast.LENGTH_LONG).show();
-                onResume();
-            }
-        };
-
-        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(networkStateReceiver, filter);
 
     }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        unregisterReceiver(networkStateReceiver);
-    }
-
-    @Override
-    protected void onResume() {
-        Log.i("s", "onResume");
-        try {
-            new DBAsync().execute();
-            android.support.v7.app.ActionBar ab = getSupportActionBar();
-            if (connectionDetector.isConnectingToInternet()) {
-
-                // Get Local IP either from WIFI or Data
-                // WIFI
-                WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
-                @SuppressWarnings("deprecation")
-                String wifiIP = Formatter.formatIpAddress(wm.getConnectionInfo()
-                        .getIpAddress());
-
-                if (wifiIP.length() > 7) {
-                    intIP = wifiIP;
-                } else {
-                    // Data
-                    intIP = GetDeviceIP.getDeviceIP();
-                }
-
-                // Set Internal IP
-
-                if (intIP != null) {
-                    if (intIP.length() > 7) {
-                        intIP = ", " + intIP;
-                        ab.setSubtitle(Html.fromHtml("<fontcolor='#99ff00'><small>Device:"
-                                + android.os.Build.MODEL + intIP + "</small></fontcolor>"));
-                    }
-                } // Get Ex IP if network is connected
-                new ExternalIPFinder().execute();
-
-            } else {
-                ab.setSubtitle(Html.fromHtml("<fontcolor='#99ff00'><small>"
-                        + android.os.Build.MODEL + "</small</fontcolor>"));
-                tvExIpArea.setText("Disconnected !");
-                tvExIpArea.setVisibility(View.VISIBLE);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        super.onResume();
-    }
-
 
     private void initialize() {
         Log.i("f", "initialize");
@@ -234,33 +188,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
-
-    private void initFinding() {
-        try {
-            if (etSearchBox.getText().toString().contentEquals("")) {
-                Toast.makeText(getApplicationContext(), "Nothing  to search...",
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                if (connectionDetector.isConnectingToInternet()) {
-                    ivSearch.setEnabled(false);
-                    new ServerAsync(etSearchBox.getText().toString()).execute();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Disconnected !",
-                            Toast.LENGTH_SHORT).show();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     private class ServerAsync extends AsyncTask<Void, Void, Void> {
         String ips = "";
         boolean error = false, value = false;
-        String string;
+        String inputString;
 
         @Override
         protected void onPreExecute() {
@@ -269,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         ServerAsync(String inputString) {
-            this.string = inputString;
+            this.inputString = inputString;
         }
 
         @Override
@@ -280,10 +214,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 long time = d.getTime();
 
                 InetAddress[] add = null;
-                UserFunctions u = new UserFunctions();
+                UserFunctions userFunctions = new UserFunctions();
                 JSONObject json;
                 try {
-                    add = InetAddress.getAllByName(string.trim());
+                    add = InetAddress.getAllByName(inputString.trim());
 
                     if (add.length > 0) {
 
@@ -292,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         for (InetAddress inet : add) {
 
                             try {
-                                json = u.getIPInfo(inet.getHostAddress());
+                                json = userFunctions.getIPInfo(inet.getHostAddress());
                                 if (json != null)
                                     if (json.getString("status").contentEquals(
                                             "success")) {
@@ -312,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     } else if (json.getString("message")
                                             .contentEquals("private range")) {
                                         InetAddress ad = InetAddress
-                                                .getByName(string);
+                                                .getByName(inputString);
                                         item = new Items(ad.getCanonicalHostName(),
                                                 ad.getHostAddress(), "", "",
                                                 Long.toString(time), "", "", "", "", "", "");
@@ -321,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                                     }
                             } catch (Exception e) {
-                                InetAddress ad = InetAddress.getByName(string);
+                                InetAddress ad = InetAddress.getByName(inputString);
                                 item = new Items(ad.getCanonicalHostName(),
                                         ad.getHostAddress(), "", "",
                                         Long.toString(time), "", "", "", "", "", "");
@@ -461,8 +395,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         final Items item = dbItems.get(position);
         String[] choices = {"Open " + item.ip + " in browser...",
-                "Copy " + item.ip, "Export data... ", "Remove item from list",
-                "Ping " + " Server "};
+                "Copy " + item.ip, "Export data... ", "Remove from list",
+                "Ping " + " Server", "Details..."};
         @SuppressWarnings("deprecation")
         AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this,
                 AlertDialog.THEME_HOLO_LIGHT);
@@ -525,9 +459,48 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     return;
                 }
                 if (which == 4) {
+                    //Ping
                     new PingRequest(item.ip).execute();
-
                 }
+                if (which == 5) {
+                    //Details
+                    Context context = MainActivity.this;
+
+                    final Dialog d = new Dialog(context);
+                    d.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    d.setContentView(R.layout.dialog_newfeatures);
+
+                    TextView title, message;
+                    title = (TextView) d.findViewById(R.id.titleText);
+                    title.setText("Details:" + item.ip);
+
+                    message = (TextView) d.findViewById(R.id.message);
+                    final String messageDetails = getFormattedDetails(item);
+                    message.setText(messageDetails);
+                    message.setGravity(Gravity.LEFT);
+
+
+                    Button ok = (Button) d.findViewById(R.id.ok);
+                    ok.setText("Copy");
+                    ok.setOnClickListener(new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View v) {
+                            // copy ip to clipboard
+                            boolean status = Clipboard.copyToClipboard(
+                                    MainActivity.this, messageDetails);
+                            if (status) {
+                                new ShowToast(MainActivity.this,
+                                        "Copied to Clipboard", Color.WHITE,
+                                        R.drawable.action_bar_bg, 0,
+                                        Toast.LENGTH_LONG, Gravity.BOTTOM);
+                            }
+                        }
+                    });
+                    d.show();
+                    d.setCancelable(true);
+                }
+
             }
 
         });
@@ -536,6 +509,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         d.setCanceledOnTouchOutside(true);
         d.show();
         return true;
+    }
+
+    private String getFormattedDetails(Items item) {
+        return "DNS: " + item.name + "\nIP: "
+                + item.ip + "\nISP: " + item.isp + "\nLocation: "
+                + item.location + "\nRegion: " + item.region
+                + "\nRegion Name: " + item.region_name
+                + "\nTime Zone: " + item.time_zone
+                + "\nZip: " + item.zip
+                + "\nLast Saved: " + ItemsAdapter.getDate(
+                Long.parseLong(item.date), "EEE MMM dd yyyy HH:mm z")
+                + "\nCoordinate: " + item.lon
+                + ", " + item.lat
+                + "\n";
     }
 
     private class PingRequest extends AsyncTask<Void, Void, Void> {
@@ -692,15 +679,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
+    private String getAllData() {
+        String allData = "";
+        dao.open();
+        ArrayList<Items> allDbItems = new ArrayList<>();
+        allDbItems.addAll(dao.getItems());
+        for (int i = 0; i < allDbItems.size(); i++) {
+            allData += allData + (i + 1) + ".\nDNS: " + allDbItems.get(i).name + "\nIP: "
+                    + allDbItems.get(i).ip + "\nISP: " + allDbItems.get(i).isp + "\nLocation: "
+                    + allDbItems.get(i).location + "\nRegion: " + allDbItems.get(i).region
+                    + "\nRegion Name: " + allDbItems.get(i).region_name
+                    + "\nTime Zone: " + allDbItems.get(i).time_zone
+                    + "\nZip: " + allDbItems.get(i).zip
+                    + "\nLast Saved: " + ItemsAdapter.getDate(
+                    Long.parseLong(allDbItems.get(i).date), "EEE MMM dd yyyy HH:mm z")
+                    + "\nCoordinate: " + allDbItems.get(i).lon
+                    + ", " + allDbItems.get(i).lat
+
+                    + "\nRegion: " + allDbItems.get(i).region + "\n\n";
+        }
+        return allData;
+
+    }
+
     public void onClick(View arg0) {
         int id = arg0.getId();
-        String copydata = "";
-        for (int i = 0; i < dbItems.size(); i++) {
-            copydata = copydata + (i + 1) + ". " + dbItems.get(i).name + ":"
-                    + dbItems.get(i).ip + "(" + dbItems.get(i).isp + " "
-                    + dbItems.get(i).location + "\n";
-        }
-
         if (id == R.id.extip) {
             String value = tvExIpArea.getText().toString().trim();
             if (value.contains(":")) {
@@ -762,7 +765,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (dbItems.size() > 0) {
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, copydata);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, getAllData());
                 sendIntent.setType("text/plain");
                 startActivity(Intent.createChooser(sendIntent, "Share using"));
                 overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
@@ -776,7 +779,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (id == R.id.copy) {
             if (dbItems.size() > 0) {
                 boolean status = Clipboard.copyToClipboard(MainActivity.this,
-                        copydata);
+                        getAllData());
                 if (status) {
                     new ShowToast(MainActivity.this, "Copied all to Clipboard",
                             Color.WHITE, R.drawable.action_bar_bg, 0,
@@ -790,6 +793,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         if (id == R.id.find) {
             initFinding();
+        }
+    }
+
+    private void initFinding() {
+        try {
+            if (etSearchBox.getText().toString().contentEquals("")) {
+                Toast.makeText(getApplicationContext(), "Nothing  to search...",
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                if (connectionDetector.isConnectingToInternet()) {
+                    ivSearch.setEnabled(false);
+                    new ServerAsync(etSearchBox.getText().toString()).execute();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Disconnected !",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -809,8 +831,72 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 tvEntriesCountArea.setText(dbItems.size() + " Entries");
             }
             super.onPostExecute(result);
-
         }
+    }
+
+
+    @Override
+    protected void onResume() {
+        Log.i("s", "onResume");
+        try {
+            new DBAsync().execute();
+            networkStateReceiver = new BroadcastReceiver() {
+
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    Log.w("Network Listener", "Network Type Changed");
+                    String status = NetworkUtil.getConnectivityStatusString(context);
+                    Toast.makeText(context, status, Toast.LENGTH_LONG).show();
+                }
+            };
+
+            IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+            registerReceiver(networkStateReceiver, filter);
+
+            android.support.v7.app.ActionBar ab = getSupportActionBar();
+            if (connectionDetector.isConnectingToInternet()) {
+
+                // Get Local IP either from WIFI or Data
+                // WIFI
+                WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
+                @SuppressWarnings("deprecation")
+                String wifiIP = Formatter.formatIpAddress(wm.getConnectionInfo()
+                        .getIpAddress());
+
+                if (wifiIP.length() > 7) {
+                    intIP = wifiIP;
+                } else {
+                    // Data
+                    intIP = GetDeviceIP.getDeviceIP();
+                }
+
+                // Set Internal IP
+
+                if (intIP != null) {
+                    if (intIP.length() > 7) {
+                        intIP = ", " + intIP;
+                        ab.setSubtitle(Html.fromHtml("<fontcolor='#99ff00'><small>Device:"
+                                + android.os.Build.MODEL + intIP + "</small></fontcolor>"));
+                    }
+                } // Get Ex IP if network is connected
+                new ExternalIPFinder().execute();
+
+            } else {
+                ab.setSubtitle(Html.fromHtml("<fontcolor='#99ff00'><small>"
+                        + android.os.Build.MODEL + "</small</fontcolor>"));
+                tvExIpArea.setText("Disconnected !");
+                tvExIpArea.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        super.onResume();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(networkStateReceiver);
     }
 
     @Override
