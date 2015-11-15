@@ -5,6 +5,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.support.v7.app.NotificationCompat;
 
 import com.thapasujan5.netanalyzerpro.R;
 import com.thapasujan5.netanalzyerpro.MainActivity;
@@ -19,30 +21,49 @@ public class Notify {
         Intent intent = new Intent(context, MainActivity.class);
         PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), intent, 0);
 
-        // Build notification
-        // Actions are just fake
-        Notification noti;
 
+        //Older Devices
+        NotificationCompat.Builder n = new NotificationCompat.Builder(context);
+        //For api>15
+        Notification noti = null;
         if (extIPAdd != null && org != null && city != null && country != null) {
-            noti = new Notification.Builder(context).setTicker("ISP Information").setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentIntent(pIntent).setColor(context.getResources().getColor(R.color.colorPrimary))
-                    .setContentTitle("External IP: " + extIPAdd)
-                    .setContentText(org + " "
-                            + city + ", " + country).build();
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                noti = new Notification.Builder(context).setTicker("ISP Information").setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentIntent(pIntent).setColor(context.getResources().getColor(R.color.colorPrimary))
+                        .setContentTitle("External IP: " + extIPAdd)
+                        .setContentText(org + " "
+                                + city + ", " + country).build();
+            } else {
+                n.setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentIntent(pIntent)
+                        .setContentTitle("External IP: " + extIPAdd)
+                        .setContentText(org + " "
+                                + city + ", " + country);
+            }
 
-            ;
+
         } else {
-            noti = new Notification.Builder(context).setTicker("ISP Information").setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentIntent(pIntent).setColor(context.getResources().getColor(R.color.colorPrimary))
-                    .setContentTitle("Check Network Access !")
-                    .setContentText("Touch to reload.").build();
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                noti = new Notification.Builder(context).setTicker("ISP Information").setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentIntent(pIntent).setColor(context.getResources().getColor(R.color.colorPrimary))
+                        .setContentTitle("Check Network Access !")
+                        .setContentText("Touch to reload.").build();
+            } else {
+                n.setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentIntent(pIntent).setContentTitle("Check Network Access !")
+                        .setContentText("Touch to reload.");
+            }
         }
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         // hide the notification after its selected
-        noti.flags |= Notification.FLAG_ONGOING_EVENT;
-
-        notificationManager.notify(0, noti);
-
+        if (noti != null) {
+            noti.flags |= Notification.FLAG_ONGOING_EVENT;
+            notificationManager.notify(0, noti);
+        } else {
+            n.setAutoCancel(false);
+            n.setOngoing(true);
+            notificationManager.notify(0, n.build());
+        }
     }
 }
