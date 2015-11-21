@@ -2,7 +2,11 @@ package com.thapasujan5.netanalzyerpro.tools;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
+
+import java.util.List;
 
 public class SocialIntentProvider {
     public static Intent getOpenFacebookIntent(Context context, String fbid,
@@ -44,6 +48,24 @@ public class SocialIntentProvider {
             }
         } catch (Exception e) {
             return (new Intent(Intent.ACTION_VIEW, Uri.parse(ytChannelID)));
+        }
+    }
+
+    public static Intent getLinkedinIntent(Context context, String id) {
+
+        try {
+            Intent linkedinIntent = new Intent(Intent.ACTION_VIEW);
+            linkedinIntent.setClassName("com.linkedin.android", "com.linkedin.android.profile.ViewProfileActivity");
+            linkedinIntent.putExtra("memberId", id);
+            return linkedinIntent;
+        } catch (Exception e) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("linkedin://you"));
+            final PackageManager packageManager = context.getPackageManager();
+            final List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+            if (list.isEmpty()) {
+                intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.linkedin.com/profile/view?id=you"));
+            }
+            return intent;
         }
     }
 }

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Net Analyzer Pro</string>
-    <string name="version">1.2.5</string>
+    <string name="version">1.2.6</string>
     <string name="phone">+61452065052</string>
     <string name="email">thapasujan5@gmail.com</string>
     <string name="fbID">1230665286</string>
@@ -16,7 +16,7 @@
     <string name="ivClearDesc">Clear</string>
     <string name="ivShareDesc">Share</string>
     <string name="ivCopyDesc">Copy</string>
-    <string name="newFeatures">- Bug Fix for ICS Crash.\n- More ISP Details.\n- UI Changes.\n- Stability and Improvements.</string>
+    <string name="newFeatures">- Settings Added.\n- Adjustable OnGoing Notification.</string>
     <string name="oops_something_went_wrong_try_in_a_while_">Oops! We can\'t figure out what\'s that.</string>
     <string name="feedbackSubject">Subject of Feedback</string>
     <string name="feedbackDetails">Feedback Details</string>
@@ -52,23 +52,23 @@
     </string-array>
 
     <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
+    <string name="pref_header_data_sync">Data Cache Settings</string>
 
-    <string name="pref_title_sync_frequency">Sync frequency</string>
-    <string-array name="pref_sync_frequency_titles">
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
+    <string name="pref_title_flush_frequency">Flush Frequency</string>
+    <string-array name="pref_flush_frequency_titles">
+        <item>1 Day</item>
+        <item>1 Week</item>
+        <item>15 Days</item>
+        <item>1 Month[30 Days]</item>
+        <item>6 Months</item>
         <item>Never</item>
     </string-array>
-    <string-array name="pref_sync_frequency_values">
+    <string-array name="pref_flush_frequency_values">
+        <item>1</item>
+        <item>7</item>
         <item>15</item>
         <item>30</item>
-        <item>60</item>
         <item>180</item>
-        <item>360</item>
         <item>-1</item>
     </string-array>
 
@@ -77,12 +77,17 @@
     <!-- Example settings for Notifications -->
     <string name="pref_header_notifications">Notifications</string>
 
-    <string name="pref_title_new_message_notifications">New message notifications</string>
+    <string name="pref_title_new_isp_notifications">Sticky Notification</string>
 
-    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_title_ringtone">Notification Sound</string>
     <string name="pref_ringtone_silent">Silent</string>
-
     <string name="pref_title_vibrate">Vibrate</string>
+
+    <string name="portal_id">1518916698434996</string>
+    <string name="portal_name">netanalyzer</string>
+    <string name="notification_ongoing">OnGoing Notification</string>
+    <string name="key_notification_sticky">sticky</string>
+    <string name="key_notification_ongoing">ongoing</string>
 
 </resources>
 

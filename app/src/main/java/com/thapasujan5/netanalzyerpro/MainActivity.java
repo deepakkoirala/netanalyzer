@@ -2,11 +2,13 @@ package com.thapasujan5.netanalzyerpro;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
@@ -14,6 +16,7 @@ import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -42,10 +45,11 @@ import android.widget.Toast;
 
 import com.thapasujan5.netanalyzerpro.R;
 import com.thapasujan5.netanalzyerpro.actionMenu.About;
+import com.thapasujan5.netanalzyerpro.actionMenu.AboutWhatsNew;
 import com.thapasujan5.netanalzyerpro.actionMenu.Feedback;
+import com.thapasujan5.netanalzyerpro.actionMenu.Portal;
 import com.thapasujan5.netanalzyerpro.actionMenu.RateApp;
 import com.thapasujan5.netanalzyerpro.actionMenu.ScreenShot;
-import com.thapasujan5.netanalzyerpro.actionMenu.WhatsNew;
 import com.thapasujan5.netanalzyerpro.datastore.Items;
 import com.thapasujan5.netanalzyerpro.datastore.ItemsAdapter;
 import com.thapasujan5.netanalzyerpro.db.DAO;
@@ -87,6 +91,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     BroadcastReceiver networkStateReceiver;
     String extIPAdd;
     boolean intentServiceResult;
+    SharedPreferences sharedpreferences;
+    NotificationManager nm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //fab.setVisibility(View.GONE);
 
         initialize();
-        new WhatsNew(this);
+        new AboutWhatsNew(this);
 
 
     }
@@ -138,7 +144,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initialize() {
         Log.i("f", "initialize");
         try {
-
+            sharedpreferences = PreferenceManager
+                    .getDefaultSharedPreferences(getBaseContext());
+            nm = (NotificationManager) MainActivity.this.getSystemService(Context.NOTIFICATION_SERVICE);
             etSearchBox = (EditText) findViewById(R.id.input);
             etSearchBox.setOnEditorActionListener(this);
             // Check if no view has focus:
@@ -342,7 +350,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 tvExIpArea.setText("External IP: " + extIPAdd + ", " + org + " "
                         + city + ", " + country);
                 tvExIpArea.setVisibility(View.VISIBLE);
-                new Notify(MainActivity.this, extIPAdd, org, city, country);
+                if (sharedpreferences.getBoolean(getString(R.string.key_notification_sticky), true)) {
+                    new Notify(MainActivity.this, extIPAdd, org, city, country);
+                } else {
+                    nm.cancel(0);
+                    Log.i("notification", "notification cancelled from main");
+                }
             } else {
                 if (connectionDetector.isConnectingToInternet()) {
                     tvExIpArea.setText("Check Internet Access !");
@@ -369,23 +382,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int id = item.getItemId();
         if (id == R.id.rate) {
             new RateApp(MainActivity.this);
+            overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         }
         if (id == R.id.about) {
             new About(MainActivity.this);
+            overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         }
         if (id == R.id.report) {
             new Feedback(MainActivity.this);
+            overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         }
 
         if (id == R.id.screenShot) {
             new ScreenShot(MainActivity.this);
+            overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         }
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         }
-
-
+        if (id == R.id.portal) {
+            new Portal(MainActivity.this);
+            overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+        }
         return super.onOptionsItemSelected(item);
     }
 

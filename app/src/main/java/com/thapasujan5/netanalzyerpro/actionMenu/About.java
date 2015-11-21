@@ -78,6 +78,19 @@ public class About {
             }
         });
 
+        ImageView ivLinkedin = (ImageView) d.findViewById(R.id.ivLinkedinLogo);
+        ivLinkedin.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                context.startActivity(SocialIntentProvider
+                        .getOpenYoutubeIntent(context,
+                                null,
+                                context.getString(R.string.youtubeChannelID)));
+
+            }
+        });
+
 
         ImageView ivProfilepic = (ImageView) d.findViewById(R.id.ivProfilePic);
         ivProfilepic.setOnClickListener(new OnClickListener() {
@@ -114,7 +127,7 @@ public class About {
             @Override
             public void onClick(View v) {
 
-                new WhatsNew(context, false); //just sending false meaning not to check preferences whether user prviously viewed or not
+                new AboutWhatsNew(context, false); //just sending false meaning not to check preferences whether user prviously viewed or not
             }
         });
         ok.setOnClickListener(new OnClickListener() {

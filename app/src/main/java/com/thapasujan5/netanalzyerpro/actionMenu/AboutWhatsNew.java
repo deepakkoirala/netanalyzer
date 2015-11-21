@@ -15,18 +15,18 @@ import com.thapasujan5.netanalyzerpro.R;
 /**
  * Created by Suzan on 11/8/2015.
  */
-public class WhatsNew {
+public class AboutWhatsNew {
     Context context;
     boolean check = true;
 
-    public WhatsNew(Context context, boolean condition) {
+    public AboutWhatsNew(Context context, boolean condition) {
         this.context = context;
         this.check = condition;
         runCode();
 
     }
 
-    public WhatsNew(Context context) {
+    public AboutWhatsNew(Context context) {
         this.context = context;
         runCode();
     }

@@ -72,10 +72,10 @@
         <activity
             android:name="com.thapasujan5.netanalzyerpro.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName="com.thapasujan5.netanalzyerpro.MapsActivity">
+            android:parentActivityName="com.thapasujan5.netanalzyerpro.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.thapasujan5.netanalzyerpro.MapsActivity" />
+                android:value="com.thapasujan5.netanalzyerpro.MainActivity" />
         </activity>
     </application>
 

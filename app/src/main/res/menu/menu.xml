@@ -28,6 +28,11 @@
         android:title="Rate App"
         app:showAsAction="never" />
     <item
+        android:id="@+id/portal"
+        android:orderInCategory="100"
+        android:title="Portal"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/about"
 
         android:orderInCategory="100"

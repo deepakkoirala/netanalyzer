@@ -72,6 +72,7 @@
                 android:layout_toRightOf="@+id/ivFbLogo"
                 android:contentDescription="Twitter"
                 android:src="@mipmap/ic_ltwitter"></ImageView>
+
             <ImageView
                 android:id="@+id/ivYouTubeLogo"
                 android:layout_width="@dimen/socialLogoWidth"
@@ -81,6 +82,15 @@
                 android:layout_toRightOf="@+id/ivTwitterLogo"
                 android:contentDescription="Twitter"
                 android:src="@mipmap/ic_youtube"></ImageView>
+            <ImageView
+                android:id="@+id/ivLinkedinLogo"
+                android:layout_width="@dimen/socialLogoWidth"
+                android:layout_height="@dimen/socialLogoHeight"
+                android:layout_below="@+id/ivProfilePic"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/ivYouTubeLogo"
+                android:contentDescription="Twitter"
+                android:src="@mipmap/ic_linkedin"></ImageView>
 
             <TextView
                 android:id="@+id/message"

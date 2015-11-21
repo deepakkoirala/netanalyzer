@@ -14,8 +14,11 @@ import com.thapasujan5.netanalzyerpro.tools.NetworkUtil;
 
 public class Receiver extends BroadcastReceiver {
 
+
     @Override
     public void onReceive(Context context, Intent intent) {
+
+
         String status = NetworkUtil.getConnectivityStatusString(context);
         if (NetworkUtil.getConnectivityStatus(context) == 0) {
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

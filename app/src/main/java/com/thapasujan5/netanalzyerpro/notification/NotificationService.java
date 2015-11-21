@@ -3,7 +3,6 @@ package com.thapasujan5.netanalzyerpro.notification;
 import android.app.IntentService;
 import android.content.Intent;
 
-import com.thapasujan5.netanalzyerpro.MainActivity;
 import com.thapasujan5.netanalzyerpro.tools.UserFunctions;
 
 import org.json.JSONObject;
@@ -60,20 +59,13 @@ public class NotificationService extends IntentService {
 
                 } catch (Exception e) {
                     new Notify(getApplicationContext(), "Check Network Access !", null, null, null);
-                    runApplication();
                 }
 
             }
         } catch (Exception e) {
-
-            runApplication();
+            e.printStackTrace();
         }
     }
 
 
-    private void runApplication() {
-        Intent backupIntent = new Intent(getApplicationContext(), MainActivity.class);
-        backupIntent.putExtra("isr", false);
-        startActivity(backupIntent);
-    }
 }
