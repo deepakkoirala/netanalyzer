@@ -11,7 +11,6 @@ import com.thapasujan5.netanalzyerpro.tools.SocialIntentProvider;
 public class Portal {
 
     public Portal(Context context) {
-        context.startActivity(SocialIntentProvider.getOpenFacebookIntent(context, context.getString(R.string.portal_id), context.getString(R.string.portal_name)));
-
+        context.startActivity(SocialIntentProvider.getOpenFacebookPageIntent(context, context.getString(R.string.portal_id), context.getString(R.string.portal_name)));
     }
 }

@@ -1,69 +1,86 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/dialog_bg"
-    android:scrollbarStyle="outsideOverlay" >
+    android:padding="10dp"
+    tools:context="app.MainActivity">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/tvtitleArea"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp"
-        tools:context="app.MainActivity" >
+        android:gravity="left"
+        android:selectAllOnFocus="true"
+        android:text="Ping Statistics for 192.168.1.1"
+        android:textColor="#ff00ff"
+        android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/tvtitleArea"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="left"
-            android:selectAllOnFocus="true"
-            android:text="Ping Statistics for 192.168.1.1"
-            android:textColor="#fff"
-            android:textSize="16sp" />
+    <View
+        android:id="@+id/divider"
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/tvtitleArea"
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="15dp"
+        android:background="#80ffffff"></View>
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="2dp"
-            android:layout_marginBottom="15dp"
-            android:layout_marginTop="15dp"
-            android:background="#80ffffff" >
-        </View>
-
-        <TextView
-            android:id="@+id/tvPingResut"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:selectAllOnFocus="true"
-            android:text="Pingresult area"
-            android:textColor="#fff"
-            android:textSize="16sp" />
+    <ScrollView
+        android:id="@+id/svResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/llActions"
+        android:layout_below="@+id/divider"
+        android:layout_centerInParent="true"
+        android:padding="10dp">
 
         <LinearLayout
-            android:id="@+id/llActions"
+            android:id="@+id/llResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvPingResut"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:selectAllOnFocus="true"
+                android:text="Pingresult area"
+                android:textColor="#fff"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/llActions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnCopy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Copy"></Button>
 
-            <Button
-                android:id="@+id/btnCopy"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="Copy" >
-            </Button>
+        <Button
+            android:id="@+id/btnShare"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Share"></Button>
 
-            <Button
-                android:id="@+id/btnShare"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="Share" >
-            </Button>
-        </LinearLayout>
+        <Button
+            android:id="@+id/btnClose"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Close"></Button>
     </LinearLayout>
+</RelativeLayout>
 
-</ScrollView>

@@ -20,7 +20,7 @@ import com.thapasujan5.netanalzyerpro.MainActivity;
 public class Notify {
     SharedPreferences sp;
 
-    public Notify(Context context, String extIPAdd, String org, String city, String country) {
+    public Notify(Context context, String extIPAdd, String intIP, String org, String city, String country) {
         sp = PreferenceManager.getDefaultSharedPreferences(context);
         // Prepare intent which is triggered if the
         // notification is selected
@@ -36,15 +36,15 @@ public class Notify {
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 noti = new Notification.Builder(context).setTicker("ISP Information").setSmallIcon(R.mipmap.ic_launcher)
                         .setContentIntent(pIntent).setColor(context.getResources().getColor(R.color.colorPrimary))
-                        .setContentTitle("External IP: " + extIPAdd)
-                        .setContentText(org + " "
-                                + city + ", " + country).build();
+                        .setContentTitle(org + " "
+                                + city + ", " + country)
+                        .setContentText("IntIP: " + intIP + "  ExIP: " + extIPAdd).build();
             } else {
                 n.setSmallIcon(R.mipmap.ic_launcher)
                         .setContentIntent(pIntent)
-                        .setContentTitle("External IP: " + extIPAdd)
-                        .setContentText(org + " "
-                                + city + ", " + country);
+                        .setContentTitle(org + " "
+                                + city + ", " + country)
+                        .setContentText("IP: " + intIP + "  /  " + extIPAdd);
             }
 
 
@@ -64,7 +64,7 @@ public class Notify {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         // Adjust OnGoing based on pref
-        if (sp.getBoolean(context.getString(R.string.key_notification_ongoing), true) == true) {
+        if (sp.getBoolean(context.getString(R.string.key_notification_ongoing), false) == true) {
             if (noti != null) {
                 noti.flags |= Notification.FLAG_ONGOING_EVENT;
             } else {

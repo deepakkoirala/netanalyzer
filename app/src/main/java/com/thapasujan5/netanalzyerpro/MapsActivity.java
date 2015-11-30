@@ -2,7 +2,6 @@ package com.thapasujan5.netanalzyerpro;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -27,12 +26,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             location = bundle.getString("location");
             lat = bundle.getDouble("lat");
             lon = bundle.getDouble("lon");
-            Toast.makeText(this, location + ":" + lat + ", " + lon, Toast.LENGTH_LONG).show();
         }
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
     }
 
 
@@ -54,5 +53,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions().position(latLng).title(location));
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.0f));
+        mMap.getUiSettings().setMapToolbarEnabled(true);
+        mMap.getUiSettings().setAllGesturesEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
     }
 }

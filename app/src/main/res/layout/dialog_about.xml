@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:padding="5dp">
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -82,6 +82,7 @@
                 android:layout_toRightOf="@+id/ivTwitterLogo"
                 android:contentDescription="Twitter"
                 android:src="@mipmap/ic_youtube"></ImageView>
+
             <ImageView
                 android:id="@+id/ivLinkedinLogo"
                 android:layout_width="@dimen/socialLogoWidth"
@@ -90,7 +91,8 @@
                 android:layout_marginLeft="5dp"
                 android:layout_toRightOf="@+id/ivYouTubeLogo"
                 android:contentDescription="Twitter"
-                android:src="@mipmap/ic_linkedin"></ImageView>
+                android:src="@mipmap/ic_linkedin"
+                android:visibility="gone"></ImageView>
 
             <TextView
                 android:id="@+id/message"
@@ -108,19 +110,19 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="20dp">
+            android:padding="5dp">
 
             <Button
                 android:id="@+id/ok"
-                style="?android:attr/buttonBarButtonStyle"
+
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Phone" />
+                android:text="Talk" />
 
             <Button
                 android:id="@+id/cancel"
-                style="?android:attr/buttonBarButtonStyle"
+
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -128,11 +130,13 @@
 
             <Button
                 android:id="@+id/btnWhatsNew"
+
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="8dp"
-                android:text="What's New" />
+
+                android:text="Changes" />
         </LinearLayout>
 
     </LinearLayout>

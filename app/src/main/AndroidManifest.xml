@@ -3,14 +3,12 @@
     package="com.thapasujan5.netanalyzerpro"
     android:installLocation="auto">
 
-
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -48,6 +46,7 @@
         </activity>
         <activity
             android:name="com.thapasujan5.netanalzyerpro.MainActivity"
+            android:configChanges="screenSize|orientation|keyboard|keyboardHidden"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <!--

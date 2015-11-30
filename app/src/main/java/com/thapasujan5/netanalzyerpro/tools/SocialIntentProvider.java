@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 
+import com.thapasujan5.netanalyzerpro.R;
+
 import java.util.List;
 
 public class SocialIntentProvider {
@@ -23,16 +25,26 @@ public class SocialIntentProvider {
         }
     }
 
-    public static Intent getOpenTwitterIntent(String twitterid,
-                                              String twittername) {
+    public static Intent getOpenFacebookPageIntent(Context context, String id, String name) {
+
         try {
-            Intent intent = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("twitter://user?screen_name=" + twittername));
-            return intent;
+            context.getPackageManager().getPackageInfo("com.facebook.katana", 0);
+            return new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/" + id));
+        } catch (Exception e) {
+            return new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/" + name));
+        }
+    }
+
+    public static void OpenTwitter(Context context) {
+        try {
+
+            context.startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("twitter://user?screen_name=" + context.getString(R.string.twitterID)))
+            );
 
         } catch (Exception e) {
-            return (new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("https://twitter.com/#!/" + twittername)));
+            context.startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://twitter.com/#!/" + context.getString(R.string.twitterID))));
         }
     }
 

@@ -19,7 +19,7 @@
   -->
     <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
     <SwitchPreference
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:dependency="@string/key_notification_sticky"
         android:key="@string/key_notification_ongoing"
         android:title="@string/notification_ongoing" />

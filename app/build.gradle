@@ -8,8 +8,8 @@ android {
         applicationId "com.thapasujan5.netanalyzerpro"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 16
-        versionName "1.2.6"
+        versionCode 19
+        versionName "1.2.8"
     }
     buildTypes {
         release {

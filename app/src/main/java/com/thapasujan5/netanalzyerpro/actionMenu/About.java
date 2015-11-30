@@ -58,10 +58,7 @@ public class About {
 
             @Override
             public void onClick(View v) {
-                context.startActivity(SocialIntentProvider
-                        .getOpenTwitterIntent(null,
-                                context.getString(R.string.twitterID)));
-
+                SocialIntentProvider.OpenTwitter(context);
             }
         });
 

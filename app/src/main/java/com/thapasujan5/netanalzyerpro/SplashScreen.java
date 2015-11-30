@@ -20,7 +20,7 @@ public class SplashScreen extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
 		setContentView(R.layout.activity_splash_screen);
 
 		iv = (ImageView) findViewById(R.id.icon);
@@ -29,15 +29,15 @@ public class SplashScreen extends Activity {
 		iv.startAnimation(an2);
 
 		startMainActivity();
-		overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+
 	}
 
 
 	@Override
 	protected void onPause() {
-		super.onPause();
+		super.onPause();overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
 		finish();
-		overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+
 	}
 	public void startMainActivity() {
 		new Handler().postDelayed(new Runnable() {
