@@ -36,6 +36,7 @@ public class ItemsAdapter extends ArrayAdapter<Items> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
+        row = null;
         if (row == null) {
             LayoutInflater inflater = ((Activity) context).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
@@ -50,7 +51,7 @@ public class ItemsAdapter extends ArrayAdapter<Items> {
                 ((TextView) row.findViewById(R.id.isp)).setText(item.isp);
             } else {
                 row.findViewById(R.id.isp)
-                        .setVisibility(View.INVISIBLE);
+                        .setVisibility(View.GONE);
             }
 
             ((TextView) row.findViewById(R.id.date)).setText(getDate(
@@ -61,20 +62,25 @@ public class ItemsAdapter extends ArrayAdapter<Items> {
                         .setText(item.location);
             } else {
                 row.findViewById(R.id.location)
-                        .setVisibility(View.INVISIBLE);
+                        .setVisibility(View.GONE);
             }
             ImageView ivLocation = (ImageView) row.findViewById(R.id.ivLocation);
-            ivLocation.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent openMap = new Intent(context, MapsActivity.class);
-                    openMap.putExtra("location", item.location);
-                    openMap.putExtra("lat", Double.parseDouble(item.lat));
-                    openMap.putExtra("lon", Double.parseDouble(item.lon));
-                    context.startActivity(openMap);
-                    ((Activity) context).overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-                }
-            });
+            if (item.lat.length() > 0 && item.lon.length() > 0) {
+
+                ivLocation.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent openMap = new Intent(context, MapsActivity.class);
+                        openMap.putExtra("location", item.location);
+                        openMap.putExtra("lat", Double.parseDouble(item.lat));
+                        openMap.putExtra("lon", Double.parseDouble(item.lon));
+                        context.startActivity(openMap);
+                        ((Activity) context).overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+                    }
+                });
+            } else {
+                ivLocation.setVisibility(View.INVISIBLE);
+            }
         } catch (Exception e) {
 
         }

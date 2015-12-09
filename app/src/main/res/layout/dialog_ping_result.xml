@@ -8,21 +8,21 @@
 
     <TextView
         android:id="@+id/tvtitleArea"
+        style="@android:style/TextAppearance.DeviceDefault.Small"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="left"
         android:selectAllOnFocus="true"
-        android:text="Ping Statistics for 192.168.1.1"
-        android:textColor="#ff00ff"
-        android:textSize="16sp" />
+        android:text="@string/ping_result_title"
+        android:textColor="#fff" />
 
     <View
         android:id="@+id/divider"
         android:layout_width="fill_parent"
-        android:layout_height="2dp"
+        android:layout_height="1dp"
         android:layout_below="@+id/tvtitleArea"
-        android:layout_marginBottom="15dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
         android:background="#80ffffff"></View>
 
     <ScrollView
@@ -32,7 +32,8 @@
         android:layout_above="@+id/llActions"
         android:layout_below="@+id/divider"
         android:layout_centerInParent="true"
-        android:padding="10dp">
+        android:layout_marginBottom="10dp"
+        android:padding="5dp">
 
         <LinearLayout
             android:id="@+id/llResult"
@@ -41,13 +42,13 @@
 
             <TextView
                 android:id="@+id/tvPingResut"
+                style="@android:style/TextAppearance.DeviceDefault.Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:selectAllOnFocus="true"
                 android:text="Pingresult area"
-                android:textColor="#fff"
-                android:textSize="16sp" />
+                android:textColor="#fff" />
         </LinearLayout>
     </ScrollView>
 
@@ -56,6 +57,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+
         android:orientation="horizontal">
 
         <Button

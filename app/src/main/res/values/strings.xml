@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">Net Analyzer Pro</string>
-    <string name="version">1.2.8</string>
+    <string name="version">1.2.9</string>
     <string name="phone">+61452065052</string>
     <string name="email">sujan.private@gmail.com</string>
     <string name="fbID">1230665286</string>
     <string name="fbName">sujanthapa55</string>
     <string name="twitterID">thapasujan5</string>
     <string name="youtubeChannelID">https://www.youtube.com/channel/UCWHwD_GvYj8i8-8I4ulkchA</string>
-    <string name="isp_check">Checking your Internet Provider</string>
+    <string name="isp_check">Checking ISP Information.</string>
     <string name="EditTextHeader">Search any IP or DNS Name</string>
     <string name="HintSearchBox">IP or DNS</string>
     <string name="ivSearchDesc">Search</string>
@@ -15,10 +15,12 @@
     <string name="ivClearDesc">Clear</string>
     <string name="ivShareDesc">Share</string>
     <string name="ivCopyDesc">Copy</string>
-    <string name="newFeatures">- Added Quick Ping Service.\n- UI Homework.\n- Google Map Featured. </string>
+    <string name="newFeatures">- Bug Fixes and Performance Improvements.\n- UI Retouch.\n- LAN, WAN, DHCP Details (Under Development). </string>
     <string name="oops_something_went_wrong_try_in_a_while_">Oops! We can\'t figure out what\'s that.</string>
     <string name="feedbackSubject">Subject of Feedback</string>
+    <string name="about_content"><b><u>Developer</u></b>\nSujan Thapa\nSydney, Australia\n+61452065052\nsujan.private@gmail.com</string>
     <string name="feedbackDetails">Feedback Details</string>
+    <string name="ping_result_title"><b>Ping Statistics for 192.168.1.1</b></string>
     <string name="title_activity_map">MapActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -88,6 +90,10 @@
     <string name="key_notification_sticky">sticky</string>
     <string name="key_notification_ongoing">ongoing</string>
     <string name="title_activity_tab1">Tab1Activity</string>
+    <string name="title_activity_main2">Main2Activity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
 </resources>
 

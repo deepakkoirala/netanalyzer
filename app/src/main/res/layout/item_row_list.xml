@@ -10,43 +10,46 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/count"
-            style="@android:style/TextAppearance.Small"
+            style="@android:style/TextAppearance.Large"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
+            android:layout_height="match_parent"
             android:text="1"
-            android:textColor="#000" />
+
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/name"
-            style="@android:style/TextAppearance.Small"
-            android:layout_width="wrap_content"
+            style="@android:style/TextAppearance.Medium"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="www.facebook.com"
-            android:textColor="#990099"
-            android:textSize="20sp" />
+            android:layout_gravity="left"
+            android:layout_weight="0.3"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="www.thisisaverylongdnsnameexample.com"
+            android:textColor="#000"
+          />
 
         <ImageView
             android:id="@+id/ivLocation"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:src="@drawable/ic_action_location_found"
-            android:text="www.facebook.com" />
+            android:layout_weight="0.7"
+            android:contentDescription="View"
+            android:gravity="right"
+            android:src="@android:drawable/ic_menu_mylocation"
+            android:tint="#000" />
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+
         android:orientation="horizontal">
 
         <TextView
@@ -57,8 +60,8 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="5dp"
             android:text="192.168.1.1"
-            android:textColor="#cc0066"
-            android:textSize="12sp" />
+
+            />
 
         <TextView
             android:id="@+id/isp"
@@ -68,9 +71,9 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="TPG Internet"
-            android:textColor="#000"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+
+
+            />
 
         <TextView
             android:id="@+id/location"
@@ -80,9 +83,9 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Hurstvillie, Australia"
-            android:textColor="#006400"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+
+
+            />
 
         <TextView
             android:id="@+id/date"
@@ -92,9 +95,9 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Sat Nov 8 14:55 2015 GMT +11:00"
-            android:textColor="#ff8c00"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+
+
+            />
     </LinearLayout>
 
 </LinearLayout>

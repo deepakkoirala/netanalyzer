@@ -13,41 +13,44 @@ import android.widget.ImageView;
 import com.thapasujan5.netanalyzerpro.R;
 
 public class SplashScreen extends Activity {
-	public static final String MyPREFERENCES = "MyPrefs";
+    public static final String MyPREFERENCES = "MyPrefs";
 
-	ImageView iv;
-	Image icon;
+    ImageView iv;
+    Image icon;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-		setContentView(R.layout.activity_splash_screen);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+        setContentView(R.layout.activity_splash_screen);
 
-		iv = (ImageView) findViewById(R.id.icon);
+        iv = (ImageView) findViewById(R.id.icon);
 
-		Animation an2 = AnimationUtils.loadAnimation(this, R.anim.splash);
-		iv.startAnimation(an2);
+        Animation an2 = AnimationUtils.loadAnimation(this, R.anim.splash);
+        iv.startAnimation(an2);
 
-		startMainActivity();
+        startMainActivity();
 
-	}
+    }
 
 
-	@Override
-	protected void onPause() {
-		super.onPause();overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-		finish();
+    @Override
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+        finish();
 
-	}
-	public void startMainActivity() {
-		new Handler().postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				Intent i = new Intent(getApplicationContext(),
-						MainActivity.class);
-				startActivity(i);
-				overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-			}
-		}, AppConstants.SPLASH_TIME);
-	}
+    }
+
+    public void startMainActivity() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent i = new Intent(getApplicationContext(),
+                        MainActivity.class);
+                startActivity(i);
+                overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+            }
+        }, AppConstants.SPLASH_TIME);
+    }
 }

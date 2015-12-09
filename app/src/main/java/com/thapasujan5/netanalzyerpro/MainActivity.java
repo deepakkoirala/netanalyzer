@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     EditText etSearchBox;
     ImageView ivSearch;
-    RelativeLayout rlProgressbarContainer;
+    RelativeLayout rlProgressbarContainer, rlInfo;
     TextView tvEntriesCountArea, tvExIpArea;
     ConnectionDetector connectionDetector;
     ImageView ivClearList, ivShare, ivCopy;
@@ -104,90 +104,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (fields != null) {
             intentServiceResult = fields.getBoolean("isr");
         }
-
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Perform Quick Ping from here.", Snackbar.LENGTH_LONG)
-                        .setAction("Continue", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                AlertDialog.Builder d = new AlertDialog.Builder(MainActivity.this);
-                                d.setTitle("Quick Ping Service");
-
-                                final EditText editText = new EditText(MainActivity.this);
-                                editText.setHint("Enter DNS or IP ");
-                                editText.setSingleLine();
-                                editText.setGravity(Gravity.CENTER);
-                                d.setView(editText);
-                                d.setPositiveButton("Ping", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        if (editText.getText().toString().trim().length() > 0) {
-                                            new PingRequest(editText.getText().toString().trim()).execute();
-                                            dialog.dismiss();
-                                        } else {
-                                            Toast.makeText(MainActivity.this, "Address required !", Toast.LENGTH_SHORT).show();
-
-                                            editText.requestFocus();
-                                        }
-                                    }
-                                });
-                                d.setNegativeButton("Close", null);
-
-
-                                editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                                    @Override
-                                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                                        if ((actionId == EditorInfo.IME_ACTION_DONE)) {
-                                            InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                                            in.hideSoftInputFromWindow(etSearchBox.getApplicationWindowToken(),
-                                                    InputMethodManager.HIDE_NOT_ALWAYS);
-                                            if (editText.getText().toString().trim().length() > 0) {
-                                                new PingRequest(editText.getText().toString().trim()).execute();
-                                            } else {
-                                                Toast.makeText(MainActivity.this, "Address required !", Toast.LENGTH_SHORT).show();
-                                                editText.requestFocus();
-                                            }
-                                            return true;
-                                        }
-                                        return false;
-                                    }
-                                });
-                                final Dialog dialog = d.create();
-
-                                dialog.show();
-
-                            }
-                        }).show();
-            }
-        });
-        //fab.setVisibility(View.GONE);
-
         initialize();
+        //Run at first install
         new AboutWhatsNew(this);
-
-        networkStateReceiver = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Log.w("Network Listener", "Network Type Changed");
-                String status = NetworkUtil.getConnectivityStatusString(context);
-                Toast.makeText(context, status, Toast.LENGTH_LONG).show();
-                reValidate();
-            }
-        };
-
-        filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(networkStateReceiver, filter);
-
-
     }
 
     private void initialize() {
@@ -196,6 +115,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             sharedpreferences = PreferenceManager
                     .getDefaultSharedPreferences(getBaseContext());
             nm = (NotificationManager) MainActivity.this.getSystemService(Context.NOTIFICATION_SERVICE);
+
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            fab.setOnClickListener(MainActivity.this);
+
+            networkStateReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    Log.w("Network Listener", "Network Type Changed");
+                    String status = NetworkUtil.getConnectivityStatusString(context);
+                    Toast.makeText(context, status, Toast.LENGTH_LONG).show();
+                    reValidate();
+                }
+            };
+            filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+            registerReceiver(networkStateReceiver, filter);
             etSearchBox = (EditText) findViewById(R.id.input);
             etSearchBox.setOnEditorActionListener(this);
             // Check if no view has focus:
@@ -223,6 +159,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             rlProgressbarContainer = (RelativeLayout) findViewById(R.id.rvPB);
             rlProgressbarContainer.setVisibility(View.GONE);
 
+            rlInfo = (RelativeLayout) findViewById(R.id.rlInfo);
+            rlInfo.setVisibility(View.GONE);
+
             currentItems = new ArrayList<Items>();
             dbItems = new ArrayList<Items>();
 
@@ -243,6 +182,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             new DBAsync().execute();
             new CheckNet(getApplicationContext());
         } catch (Exception e) {
+            finish();
+
             e.printStackTrace();
         }
     }
@@ -396,7 +337,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             pbExip.setVisibility(View.GONE);
             if (data) {
                 new ServerAsync(extIPAdd).execute();
-                tvExIpArea.setText("External IP: " + extIPAdd + ", " + org + " "
+                tvExIpArea.setText("External IP " + extIPAdd + ", " + org + " "
                         + city + ", " + country);
                 tvExIpArea.setVisibility(View.VISIBLE);
                 if (sharedpreferences.getBoolean(getString(R.string.key_notification_sticky), true) == true) {
@@ -408,7 +349,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             } else {
                 if (connectionDetector.isConnectingToInternet()) {
-                    tvExIpArea.setText("Check Internet Access !");
+                    tvExIpArea.setText("Limited Connectivity Found !");
                 } else {
                     tvExIpArea.setText("Disconnected !");
                 }
@@ -462,12 +403,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onItemLongClick(AdapterView<?> parent, View view,
                                    int position, long id) {
         //clicked Item
-        final Items item = dbItems.get(position);
+        final Items myItem = dbItems.get(position);
 
         //Possible Menus
-        String[] choices = {"Open " + item.ip + " in browser...",
-                "Copy " + item.ip, "Export data... ", "Remove from list",
-                "Ping " + " Server", "View on Map", "Details..."};
+        String[] choices = {"Open " + myItem.ip,
+                "Copy " + myItem.ip, "Export data... ", "Remove from list",
+                "Ping " + myItem.ip, "View on Map", "Details..."};
         //Finalized MenuItmes
         ArrayList<ReportChoices> choice = new ArrayList<ReportChoices>();
         choice.add(new ReportChoices(choices[0], android.R.drawable.ic_menu_send));
@@ -494,10 +435,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(DialogInterface dialog, int which) {
                 if (which == 0) {
                     // open value.ip
-                    String url = "http://" + item.ip;
+                    String url = "http://" + myItem.ip;
                     Intent i = new Intent(Intent.ACTION_VIEW);
                     i.setData(Uri.parse(url));
-                    startActivity(Intent.createChooser(i, "Open " + item.ip
+                    startActivity(Intent.createChooser(i, "Open " + myItem.ip
                             + " using"));
                     overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
                     return;
@@ -505,9 +446,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (which == 1) {
                     // copy ip to clipboard
                     boolean status = Clipboard.copyToClipboard(
-                            MainActivity.this, item.ip);
+                            MainActivity.this, myItem.ip);
                     if (status) {
-                        new ShowToast(MainActivity.this, "Copied " + item.ip
+                        new ShowToast(MainActivity.this, "Copied " + myItem.ip
                                 + " to Clipboard", Color.WHITE,
                                 R.drawable.action_bar_bg, 0,
                                 Toast.LENGTH_SHORT, Gravity.BOTTOM);
@@ -519,9 +460,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Intent sendIntent = new Intent();
                     sendIntent.setAction(Intent.ACTION_SEND);
                     sendIntent.putExtra(Intent.EXTRA_TEXT, "Website: "
-                            + item.name + "\n" + "IP: " + item.ip + "\n"
-                            + "Server Location: " + item.location + ","
-                            + item.date);
+                            + myItem.name + "\n" + "IP: " + myItem.ip + "\n"
+                            + "Server Location: " + myItem.location + ","
+                            + myItem.date);
                     sendIntent.setType("text/plain");
                     startActivity(Intent.createChooser(sendIntent,
                             "Share using"));
@@ -532,14 +473,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (which == 3) {
                     // Remove
                     dao.open();
-                    boolean res = dao.deleteItem(item);
-                    dao.close();
-                    if (res) {
-                        new ExternalIPFinder().execute();
+                    boolean res = dao.deleteItem(myItem);
 
+                    if (res) {
+                        new DBAsync().execute();
                         Toast.makeText(MainActivity.this,
-                                "Removed " + item.name + ":" + item.ip,
+                                "Removed " + myItem.name + ":" + myItem.ip,
                                 Toast.LENGTH_SHORT).show();
+
+
+                        if (connectionDetector.isConnectingToInternet()) {
+                            new ExternalIPFinder().execute();
+                        }
                     } else {
                         Toast.makeText(MainActivity.this, "Error deleteing !",
                                 Toast.LENGTH_SHORT).show();
@@ -548,15 +493,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 if (which == 4) {
                     //Ping
-                    new PingRequest(item.ip).execute();
+                    new PingRequest(myItem.ip).execute();
                 }
                 if (which == 5) {
-                    Intent openMap = new Intent(MainActivity.this, MapsActivity.class);
-                    openMap.putExtra("location", item.location);
-                    openMap.putExtra("lat", Double.parseDouble(item.lat));
-                    openMap.putExtra("lon", Double.parseDouble(item.lon));
-                    startActivity(openMap);
-                    overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+                    if (myItem.lon.length() > 0 && myItem.lat.length() > 0) {
+                        Intent openMap = new Intent(MainActivity.this, MapsActivity.class);
+                        openMap.putExtra("location", myItem.location);
+                        openMap.putExtra("lat", Double.parseDouble(myItem.lat));
+                        openMap.putExtra("lon", Double.parseDouble(myItem.lon));
+                        startActivity(openMap);
+                        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+                    } else {
+                        new ShowToast(getApplicationContext(), "No geo-location data found !", Color.WHITE, 0, Color.RED, Toast.LENGTH_SHORT, Gravity.BOTTOM);
+                    }
                 }
                 if (which == 6) {
                     //Details
@@ -568,10 +517,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     TextView title, message;
                     title = (TextView) d.findViewById(R.id.titleText);
-                    title.setText("Details:" + item.ip);
+                    title.setText("Details:" + myItem.ip);
 
                     message = (TextView) d.findViewById(R.id.message);
-                    final String messageDetails = getFormattedDetails(item);
+                    final String messageDetails = getFormattedDetails(myItem);
                     message.setText(messageDetails);
                     message.setGravity(Gravity.LEFT);
 
@@ -639,7 +588,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             pb = (ProgressBar) dialog.findViewById(R.id.pbPinging);
             pb.setIndeterminate(true);
             tvTitle = (TextView) dialog.findViewById(R.id.titleText);
-            tvTitle.setText("Pinging : " + ip);
+            tvTitle.setText(Html.fromHtml("<b>Pinging " + ip + "</b>"));
             btnCancel = (Button) dialog.findViewById(R.id.btnCancel);
             btnCancel.setOnClickListener(new View.OnClickListener() {
 
@@ -712,7 +661,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 tvPingResult.setText(pingResult);
                 final TextView tvTitleArea = (TextView) d
                         .findViewById(R.id.tvtitleArea);
-                tvTitleArea.setText("Ping Statistics for " + ip);
+                tvTitleArea.setText(Html.fromHtml("<b>Ping Statistics for " + ip + "</b>"));
                 Button btnShare = (Button) d.findViewById(R.id.btnShare);
                 btnShare.setOnClickListener(new View.OnClickListener() {
 
@@ -753,8 +702,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         d.dismiss();
                     }
                 });
-                d.setOnCancelListener(null);
-                d.setCancelable(false);
+
+
                 d.show();
             } else {
                 new ShowToast(getApplicationContext(), "Server unreachable.",
@@ -805,8 +754,65 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    //Global onClick Handler
     public void onClick(View arg0) {
+
+        //Get the id of clicked item and decide function accordingly
         int id = arg0.getId();
+        //Functions starts now
+        if (id == R.id.fab) {
+            Snackbar.make(arg0, "Perform Quick Ping from here.", Snackbar.LENGTH_LONG)
+                    .setAction("Continue", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            AlertDialog.Builder d = new AlertDialog.Builder(MainActivity.this);
+                            d.setTitle("Quick Ping Service");
+
+                            final EditText editText = new EditText(MainActivity.this);
+                            editText.setHint("Enter DNS or IP ");
+                            editText.setSingleLine();
+                            editText.setGravity(Gravity.CENTER);
+                            d.setView(editText);
+                            d.setPositiveButton("Ping", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (editText.getText().toString().trim().length() > 0) {
+                                        new PingRequest(editText.getText().toString().trim()).execute();
+                                        dialog.dismiss();
+                                    } else {
+                                        Toast.makeText(MainActivity.this, "Address required !", Toast.LENGTH_SHORT).show();
+
+                                        editText.requestFocus();
+                                    }
+                                }
+                            });
+                            d.setNegativeButton("Close", null);
+
+
+                            editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                                @Override
+                                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                                    if ((actionId == EditorInfo.IME_ACTION_DONE)) {
+                                        InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                                        in.hideSoftInputFromWindow(etSearchBox.getApplicationWindowToken(),
+                                                InputMethodManager.HIDE_NOT_ALWAYS);
+                                        if (editText.getText().toString().trim().length() > 0) {
+                                            new PingRequest(editText.getText().toString().trim()).execute();
+                                        } else {
+                                            Toast.makeText(MainActivity.this, "Address required !", Toast.LENGTH_SHORT).show();
+                                            editText.requestFocus();
+                                        }
+                                        return true;
+                                    }
+                                    return false;
+                                }
+                            });
+                            final Dialog dialog = d.create();
+                            dialog.show();
+                        }
+                    }).show();
+        }
+
         if (id == R.id.extip) {
             String value = tvExIpArea.getText().toString().trim();
             if (value.contains(":")) {
@@ -822,6 +828,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
         }
+
         if (id == R.id.clearlist) {
             ArrayList<Items> tempItems = new ArrayList<Items>();
             dao.open();
@@ -909,8 +916,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     ivSearch.setEnabled(false);
                     new ServerAsync(etSearchBox.getText().toString()).execute();
                 } else {
-                    Toast.makeText(getApplicationContext(), "Disconnected !",
-                            Toast.LENGTH_SHORT).show();
+                    new CheckNet(getApplication());
                 }
             }
         } catch (Exception e) {
@@ -931,60 +937,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         protected void onPostExecute(Void result) {
             adapterMain.notifyDataSetChanged();
             if (dbItems.size() > 0) {
+                tvEntriesCountArea.setVisibility(View.VISIBLE);
                 tvEntriesCountArea.setText(dbItems.size() + " Entries");
+                rlInfo.setVisibility(View.GONE);
+            } else {
+                tvEntriesCountArea.setVisibility(View.GONE);
+                rlInfo.setVisibility(View.VISIBLE);
             }
             super.onPostExecute(result);
         }
     }
 
-
-    @Override
-    protected void onResume() {
-        Log.i("s", "onResume");
-        reValidate();
-        super.onResume();
-    }
-
-    private void reValidate() {
-        try {
-            android.support.v7.app.ActionBar ab = getSupportActionBar();
-            if (connectionDetector.isConnectingToInternet()) {
-
-                // Get Local IP either from WIFI or Data
-                // WIFI
-                intIP = GetIntIP.getInternalIP(MainActivity.this);
-
-                // Set Internal IP
-
-                if (intIP != null) {
-                    if (intIP.length() > 7) {
-                        intIP = ", " + intIP;
-                        ab.setSubtitle(Html.fromHtml("<fontcolor='#99ff00'><small>Device:"
-                                + android.os.Build.MODEL + intIP + "</small></fontcolor>"));
-                    }
-                } // Get Ex IP if network is connected
-                new ExternalIPFinder().execute();
-
-            } else {
-                ab.setSubtitle(Html.fromHtml("<fontcolor='#99ff00'><small>"
-                        + android.os.Build.MODEL + "</small</fontcolor>"));
-                tvExIpArea.setText("Check your Connectivity !");
-                tvExIpArea.setVisibility(View.VISIBLE);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        try {
-            unregisterReceiver(networkStateReceiver);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -1002,5 +965,51 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return true;
         }
         return false;
+    }
+
+    @Override
+    protected void onResume() {
+        Log.i("s", "onResume");
+        reValidate();
+        super.onResume();
+    }
+
+    private void reValidate() {
+        try {
+            new DBAsync().execute();
+            android.support.v7.app.ActionBar ab = getSupportActionBar();
+            if (connectionDetector.isConnectingToInternet()) {
+                // Get Local IP either from WIFI or Data
+                // WIFI
+                intIP = GetIntIP.getInternalIP(MainActivity.this);
+                // Set Internal IP
+                if (intIP != null) {
+                    if (intIP.length() > 7) {
+                        intIP = ", " + intIP;
+                        ab.setSubtitle(Html.fromHtml("<fontcolor='#99ff00'><small>Device:"
+                                + android.os.Build.MODEL + intIP + "</small></fontcolor>"));
+                    }
+                } // Get Ex IP if network is connected
+                new ExternalIPFinder().execute();
+            } else {
+                ab.setSubtitle(Html.fromHtml("<fontcolor='#99ff00'><small>"
+                        + android.os.Build.MODEL + "</small</fontcolor>"));
+                tvExIpArea.setText("Check your Connectivity !");
+                tvExIpArea.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.i("s", "onDestroy");
+        try {
+            unregisterReceiver(networkStateReceiver);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        super.onDestroy();
     }
 }
