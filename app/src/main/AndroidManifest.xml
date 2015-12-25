@@ -10,6 +10,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
+
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -23,9 +26,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service android:name="com.thapasujan5.netanalzyerpro.notification.NotificationService" />
+        <service android:name="com.thapasujan5.netanalzyerpro.Notification.NotificationService" />
 
-        <receiver android:name="com.thapasujan5.netanalzyerpro.notification.Receiver">
+        <receiver android:name="com.thapasujan5.netanalzyerpro.Notification.Receiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
@@ -34,7 +37,7 @@
         </receiver>
 
         <activity
-            android:name="com.thapasujan5.netanalzyerpro.SplashScreen"
+            android:name="com.thapasujan5.netanalzyerpro.SplashActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
@@ -44,11 +47,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.thapasujan5.netanalzyerpro.MainActivity"
-            android:configChanges="screenSize|orientation|keyboard|keyboardHidden"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" />
+
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -63,10 +62,11 @@
 
         <activity
             android:name="com.thapasujan5.netanalzyerpro.MapsActivity"
-            android:label="@string/title_activity_maps">
+            android:label="@string/title_activity_maps"
+            android:parentActivityName="com.thapasujan5.netanalzyerpro.DnsIPDirectoryActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.thapasujan5.netanalzyerpro.MainActivity" />
+                android:value="com.thapasujan5.netanalzyerpro.DnsIPDirectoryActivity" />
         </activity>
         <activity
             android:name="com.thapasujan5.netanalzyerpro.SettingsActivity"
@@ -76,6 +76,22 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thapasujan5.netanalzyerpro.MainActivity" />
         </activity>
+        <activity
+            android:name="com.thapasujan5.netanalzyerpro.MainActivity"
+            android:configChanges="keyboard|orientation|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name="com.thapasujan5.netanalzyerpro.DnsIPDirectoryActivity"
+            android:configChanges="keyboard|orientation|screenSize"
+            android:label="Net Analyzer Pro:DNS-IP Directory"
+            android:parentActivityName="com.thapasujan5.netanalzyerpro.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.thapasujan5.netanalzyerpro.MainActivity" />
+        </activity>
+
     </application>
 
 </manifest>

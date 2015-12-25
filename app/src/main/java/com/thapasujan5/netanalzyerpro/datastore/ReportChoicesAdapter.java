@@ -1,4 +1,4 @@
-package com.thapasujan5.netanalzyerpro.datastore;
+package com.thapasujan5.netanalzyerpro.DataStore;
 
 import android.app.Activity;
 import android.content.Context;

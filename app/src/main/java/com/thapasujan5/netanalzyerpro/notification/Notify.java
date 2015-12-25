@@ -1,4 +1,4 @@
-package com.thapasujan5.netanalzyerpro.notification;
+package com.thapasujan5.netanalzyerpro.Notification;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -52,12 +52,12 @@ public class Notify {
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 noti = new Notification.Builder(context).setTicker("ISP Information").setSmallIcon(R.mipmap.ic_launcher)
                         .setContentIntent(pIntent).setColor(context.getResources().getColor(R.color.colorPrimary))
-                        .setContentTitle("Check Network Access !")
-                        .setContentText("Touch to reload.").build();
+                        .setContentTitle(context.getString(R.string.limited_access))
+                        .setContentText(context.getString(R.string.intranet_env)).build();
             } else {
                 n.setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentIntent(pIntent).setContentTitle("Check Network Access !")
-                        .setContentText("Touch to reload.");
+                        .setContentIntent(pIntent).setContentTitle(context.getString(R.string.limited_access))
+                        .setContentText(context.getString(R.string.intranet_env));
             }
         }
 
@@ -73,10 +73,13 @@ public class Notify {
             }
             Log.i("Notify", "OnGoing On");
         }
-        if (noti != null) {
-            notificationManager.notify(0, noti);
-        } else {
-            notificationManager.notify(0, n.build());
+        if (sp.getBoolean(context.getString(R.string.key_notification_sticky), false) == true) {
+            if (noti != null) {
+
+                notificationManager.notify(0, noti);
+            } else {
+                notificationManager.notify(0, n.build());
+            }
         }
     }
 }

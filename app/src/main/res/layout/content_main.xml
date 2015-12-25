@@ -8,7 +8,6 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/activity_main">
 
-
     <LinearLayout
         android:id="@+id/llextip"
         android:layout_width="fill_parent"
@@ -40,37 +39,11 @@
             android:visibility="visible" />
     </LinearLayout>
 
-    <!--<TabHost-->
-    <!--android:id="@+id/mTabHost"-->
-    <!--android:layout_width="fill_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_below="@+id/llextip">-->
-
-    <!--<LinearLayout-->
-    <!--android:id="@+id/LinearLayout01"-->
-    <!--android:layout_width="fill_parent"-->
-    <!--android:layout_height="fill_parent"-->
-    <!--android:orientation="vertical">-->
-
-    <!--<TabWidget-->
-    <!--android:layout_width="fill_parent"-->
-    <!--android:layout_height="wrap_content"></TabWidget>-->
-
-    <!--<FrameLayout-->
-    <!--android:id="@android:id/tabcontent"-->
-    <!--android:layout_width="fill_parent"-->
-    <!--android:layout_height="fill_parent"></FrameLayout>-->
-
-    <!--</LinearLayout>-->
-
-    <!--</TabHost>-->
-
     <RelativeLayout
         android:id="@+id/container"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/llextip"
-        android:orientation="vertical">
+        android:layout_below="@+id/llextip">
 
         <TextView
             android:id="@+id/header"
@@ -161,13 +134,20 @@
                 android:src="@drawable/copy" />
         </LinearLayout>
 
-        <ListView
-            android:id="@+id/listview"
-            android:layout_width="fill_parent"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/tools"
-            android:divider="@drawable/nav_bar_divider"
-            android:dividerHeight="2dp" />
+            android:layout_below="@+id/tools">
+
+            <ListView
+                android:id="@+id/listview"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/tools"
+                android:divider="@drawable/nav_bar_divider"
+                android:dividerHeight="2dp" />
+        </android.support.v4.widget.SwipeRefreshLayout>
 
         <RelativeLayout
             android:id="@+id/rvPB"

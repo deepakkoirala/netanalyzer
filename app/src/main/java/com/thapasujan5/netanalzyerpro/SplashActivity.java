@@ -12,7 +12,7 @@ import android.widget.ImageView;
 
 import com.thapasujan5.netanalyzerpro.R;
 
-public class SplashScreen extends Activity {
+public class SplashActivity extends Activity {
     public static final String MyPREFERENCES = "MyPrefs";
 
     ImageView iv;

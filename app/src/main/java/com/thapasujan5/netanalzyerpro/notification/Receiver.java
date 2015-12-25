@@ -1,11 +1,11 @@
-package com.thapasujan5.netanalzyerpro.notification;
+package com.thapasujan5.netanalzyerpro.Notification;
 
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.thapasujan5.netanalzyerpro.tools.NetworkUtil;
+import com.thapasujan5.netanalzyerpro.Tools.NetworkUtil;
 
 /**
  * Created by Suzan on 11/7/2015.

@@ -4,7 +4,7 @@ public class AppConstants {
 
     public static final long SPLASH_TIME =1300;
 
-    public static final int DB_VERSION = 6;
+    public static final int DB_VERSION = 7;
     public static final String DB_NAME = "servers";
 
     public static final String TBL_Items = "items";
@@ -22,6 +22,7 @@ public class AppConstants {
     public static String col_item_zip = "zip";
     public static String col_item_time_zone = "time_zone";
 
-    public static String ip_ip = "http://ip-api.com/json/";
+    public static String ip_ip = "http://209.58.180.196/json/";
+    
 
 }

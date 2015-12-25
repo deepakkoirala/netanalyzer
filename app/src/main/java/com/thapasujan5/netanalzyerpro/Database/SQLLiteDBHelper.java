@@ -1,4 +1,4 @@
-package com.thapasujan5.netanalzyerpro.db;
+package com.thapasujan5.netanalzyerpro.Database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

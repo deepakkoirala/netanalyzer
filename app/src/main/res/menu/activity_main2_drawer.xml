@@ -1,36 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
-        <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
-    </group>
-
-    <item android:title="Communicate">
+    <item android:title="Tools">
+        <menu>
+            <item
+                android:id="@+id/nav_connectiondetails"
+                android:icon="@android:drawable/ic_menu_directions"
+                android:title="Connection Details" />
+            <item
+                android:id="@+id/nav_dnsip"
+                android:icon="@android:drawable/ic_menu_save"
+                android:title="DNS-IP Directory" />
+            <item
+                android:id="@+id/nav_networkdiscovery"
+                android:icon="@android:drawable/ic_menu_search"
+                android:title="Network Discovery" />
+            <item
+                android:id="@+id/nav_ping"
+                android:icon="@android:drawable/ic_menu_revert"
+                android:title="Custom Ping" />
+        </menu>
+    </item>
+    <item android:title="Social">
         <menu>
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:title="Tell a Friend" />
             <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/nav_rate"
+                android:icon="@android:drawable/ic_menu_agenda"
+                android:title="Rate App" />
+            <item
+                android:id="@+id/nav_report"
+                android:icon="@android:drawable/ic_menu_edit"
+                android:title="Report" />
+
+            <item
+                android:id="@+id/nav_likeus"
+                android:icon="@android:drawable/ic_menu_view"
+                android:title="Like Us" />
+
         </menu>
     </item>
-
+    <item android:title="@string/app_name">
+        <menu>
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@android:drawable/ic_menu_info_details"
+                android:title="About" />
+            <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="Settings" />
+        </menu>
+    </item>
 </menu>

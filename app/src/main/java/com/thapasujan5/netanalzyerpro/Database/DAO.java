@@ -1,4 +1,4 @@
-package com.thapasujan5.netanalzyerpro.db;
+package com.thapasujan5.netanalzyerpro.Database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,7 +7,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.thapasujan5.netanalzyerpro.AppConstants;
-import com.thapasujan5.netanalzyerpro.datastore.Items;
+import com.thapasujan5.netanalzyerpro.DataStore.Items;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.thapasujan5.netanalzyerpro.actionMenu;
+package com.thapasujan5.netanalzyerpro.ActionMenu;
 
 import android.app.Dialog;
 import android.content.Context;

@@ -1,11 +1,11 @@
-package com.thapasujan5.netanalzyerpro.tools;
+package com.thapasujan5.netanalzyerpro.Tools;
 
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
-import com.thapasujan5.netanalzyerpro.MainActivity;
+import com.thapasujan5.netanalzyerpro.DnsIPDirectoryActivity;
 
 import com.thapasujan5.netanalyzerpro.R;
 
@@ -22,7 +22,7 @@ public class SendEmail {
 		try {
 			context.startActivity(Intent.createChooser(report,
 					"Choose Your Mail Client."));
-			((MainActivity) context).overridePendingTransition(R.anim.slide_in,
+			((DnsIPDirectoryActivity) context).overridePendingTransition(R.anim.slide_in,
 					R.anim.slide_out);
 			Log.d(context.getPackageName(), "Mail Sent");
 

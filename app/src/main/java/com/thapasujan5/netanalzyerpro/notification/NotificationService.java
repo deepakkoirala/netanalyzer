@@ -1,10 +1,10 @@
-package com.thapasujan5.netanalzyerpro.notification;
+package com.thapasujan5.netanalzyerpro.Notification;
 
 import android.app.IntentService;
 import android.content.Intent;
 
-import com.thapasujan5.netanalzyerpro.tools.GetIntIP;
-import com.thapasujan5.netanalzyerpro.tools.UserFunctions;
+import com.thapasujan5.netanalzyerpro.Tools.IpMac;
+import com.thapasujan5.netanalzyerpro.Tools.UserFunctions;
 
 import org.json.JSONObject;
 
@@ -52,7 +52,7 @@ public class NotificationService extends IntentService {
                         city = json.getString("city");
                         country = json.getString("country");
                         data = true;
-                        new Notify(getApplicationContext(), extIPAdd, GetIntIP.getInternalIP(getApplicationContext()), org, city, country);
+                        new Notify(getApplicationContext(), extIPAdd, IpMac.getInternalIP(getApplicationContext()), org, city, country);
 
                     } else if (json.getString("status").contentEquals("fail")) {
 

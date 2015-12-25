@@ -1,4 +1,4 @@
-package com.thapasujan5.netanalzyerpro.actionMenu;
+package com.thapasujan5.netanalzyerpro.ActionMenu;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -13,8 +13,8 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
-import com.thapasujan5.netanalzyerpro.MainActivity;
-import com.thapasujan5.netanalzyerpro.tools.TakeScreenShot;
+import com.thapasujan5.netanalzyerpro.DnsIPDirectoryActivity;
+import com.thapasujan5.netanalzyerpro.Tools.TakeScreenShot;
 
 import com.thapasujan5.netanalyzerpro.R;
 
@@ -29,7 +29,7 @@ public class ScreenShot {
 
         if (!folder.exists()) {
             folder.mkdir();
-            Log.i(MainActivity.class.getSimpleName(), "Folder Created");
+            Log.i(DnsIPDirectoryActivity.class.getSimpleName(), "Folder Created");
         }
         String path = folder.getAbsolutePath() + "/";
 
@@ -66,9 +66,9 @@ public class ScreenShot {
 
             ((Activity) context).getWindow().getDecorView()
                     .setDrawingCacheEnabled(true);
-            Log.i(MainActivity.class.getSimpleName(), "Sharing");
+            Log.i(DnsIPDirectoryActivity.class.getSimpleName(), "Sharing");
         } catch (Exception e) {
-            Log.i(MainActivity.class.getSimpleName(), e.toString());
+            Log.i(DnsIPDirectoryActivity.class.getSimpleName(), e.toString());
             file.delete();
         }
 

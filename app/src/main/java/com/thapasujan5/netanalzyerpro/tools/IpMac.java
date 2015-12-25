@@ -1,21 +1,18 @@
-package com.thapasujan5.netanalzyerpro.tools;
+package com.thapasujan5.netanalzyerpro.Tools;
 
 import android.content.Context;
 import android.net.wifi.WifiManager;
-import android.text.format.Formatter;
 
 /**
  * Created by Suzan on 11/30/2015.
  */
-public class GetIntIP {
+public class IpMac {
     public static String getInternalIP(Context context) {
         String intIP = "";
 
         WifiManager wm = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         @SuppressWarnings("deprecation")
-        String wifiIP = Formatter.formatIpAddress(wm.getConnectionInfo()
-                .getIpAddress());
-
+        String wifiIP = InttoIp.intToIp(wm.getConnectionInfo().getIpAddress());
         if (wifiIP.length() > 7) {
             intIP = wifiIP;
         } else {
@@ -23,5 +20,13 @@ public class GetIntIP {
             intIP = GetDeviceIP.getDeviceIP();
         }
         return intIP;
+    }
+
+    public static String getDeviceMacAdd(Context context) {
+        String mac = "";
+        WifiManager wm = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        @SuppressWarnings("deprecation")
+        String macAddress = wm.getConnectionInfo().getMacAddress();
+        return macAddress;
     }
 }

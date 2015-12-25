@@ -2,7 +2,7 @@
     <string name="app_name">Net Analyzer Pro</string>
     <string name="version">1.2.9</string>
     <string name="phone">+61452065052</string>
-    <string name="email">sujan.private@gmail.com</string>
+    <string name="email">thapasujan5@gmail.com</string>
     <string name="fbID">1230665286</string>
     <string name="fbName">sujanthapa55</string>
     <string name="twitterID">thapasujan5</string>
@@ -10,6 +10,7 @@
     <string name="isp_check">Checking ISP Information.</string>
     <string name="EditTextHeader">Search any IP or DNS Name</string>
     <string name="HintSearchBox">IP or DNS</string>
+    <string name="bitlyurl">http://bit.ly/1Wd8iPk</string>
     <string name="ivSearchDesc">Search</string>
     <string name="tvEntriesText">0 Entries</string>
     <string name="ivClearDesc">Clear</string>
@@ -94,6 +95,10 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="limited_access">Limited Network Access !</string>
+    <string name="intranet_env">Intranet Environment.</string>
+    <string name="no_connection">No wirelss or mobile data connection.</string>
+    <string name="general_err">Something went wrong. Try again.</string>
 
 </resources>
 

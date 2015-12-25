@@ -1,4 +1,4 @@
-package com.thapasujan5.netanalzyerpro.actionMenu;
+package com.thapasujan5.netanalzyerpro.ActionMenu;
 
 
 import android.app.Activity;
@@ -16,8 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thapasujan5.netanalyzerpro.R;
-import com.thapasujan5.netanalzyerpro.tools.SendEmail;
-import com.thapasujan5.netanalzyerpro.tools.SocialIntentProvider;
+import com.thapasujan5.netanalzyerpro.Tools.SendEmail;
+import com.thapasujan5.netanalzyerpro.Tools.SocialIntentProvider;
 
 public class About {
     Context context;

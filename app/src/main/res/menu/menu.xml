@@ -3,39 +3,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
 
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/screenShot"
+            android:icon="@drawable/ic_action_camera"
+            android:title="Snap"
+            app:showAsAction="always" />
+        <item
+            android:id="@+id/action_settings"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/action_settings"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/report"
+            android:icon="@drawable/ic_menu_manage"
 
-    <item
-        android:id="@+id/screenShot"
-        android:icon="@drawable/ic_action_camera"
-        android:title="Snap"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/report"
-
-        android:orderInCategory="100"
-        android:title="Feedback"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/rate"
-
-        android:orderInCategory="100"
-        android:title="Rate App"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/portal"
-        android:orderInCategory="100"
-        android:title="Portal"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/about"
-
-        android:orderInCategory="100"
-        android:title="About"
-        app:showAsAction="never" />
+            android:title="Feedback"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/rate"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Rate App"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/portal"
+            android:orderInCategory="100"
+            android:title="Portal"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/about"
+            android:title="About"
+            app:showAsAction="never" />
+    </group>
 </menu>
