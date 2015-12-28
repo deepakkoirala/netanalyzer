@@ -65,7 +65,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class DnsIPDirectoryActivity extends AppCompatActivity implements View.OnClickListener,
+public class DnsLookupActivity extends AppCompatActivity implements View.OnClickListener,
         AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener, TextView.OnEditorActionListener {
 
     EditText etSearchBox;
@@ -93,7 +93,7 @@ public class DnsIPDirectoryActivity extends AppCompatActivity implements View.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_dnslookup);
         Bundle fields = getIntent().getExtras();
         if (fields != null) {
             intentServiceResult = fields.getBoolean("isr");
@@ -157,7 +157,7 @@ public class DnsIPDirectoryActivity extends AppCompatActivity implements View.On
             currentItems = new ArrayList<Items>();
             dbItems = new ArrayList<Items>();
 
-            adapterMain = new ItemsAdapter(this, R.layout.item_row_list, dbItems);
+            adapterMain = new ItemsAdapter(this, R.layout.item_row_list_dnslookup, dbItems);
 
             listview = (ListView) findViewById(R.id.listview);
             listview.setOnItemClickListener(this);
@@ -169,7 +169,7 @@ public class DnsIPDirectoryActivity extends AppCompatActivity implements View.On
 
             swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
             swipeRefreshLayout.setOnRefreshListener(mOnRefreshListener);
-            swipeRefreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.BLACK);
+            swipeRefreshLayout.setColorSchemeColors(R.color.swipeRefresh1, R.color.swipeRefresh2, R.color.swipeRefresh3, R.color.swipeRefresh4);
 
             connectionDetector = new ConnectionDetector(getApplicationContext());
             dao = new DAO(getApplicationContext());
@@ -335,14 +335,14 @@ public class DnsIPDirectoryActivity extends AppCompatActivity implements View.On
 
         @Override
         protected void onPostExecute(Void result) {
-            pbExip.setVisibility(View.GONE);
+            pbExip.setVisibility(View.INVISIBLE);
             if (data) {
                 new ServerAsync(extIPAdd).execute();
                 tvExIpArea.setText("External IP " + extIPAdd + ", " + org + " "
                         + city + ", " + country);
                 tvExIpArea.setVisibility(View.VISIBLE);
                 if (sharedpreferences.getBoolean(getString(R.string.key_notification_sticky), true) == true) {
-                    new Notify(DnsIPDirectoryActivity.this, extIPAdd, IpMac.getInternalIP(DnsIPDirectoryActivity.this), org, city, country);
+                    new Notify(DnsLookupActivity.this, extIPAdd, IpMac.getInternalIP(DnsLookupActivity.this), org, city, country);
                 } else {
                     nm.cancel(0);
                     Log.i("notification", "notification cancelled from main");
@@ -406,9 +406,9 @@ public class DnsIPDirectoryActivity extends AppCompatActivity implements View.On
                 if (which == 1) {
                     // copy ip to clipboard
                     boolean status = Clipboard.copyToClipboard(
-                            DnsIPDirectoryActivity.this, myItem.ip);
+                            DnsLookupActivity.this, myItem.ip);
                     if (status) {
-                        new ShowToast(DnsIPDirectoryActivity.this, "Copied " + myItem.ip
+                        new ShowToast(DnsLookupActivity.this, "Copied " + myItem.ip
                                 + " to Clipboard", Color.WHITE,
                                 R.drawable.action_bar_bg, 0,
                                 Toast.LENGTH_SHORT, Gravity.BOTTOM);
@@ -437,7 +437,7 @@ public class DnsIPDirectoryActivity extends AppCompatActivity implements View.On
 
                     if (res) {
                         new DBAsync().execute();
-                        Toast.makeText(DnsIPDirectoryActivity.this,
+                        Toast.makeText(DnsLookupActivity.this,
                                 "Removed " + myItem.name + ":" + myItem.ip,
                                 Toast.LENGTH_SHORT).show();
 
@@ -446,18 +446,18 @@ public class DnsIPDirectoryActivity extends AppCompatActivity implements View.On
                             new ExternalIPFinder().execute();
                         }
                     } else {
-                        Toast.makeText(DnsIPDirectoryActivity.this, "Error deleteing !",
+                        Toast.makeText(DnsLookupActivity.this, "Error deleteing !",
                                 Toast.LENGTH_SHORT).show();
                     }
                     return;
                 }
                 if (which == 4) {
                     //Ping
-                    new PingRequest(myItem.ip, DnsIPDirectoryActivity.this).execute();
+                    new PingRequest(myItem.ip, DnsLookupActivity.this).execute();
                 }
                 if (which == 5) {
                     if (myItem.lon.length() > 0 && myItem.lat.length() > 0) {
-                        Intent openMap = new Intent(DnsIPDirectoryActivity.this, MapsActivity.class);
+                        Intent openMap = new Intent(DnsLookupActivity.this, MapsActivity.class);
                         openMap.putExtra("location", myItem.location);
                         openMap.putExtra("lat", Double.parseDouble(myItem.lat));
                         openMap.putExtra("lon", Double.parseDouble(myItem.lon));
@@ -469,7 +469,7 @@ public class DnsIPDirectoryActivity extends AppCompatActivity implements View.On
                 }
                 if (which == 6) {
                     //Details
-                    Context context = DnsIPDirectoryActivity.this;
+                    Context context = DnsLookupActivity.this;
 
                     final Dialog d = new Dialog(context);
                     d.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -493,9 +493,9 @@ public class DnsIPDirectoryActivity extends AppCompatActivity implements View.On
                         public void onClick(View v) {
                             // copy ip to clipboard
                             boolean status = Clipboard.copyToClipboard(
-                                    DnsIPDirectoryActivity.this, messageDetails);
+                                    DnsLookupActivity.this, messageDetails);
                             if (status) {
-                                new ShowToast(DnsIPDirectoryActivity.this,
+                                new ShowToast(DnsLookupActivity.this,
                                         "Copied to Clipboard", Color.WHITE,
                                         R.drawable.action_bar_bg, 0,
                                         Toast.LENGTH_LONG, Gravity.BOTTOM);
@@ -579,10 +579,10 @@ public class DnsIPDirectoryActivity extends AppCompatActivity implements View.On
                     .setAction("Continue", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            AlertDialog.Builder d = new AlertDialog.Builder(DnsIPDirectoryActivity.this);
+                            AlertDialog.Builder d = new AlertDialog.Builder(DnsLookupActivity.this);
                             d.setTitle("Quick Ping Service");
 
-                            final EditText editText = new EditText(DnsIPDirectoryActivity.this);
+                            final EditText editText = new EditText(DnsLookupActivity.this);
                             editText.setHint("Enter DNS or IP ");
                             editText.setSingleLine();
                             editText.setGravity(Gravity.CENTER);
@@ -591,10 +591,10 @@ public class DnsIPDirectoryActivity extends AppCompatActivity implements View.On
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     if (editText.getText().toString().trim().length() > 0) {
-                                        new PingRequest(editText.getText().toString().trim(), DnsIPDirectoryActivity.this).execute();
+                                        new PingRequest(editText.getText().toString().trim(), DnsLookupActivity.this).execute();
                                         dialog.dismiss();
                                     } else {
-                                        Toast.makeText(DnsIPDirectoryActivity.this, "Address required !", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(DnsLookupActivity.this, "Address required !", Toast.LENGTH_SHORT).show();
 
                                         editText.requestFocus();
                                     }
@@ -611,9 +611,9 @@ public class DnsIPDirectoryActivity extends AppCompatActivity implements View.On
                                         in.hideSoftInputFromWindow(editText.getApplicationWindowToken(),
                                                 InputMethodManager.HIDE_NOT_ALWAYS);
                                         if (editText.getText().toString().trim().length() > 0) {
-                                            new PingRequest(editText.getText().toString().trim(), DnsIPDirectoryActivity.this).execute();
+                                            new PingRequest(editText.getText().toString().trim(), DnsLookupActivity.this).execute();
                                         } else {
-                                            Toast.makeText(DnsIPDirectoryActivity.this, "Address required !", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(DnsLookupActivity.this, "Address required !", Toast.LENGTH_SHORT).show();
                                             editText.requestFocus();
                                         }
                                         return true;
@@ -631,10 +631,10 @@ public class DnsIPDirectoryActivity extends AppCompatActivity implements View.On
             String value = tvExIpArea.getText().toString().trim();
             if (CheckDigit.containsDigit(value)) {
                 // copy ip to clipboard
-                boolean status = Clipboard.copyToClipboard(DnsIPDirectoryActivity.this,
+                boolean status = Clipboard.copyToClipboard(DnsLookupActivity.this,
                         value);
                 if (status) {
-                    new ShowToast(DnsIPDirectoryActivity.this, "Copied " + value
+                    new ShowToast(DnsLookupActivity.this, "Copied " + value
                             + " to Clipboard", Color.WHITE,
                             R.drawable.action_bar_bg, 0, Toast.LENGTH_LONG,
                             Gravity.BOTTOM);
@@ -648,7 +648,7 @@ public class DnsIPDirectoryActivity extends AppCompatActivity implements View.On
             dao.open();
             tempItems.addAll(dao.getItems());
             if (tempItems.size() > 0) {
-                final Dialog d = new Dialog(DnsIPDirectoryActivity.this);
+                final Dialog d = new Dialog(DnsLookupActivity.this);
                 d.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 d.setContentView(R.layout.dialog_common);
                 Button ok = (Button) d.findViewById(R.id.ok);
@@ -702,10 +702,10 @@ public class DnsIPDirectoryActivity extends AppCompatActivity implements View.On
         }
         if (id == R.id.copy) {
             if (dbItems.size() > 0) {
-                boolean status = Clipboard.copyToClipboard(DnsIPDirectoryActivity.this,
+                boolean status = Clipboard.copyToClipboard(DnsLookupActivity.this,
                         getAllData());
                 if (status) {
-                    new ShowToast(DnsIPDirectoryActivity.this, "Copied all to Clipboard",
+                    new ShowToast(DnsLookupActivity.this, "Copied all to Clipboard",
                             Color.WHITE, R.drawable.action_bar_bg, 0,
                             Toast.LENGTH_SHORT, Gravity.BOTTOM);
                 }
@@ -796,7 +796,7 @@ public class DnsIPDirectoryActivity extends AppCompatActivity implements View.On
             if (connectionDetector.isConnectingToInternet()) {
                 // Get Local IP either from WIFI or Data
                 // WIFI
-                intIP = IpMac.getInternalIP(DnsIPDirectoryActivity.this);
+                intIP = IpMac.getInternalIP(DnsLookupActivity.this);
                 // Set Internal IP
                 if (intIP != null) {
                     if (intIP.length() > 7) {
@@ -836,16 +836,16 @@ public class DnsIPDirectoryActivity extends AppCompatActivity implements View.On
         super.onStop();
     }
 
-    @Override
-    public void onBackPressed() {
-        finish();
-        startActivity(new Intent(this, MainActivity.class));
-        super.onBackPressed();
-    }
+//    @Override
+//    public void onBackPressed() {
+//        finish();
+//        startActivity(new Intent(this, MainActivity.class));
+//        super.onBackPressed();
+//    }
 
     @Override
     protected void onDestroy() {
-        Log.i(DnsIPDirectoryActivity.class.getSimpleName(), "onDestroy");
+        Log.i(DnsLookupActivity.class.getSimpleName(), "onDestroy");
         try {
             unregisterReceiver(networkStateReceiver);
         } catch (Exception e) {

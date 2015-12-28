@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
@@ -27,6 +28,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +39,7 @@ import com.thapasujan5.netanalzyerpro.ActionMenu.AboutWhatsNew;
 import com.thapasujan5.netanalzyerpro.ActionMenu.Feedback;
 import com.thapasujan5.netanalzyerpro.ActionMenu.Portal;
 import com.thapasujan5.netanalzyerpro.ActionMenu.RateApp;
+import com.thapasujan5.netanalzyerpro.ActionMenu.ShareApp;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnapShot;
 import com.thapasujan5.netanalzyerpro.DataStore.ViewPagerAdapter;
 import com.thapasujan5.netanalzyerpro.Notification.Notify;
@@ -45,7 +48,6 @@ import com.thapasujan5.netanalzyerpro.Tools.CheckDigit;
 import com.thapasujan5.netanalzyerpro.Tools.Clipboard;
 import com.thapasujan5.netanalzyerpro.Tools.ConnectionDetector;
 import com.thapasujan5.netanalzyerpro.Tools.IpMac;
-import com.thapasujan5.netanalzyerpro.ActionMenu.ShareApp;
 import com.thapasujan5.netanalzyerpro.Tools.ShowToast;
 import com.thapasujan5.netanalzyerpro.Tools.UserFunctions;
 import com.thapasujan5.netanalzyerpro.Tools.ZoomOutPageTransformer;
@@ -66,12 +68,16 @@ public class MainActivity extends AppCompatActivity
     ViewPager viewPager;
     ViewPagerAdapter viewPagerAdapter;
     View rootView;
+    NavigationView navigationView;
+    public static TextView tvInfo;
+    ImageView navLogo;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -89,20 +95,47 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
         new AboutWhatsNew(this); //Run at first install
         initialize();
     }
 
+    private void changeColorSate(NavigationView navigationView) {
+        ColorStateList textStateList = new ColorStateList(
+                new int[][]{
+                        new int[]{android.R.attr.state_checked},
+                        new int[]{}
+                },
+                new int[]{
+                        getResources().getColor(R.color.background_purple),
+                        getResources().getColor(R.color.colorPrimary)
+                }
+        );
+        ColorStateList iconStateList = new ColorStateList(
+                new int[][]{
+                        new int[]{android.R.attr.state_checked},
+                        new int[]{}
+                },
+                new int[]{
+                        getResources().getColor(R.color.background_purple),
+                        getResources().getColor(R.color.colorPrimary)
+                }
+        );
+        navigationView.setItemIconTintList(iconStateList);
+        navigationView.setItemTextColor(textStateList);
+    }
+
     private void initialize() {
-        Log.i(MainActivity.class.getSimpleName(), "initialize");
+
         try {
             sharedpreferences = PreferenceManager
                     .getDefaultSharedPreferences(getBaseContext());
@@ -118,9 +151,9 @@ public class MainActivity extends AppCompatActivity
             filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
             registerReceiver(networkStateReceiver, filter);
             tvExIpArea = (TextView) findViewById(R.id.extip);
-            tvExIpArea.setOnClickListener(new View.OnClickListener() {
+            tvExIpArea.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public void onClick(View v) {
+                public boolean onLongClick(View v) {
                     String value = tvExIpArea.getText().toString().trim();
                     if (CheckDigit.containsDigit(value)) {
                         // copy ip to clipboard
@@ -133,7 +166,7 @@ public class MainActivity extends AppCompatActivity
                                     Gravity.BOTTOM);
                         }
                     }
-
+                    return true;
                 }
             });
             pbExip = (ProgressBar) findViewById(R.id.pbExip);
@@ -158,7 +191,7 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
     }
 
-    private void reValidate() {
+    public void reValidate() {
         {
             try {
                 android.support.v7.app.ActionBar ab = getSupportActionBar();
@@ -186,6 +219,7 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
         }
+
     }
 
     private class ExternalIPFinder extends AsyncTask<Void, Void, Void> {
@@ -221,7 +255,7 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected void onPostExecute(Void result) {
-            pbExip.setVisibility(View.GONE);
+            pbExip.setVisibility(View.INVISIBLE);
             if (data) {
                 tvExIpArea.setText("External IP " + extIPAdd + ", " + org + " "
                         + city + ", " + country);
@@ -230,7 +264,6 @@ public class MainActivity extends AppCompatActivity
                     new Notify(MainActivity.this, extIPAdd, IpMac.getInternalIP(MainActivity.this), org, city, country);
                 } else {
                     nm.cancel(0);
-                    Log.i("notification", "notification cancelled from main");
                 }
             } else {
                 if (connectionDetector.isConnectingToInternet()) {
@@ -278,7 +311,7 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
         if (id == R.id.snapshot) {
-            new SnapShot(MainActivity.this,getWindow().getDecorView().getRootView());
+            new SnapShot(MainActivity.this, getWindow().getDecorView().getRootView());
             return true;
 
         }
@@ -288,13 +321,15 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+
+
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_connectiondetails) {
             viewPager.setCurrentItem(0);
         } else if (id == R.id.nav_dnsip) {
-            startActivity(new Intent(this, DnsIPDirectoryActivity.class));
+            startActivity(new Intent(this, DnsLookupActivity.class));
 
         } else if (id == R.id.nav_networkdiscovery) {
             Toast.makeText(getApplicationContext(), "Coming soon !", Toast.LENGTH_SHORT).show();

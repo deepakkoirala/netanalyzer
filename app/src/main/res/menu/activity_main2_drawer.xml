@@ -1,44 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:title="Tools">
+    <item android:title="@string/title_tools">
         <menu>
             <item
                 android:id="@+id/nav_connectiondetails"
                 android:icon="@android:drawable/ic_menu_directions"
-                android:title="Connection Details" />
+                android:title="@string/title_connectiondetails" />
             <item
                 android:id="@+id/nav_dnsip"
                 android:icon="@android:drawable/ic_menu_save"
-                android:title="DNS-IP Directory" />
+                android:title="@string/title_dnslookup" />
             <item
                 android:id="@+id/nav_networkdiscovery"
                 android:icon="@android:drawable/ic_menu_search"
-                android:title="Network Discovery" />
+                android:title="@string/title_networkdiscovery" />
             <item
                 android:id="@+id/nav_ping"
                 android:icon="@android:drawable/ic_menu_revert"
-                android:title="Custom Ping" />
+                android:title="@string/title_ping" />
+
+          
         </menu>
     </item>
-    <item android:title="Social">
+    <item android:title="@string/title_social">
         <menu>
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Tell a Friend" />
+                android:title="@string/title_tell_a_friend" />
             <item
                 android:id="@+id/nav_rate"
                 android:icon="@android:drawable/ic_menu_agenda"
-                android:title="Rate App" />
+                android:title="@string/title_rate_app" />
             <item
                 android:id="@+id/nav_report"
                 android:icon="@android:drawable/ic_menu_edit"
-                android:title="Report" />
+                android:title="@string/title_report" />
 
             <item
                 android:id="@+id/nav_likeus"
                 android:icon="@android:drawable/ic_menu_view"
-                android:title="Like Us" />
+                android:title="@string/title_like_us" />
 
         </menu>
     </item>
@@ -47,11 +49,11 @@
             <item
                 android:id="@+id/nav_about"
                 android:icon="@android:drawable/ic_menu_info_details"
-                android:title="About" />
+                android:title="@string/title_about" />
             <item
                 android:id="@+id/nav_settings"
                 android:icon="@drawable/ic_menu_manage"
-                android:title="Settings" />
+                android:title="@string/title_settings" />
         </menu>
     </item>
 </menu>

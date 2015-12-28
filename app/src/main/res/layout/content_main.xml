@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".MainActivity"
-    tools:showIn="@layout/activity_main">
+    tools:context="com.thapasujan5.netanalzyerpro.MainActivity"
+    tools:showIn="@layout/app_bar_main2">
 
     <LinearLayout
         android:id="@+id/llextip"
@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_margin="15dp"
+            android:padding="10dp"
             android:gravity="center"
             android:text="@string/isp_check"
             android:textColor="#99ff33"
@@ -39,146 +39,47 @@
             android:visibility="visible" />
     </LinearLayout>
 
-    <RelativeLayout
-        android:id="@+id/container"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/llextip">
+        android:layout_below="@+id/llextip"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/header"
-            style="@android:style/TextAppearance.Small"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:paddingBottom="0dp"
-            android:text="@string/EditTextHeader"
-            android:textColor="#000"
-            android:textSize="16sp" />
-
-        <LinearLayout
-            android:id="@+id/llinput"
+        <TabWidget
+            android:id="@android:id/tabs"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/header"
-            android:orientation="horizontal">
+            android:layout_weight="0"
+            android:orientation="horizontal" />
 
-            <EditText
-                android:id="@+id/input"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.3"
-                android:gravity="center"
-                android:imeOptions="actionDone"
-                android:singleLine="true"
-                android:textColor="#000"
-                android:textColorHighlight="#00ff00"
-                android:textSize="16sp" />
+        <FrameLayout
+            android:id="@android:id/tabcontent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="0" />
 
-            <ImageView
-                android:id="@+id/find"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:contentDescription="@string/ivSearchDesc"
-                android:gravity="center"
-                android:src="@drawable/search"
-                android:textColor="#000000" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/tools"
-            android:layout_width="match_parent"
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/llinput"
-            android:orientation="horizontal">
+            android:layout_gravity="bottom"
+            android:overScrollMode="never">
 
-            <TextView
-                android:id="@+id/count"
-                style="@android:style/TextAppearance.Medium"
-                android:layout_width="fill_parent"
+
+            <android.support.v4.view.PagerTabStrip
+                android:id="@+id/pager_title_strip"
+                style="@android:style/TextAppearance.Large"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:selectAllOnFocus="true"
-                android:text="@string/tvEntriesText"
-                android:textColor="#000"
-                android:textSize="16sp" />
+                android:layout_gravity="top"
+                android:background="@color/colorPrimary"
+                android:layoutMode="opticalBounds"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp"
+                android:textColor="#fff" />
 
-            <ImageView
-                android:id="@+id/clearlist"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:contentDescription="@string/ivClearDesc"
-                android:gravity="center"
-                android:src="@drawable/clean" />
+        </android.support.v4.view.ViewPager>
+    </LinearLayout>
 
-            <ImageView
-                android:id="@+id/share"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:contentDescription="@string/ivShareDesc"
-                android:gravity="center"
-                android:src="@drawable/share" />
-
-            <ImageView
-                android:id="@+id/copy"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:contentDescription="@string/ivCopyDesc"
-                android:gravity="center"
-                android:src="@drawable/copy" />
-        </LinearLayout>
-
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/swipeRefreshLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/tools">
-
-            <ListView
-                android:id="@+id/listview"
-                android:layout_width="fill_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/tools"
-                android:divider="@drawable/nav_bar_divider"
-                android:dividerHeight="2dp" />
-        </android.support.v4.widget.SwipeRefreshLayout>
-
-        <RelativeLayout
-            android:id="@+id/rvPB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:visibility="visible">
-
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/rlInfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:padding="10dp"
-            android:visibility="visible">
-
-            <TextView
-                android:id="@+id/tvInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="You have no saved searches yet ! Enable Cellular Data or WIFI first to start tracking the ISPs." />
-        </RelativeLayout>
-    </RelativeLayout>
 
 </RelativeLayout>

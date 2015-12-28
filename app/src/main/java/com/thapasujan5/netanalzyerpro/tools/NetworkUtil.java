@@ -4,14 +4,17 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.thapasujan5.netanalyzerpro.R;
+import com.thapasujan5.netanalzyerpro.AppConstants;
+
 /**
  * Created by Suzan on 11/13/2015.
  */
 public class NetworkUtil {
 
-    public static int TYPE_WIFI = 1;
-    public static int TYPE_MOBILE = 2;
-    public static int TYPE_NOT_CONNECTED = 0;
+    public static int TYPE_WIFI = AppConstants.TYPE_WIFI;
+    public static int TYPE_MOBILE = AppConstants.TYPE_MOBILE;
+    public static int TYPE_NOT_CONNECTED = AppConstants.TYPE_NOT_CONNECTED;
 
 
     public static int getConnectivityStatus(Context context) {
@@ -19,6 +22,7 @@ public class NetworkUtil {
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
         if (null != activeNetwork) {
             if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI)
                 return TYPE_WIFI;
@@ -29,6 +33,7 @@ public class NetworkUtil {
         return TYPE_NOT_CONNECTED;
     }
 
+
     public static String getConnectivityStatusString(Context context) {
         int conn = NetworkUtil.getConnectivityStatus(context);
         String status = null;
@@ -37,7 +42,7 @@ public class NetworkUtil {
         } else if (conn == NetworkUtil.TYPE_MOBILE) {
             status = "Mobile data enabled";
         } else if (conn == NetworkUtil.TYPE_NOT_CONNECTED) {
-            status = "Not connected to Internet";
+            status = context.getResources().getString(R.string.no_connection);
         }
         return status;
     }
