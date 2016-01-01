@@ -12,7 +12,7 @@
 
 
     <RelativeLayout
-        android:id="@+id/relativeLayout"
+        android:id="@+id/rlWifiDetails"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#daa520"
@@ -34,7 +34,7 @@
 
 
             <TextView
-                android:id="@+id/tvNetworkName"
+                android:id="@+id/tvSsid"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
@@ -42,7 +42,7 @@
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:gravity="start"
-                android:text="Please wait while SSID value is figured out for the WIFI Network..."
+                android:text="Check Wifi Connection."
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
@@ -67,23 +67,23 @@
 
 
             <TextView
-                android:id="@+id/tvIpAdd"
+                android:id="@+id/tvRouterIp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
-                android:text="Getting IP ADD for the selected WIFI Network."
+                android:text="Getting IP ADD."
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#fff" />/>
 
             <TextView
-                android:id="@+id/tvNetworkType"
+                android:id="@+id/tvMac"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:gravity="left"
-                android:text="Getting MAC ID for the selected WIFi Network."
+                android:text="Getting MAC ID."
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#fff" />
 
@@ -92,7 +92,6 @@
                 android:id="@+id/tbWifiSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:buttonTint="@color/colorPrimary"
                 android:gravity="end" />
         </LinearLayout>
@@ -100,14 +99,21 @@
 
     </RelativeLayout>
 
-    <ListView
-        android:id="@+id/listView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/rlWifiDetails">
 
-        android:layout_below="@+id/relativeLayout"
-        android:dividerHeight="0dp" />
 
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+
+            android:layout_below="@+id/relativeLayout"
+            android:dividerHeight="0dp" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 </RelativeLayout>

@@ -113,7 +113,7 @@
     <string name="title_social">Social</string>
     <string name="port_scanner">Port Scanner</string>
     <string name="desc_ssid">Slide down to turn WIFI ON.</string>
-    <string name="title_activity_network_discovery">NetworkDiscoveryActivity</string>
+    <string name="title_activity_network_discovery">Network Discovery</string>
 
 </resources>
 
