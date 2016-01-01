@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Net Analyzer Pro</string>
-    <string name="version">1.2.9</string>
+    <string name="version">1.3.1</string>
     <string name="phone">+61452065052</string>
     <string name="email">thapasujan5@gmail.com</string>
     <string name="fbID">1230665286</string>
@@ -16,7 +16,7 @@
     <string name="ivClearDesc">Clear</string>
     <string name="ivShareDesc">Share</string>
     <string name="ivCopyDesc">Copy</string>
-    <string name="newFeatures">- Bug Fixes and Performance Improvements.\n- UI Retouch.\n- LAN, WAN, DHCP Details (Under Development). </string>
+    <string name="newFeatures">- Minor Fixes.</string>
     <string name="oops_something_went_wrong_try_in_a_while_">Oops! We can\'t figure out what\'s that.</string>
     <string name="feedbackSubject">Subject of Feedback</string>
     <string name="about_content"><b><u>Developer</u></b>\nSujan Thapa\nSydney, Australia\n+61452065052\nsujan.private@gmail.com</string>
@@ -113,6 +113,7 @@
     <string name="title_social">Social</string>
     <string name="port_scanner">Port Scanner</string>
     <string name="desc_ssid">Slide down to turn WIFI ON.</string>
+    <string name="title_activity_network_discovery">NetworkDiscoveryActivity</string>
 
 </resources>
 

@@ -46,6 +46,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAyeQFWzQT0hx6OBc96FZdsYWUwl0zbFoM" />
@@ -70,7 +71,7 @@
             android:name="com.thapasujan5.netanalzyerpro.MainActivity"
             android:configChanges="keyboard|orientation|screenSize"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.thapasujan5.netanalzyerpro.DnsLookupActivity"
             android:configChanges="keyboard|orientation|screenSize"
@@ -81,7 +82,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thapasujan5.netanalzyerpro.MainActivity" />
         </activity>
-
+        <activity
+            android:name="com.thapasujan5.netanalzyerpro.NetworkDiscoveryActivity"
+            android:label="@string/title_activity_network_discovery"
+            android:parentActivityName="com.thapasujan5.netanalzyerpro.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.thapasujan5.netanalzyerpro.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

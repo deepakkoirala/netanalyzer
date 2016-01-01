@@ -109,8 +109,7 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/ivClearDesc"
                 android:gravity="center"
-                android:src="@drawable/clean"
-               />
+                android:src="@drawable/clean" />
 
             <ImageView
                 android:id="@+id/share"
@@ -119,8 +118,7 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/ivShareDesc"
                 android:gravity="center"
-                android:src="@drawable/share"
-                 />
+                android:src="@drawable/share" />
 
             <ImageView
                 android:id="@+id/copy"
@@ -129,8 +127,7 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/ivCopyDesc"
                 android:gravity="center"
-                android:src="@drawable/copy"
-                 />
+                android:src="@drawable/copy" />
         </LinearLayout>
 
         <android.support.v4.widget.SwipeRefreshLayout
@@ -144,7 +141,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/tools"
-                android:backgroundTint="@color/colorPrimary"
+
                 android:divider="@drawable/nav_bar_divider"
                 android:dividerHeight="1dp"
                 android:listSelector="@color/light_blue" />

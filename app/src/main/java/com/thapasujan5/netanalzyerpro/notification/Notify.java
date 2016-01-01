@@ -64,7 +64,7 @@ public class Notify {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         // Adjust OnGoing based on pref
-        if (sp.getBoolean(context.getString(R.string.key_notification_ongoing), false) == true) {
+        if (sp.getBoolean(context.getString(R.string.key_notification_ongoing), true) == true) {
             if (noti != null) {
                 noti.flags |= Notification.FLAG_ONGOING_EVENT;
             } else {
@@ -73,7 +73,7 @@ public class Notify {
             }
             Log.i("Notify", "OnGoing On");
         }
-        if (sp.getBoolean(context.getString(R.string.key_notification_sticky), false) == true) {
+        if (sp.getBoolean(context.getString(R.string.key_notification_sticky), true) == true) {
             if (noti != null) {
 
                 notificationManager.notify(0, noti);

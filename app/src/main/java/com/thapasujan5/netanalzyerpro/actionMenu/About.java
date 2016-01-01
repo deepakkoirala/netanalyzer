@@ -93,7 +93,7 @@ public class About {
                 final Dialog d = new Dialog(context);
                 ImageView img = new ImageView(context);
 
-                img.setImageResource(R.drawable.profile_picture_full);
+                img.setImageResource(R.drawable.search);
                 d.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 RelativeLayout pictureHolder = new RelativeLayout(context);
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(

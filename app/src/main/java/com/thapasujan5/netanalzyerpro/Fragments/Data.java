@@ -60,10 +60,12 @@ public class Data extends Fragment implements View.OnLongClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_data, container, false);
         try {
+            initialize();
             if (isAirplaneModeOn(getContext())) {
+                tvNtName.setText("Airplane Mode.");
                 alertAirplaneMode(getContext());
             }
-            initialize();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -126,6 +128,7 @@ public class Data extends Fragment implements View.OnLongClickListener {
         dhcp = new DhcpInfo();
         telephonyManager = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
         registerNetworkLister();
+        setupValues();
     }
 
     @SuppressWarnings("deprecation")
@@ -202,6 +205,7 @@ public class Data extends Fragment implements View.OnLongClickListener {
 
     private void setupValues() throws Exception {
         if (isAirplaneModeOn(getContext()) == false) {
+
             //setup values now
             tvNtName.setText(telephonyManager.getNetworkOperatorName());
             if (Build.VERSION.SDK_INT < 23) {
@@ -211,35 +215,47 @@ public class Data extends Fragment implements View.OnLongClickListener {
             }
             tvNtType.setText(networkType());
 
-            tvNtName.setVisibility(View.VISIBLE);
+
             tvNtType.setVisibility(View.VISIBLE);
             tvCellularGateway.setVisibility(View.VISIBLE);
             tvPercent.setVisibility(View.VISIBLE);
 
             if (getDataConnectionStatus()) {
                 if (NetworkUtil.getConnectivityStatus(getContext()) == AppConstants.TYPE_MOBILE) {
+
                     tvIp.setText(GetDeviceIP.getDeviceIP());
+                    tvCellularGateway.setVisibility(View.VISIBLE);
                     tvCellularGateway.setText(GetDeviceIP.getDeviceIP());
                     SharedPreferences.Editor edit = sharedPreferences.edit();
                     edit.putString("cellip", tvIp.getText().toString().trim());
                     edit.apply();
                     edit.commit();
+                } else {
+                    tvIp.setText("n/a");
+                    tvCellularGateway.setVisibility(View.GONE);
                 }
             } else {
                 tvIp.setText("n/a");
+                tvCellularGateway.setVisibility(View.GONE);
             }
         } else {
-            tvNtName.setText("Slide down to TURN OFF Airplane-Mode.");
-
-            tvNtType.setVisibility(View.GONE);
-            tvPercent.setVisibility(View.GONE);
-            tvCellularGateway.setVisibility(View.GONE);
-
-            tvIp.setText("n/a");
-            tvGateway.setText("n/a");
-            tvDns1.setText("n/a");
+            updateAirplaneModeValues();
         }
         setSIMDetails();
+
+    }
+
+    private void updateAirplaneModeValues() {
+        Toast.makeText(getContext().getApplicationContext(), "Airplane mode active.", 500).show();
+        tvNtName.setText("Airplane Mode.");
+        tvNtName.setVisibility(View.VISIBLE);
+        tvNtType.setVisibility(View.INVISIBLE);
+        tvPercent.setVisibility(View.INVISIBLE);
+        tvCellularGateway.setVisibility(View.INVISIBLE);
+
+        tvIp.setText("n/a");
+        tvGateway.setText("n/a");
+        tvDns1.setText("n/a");
 
     }
 
@@ -454,6 +470,7 @@ public class Data extends Fragment implements View.OnLongClickListener {
                     e.printStackTrace();
                 }
             } else {
+                updateAirplaneModeValues();
                 alertAirplaneMode(getContext());
             }
         }
@@ -471,6 +488,7 @@ public class Data extends Fragment implements View.OnLongClickListener {
 
                 boolean isEnabled = isAirplaneModeOn(context);
                 if (isEnabled == true) {
+                    updateAirplaneModeValues();
                     setSettings(context, isEnabled ? 1 : 0);
                     Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0);
                     Intent newIntent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);

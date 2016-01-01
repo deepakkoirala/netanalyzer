@@ -5,7 +5,7 @@
     android:layout_gravity="center"
     android:background="#fff"
     android:orientation="vertical"
-    tools:context="app.MainActivity" >
+    tools:context="app.MainActivity">
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -13,7 +13,7 @@
         android:layout_gravity="left"
         android:background="@drawable/dialog_bg"
         android:orientation="horizontal"
-        android:padding="10dp" >
+        android:padding="10dp">
 
         <ImageView
             android:id="@+id/icon"
@@ -21,17 +21,16 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:contentDescription="Title Image"
-            android:src="@drawable/clean" >
-        </ImageView>
+            android:src="@mipmap/about"></ImageView>
 
         <TextView
             android:id="@+id/titleText"
             style="@android:style/TextAppearance.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:text="Feedback"
+            android:text="Report"
             android:textColor="#fff"
             android:textSize="16sp" />
     </LinearLayout>
@@ -39,8 +38,7 @@
     <View
         android:layout_width="fill_parent"
         android:layout_height="2dp"
-        android:background="@drawable/nav_bar_divider" >
-    </View>
+        android:background="@drawable/nav_bar_divider"></View>
 
     <EditText
         android:id="@+id/etSubject"
@@ -68,7 +66,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/btnSendFeedback"

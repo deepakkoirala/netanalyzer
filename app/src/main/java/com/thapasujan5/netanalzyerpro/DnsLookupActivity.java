@@ -25,6 +25,7 @@ import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -42,6 +43,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thapasujan5.netanalyzerpro.R;
+import com.thapasujan5.netanalzyerpro.ActionMenu.SnapShot;
 import com.thapasujan5.netanalzyerpro.DataStore.Items;
 import com.thapasujan5.netanalzyerpro.DataStore.ItemsAdapter;
 import com.thapasujan5.netanalzyerpro.DataStore.ReportChoices;
@@ -363,6 +365,7 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
     public boolean onItemLongClick(AdapterView<?> parent, View view,
                                    int position, long id) {
         //clicked Item
+        view.setBackgroundColor(Color.parseColor("#00ffffff"));
         final Items myItem = dbItems.get(position);
 
         //Possible Menus
@@ -531,6 +534,7 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position,
                             long id) {
+        view.setBackgroundColor(Color.parseColor("#00ffffff"));
         if (connectionDetector.isConnectingToInternet()) {
             new ExternalIPFinder().execute();
         } else {
@@ -822,13 +826,27 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
                 return true;
         }
 
+        if (id == R.id.snapshot) {
+            new SnapShot(this, getWindow().getDecorView().getRootView());
+            return true;
+
+        }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.activiy_dnslookup_menu, menu);
+        return true;
     }
 
     @Override

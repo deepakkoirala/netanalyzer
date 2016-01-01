@@ -15,40 +15,53 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:background="#daa520"
                 android:padding="5dp">
 
                 <ImageView
                     android:id="@+id/ivWifi"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
                     android:src="@mipmap/ic_wifi_logo" />
 
-                <TextView
-                    android:id="@+id/tvNetworkName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_toRightOf="@+id/ivWifi"
-                    android:text="Getting SSID..."
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                <TextView
-                    android:id="@+id/tvPercentage"
+                <LinearLayout
+                    android:id="@+id/llSsidPercent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/tvNetworkName"
-                    android:gravity="end"
-                    android:text="0%"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="#fff" />
+                    android:layout_toRightOf="@+id/ivWifi"
+                    android:orientation="horizontal">
+
+
+                    <TextView
+                        android:id="@+id/tvNetworkName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_toRightOf="@+id/ivWifi"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:gravity="start"
+                        android:text="Please wait while SSID value is figured out for the WIFI Network..."
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <TextView
+                        android:id="@+id/tvPercentage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/tvNetworkName"
+                        android:gravity="end"
+                        android:text="0%"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#fff" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/rlOperatorDetails"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/tvNetworkName"
+                    android:layout_below="@+id/llSsidPercent"
                     android:layout_marginLeft="5dp"
                     android:layout_toRightOf="@+id/ivWifi"
                     android:orientation="horizontal">
@@ -56,22 +69,22 @@
 
                     <TextView
                         android:id="@+id/tvIpAdd"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
-
-                        android:text="Getting IP ADD"
+                        android:layout_weight="1"
+                        android:text="Getting IP ADD for the selected WIFI Network."
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="#fff" />/>
 
                     <TextView
                         android:id="@+id/tvNetworkType"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ellipsize="end"
-                        android:gravity="center"
-                        android:text="Getting MAC ID"
+                        android:gravity="left"
+                        android:text="Getting MAC ID for the selected WIFi Network."
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="#fff" />
 
