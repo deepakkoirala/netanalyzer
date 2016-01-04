@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/count"
@@ -9,25 +9,15 @@
         android:layout_height="match_parent"
         android:background="@color/colorPrimary"
         android:gravity="center"
-        android:padding="5dp"
-        android:text="1"
+        android:padding="10dp"
         android:textAppearance="@android:style/TextAppearance.Medium"
         android:textColor="@color/common_action_bar_splitter" />
 
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ImageView
-            android:id="@+id/deviceIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:contentDescription="De"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:src="@mipmap/ic_launcher" />
+        android:layout_height="match_parent"
+        android:padding="10dp">
 
         <TextView
             android:id="@+id/tvDns"
@@ -35,11 +25,19 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@+id/deviceIcon"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/message_vertical_padding"
-            android:text="Sujan's iPhone"
+            android:text="DNS Name"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/deviceIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentRight="true"
+            android:contentDescription="Device"
+            android:src="@mipmap/devices_important"
+            android:tint="@color/colorPrimaryDark" />
+
 
         <TextView
             android:id="@+id/tvIp"
@@ -47,10 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@id/tvDns"
-            android:layout_toLeftOf="@+id/deviceIcon"
-            android:paddingBottom="@dimen/message_vertical_padding"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:text="192.168.1.2"
+            android:text="IP Address"
             android:textColor="@color/light_gray"
             android:textSize="12sp" />
 
@@ -58,11 +53,12 @@
             android:id="@+id/tvMac"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/deviceIcon"
+            android:layout_below="@+id/tvDns"
             android:layout_centerHorizontal="true"
-            android:paddingBottom="@dimen/message_vertical_padding"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:text="3A:2B:00:1C:0C:8A"
+            android:layout_toRightOf="@+id/tvIp"
+            android:text="MAC Address"
+
+
             android:textColor="@color/light_gray"
             android:textSize="12sp" />
 

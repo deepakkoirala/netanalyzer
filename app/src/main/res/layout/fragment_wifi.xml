@@ -16,15 +16,16 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#daa520"
-                android:padding="5dp">
+                android:background="@color/colorPrimary"
+                android:padding="@dimen/padding_wifi_details">
 
                 <ImageView
                     android:id="@+id/ivWifi"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_centerVertical="true"
-                    android:src="@mipmap/ic_wifi_logo" />
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+
+                    android:src="@mipmap/ic_wifi_logo"
+                    android:tint="@color/app_theme_background" />
 
                 <LinearLayout
                     android:id="@+id/llSsidPercent"
@@ -44,7 +45,8 @@
                         android:ellipsize="end"
                         android:gravity="start"
                         android:text="Check WIFI Connection !"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/app_theme_background" />
 
                     <TextView
                         android:id="@+id/tvPercentage"
@@ -53,8 +55,8 @@
                         android:layout_toRightOf="@+id/tvNetworkName"
                         android:gravity="end"
                         android:text="0%"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="#fff" />
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/app_theme_background" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -68,14 +70,14 @@
 
 
                     <TextView
-                        android:id="@+id/tvIpAdd"
+                        android:id="@+id/tvIp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
                         android:layout_weight="1"
                         android:text="Getting IP ADD."
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="#fff" />/>
+                        android:textColor="@color/app_theme_background" />/>
 
                     <TextView
                         android:id="@+id/tvNetworkType"
@@ -86,14 +88,13 @@
                         android:gravity="left"
                         android:text="Getting MAC ID."
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="#fff" />
+                        android:textColor="@color/app_theme_background" />
 
 
                     <Switch
                         android:id="@+id/tbWifiSwitch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
                         android:buttonTint="@color/colorPrimary"
                         android:gravity="end" />
                 </LinearLayout>

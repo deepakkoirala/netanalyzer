@@ -35,6 +35,8 @@ import com.thapasujan5.netanalzyerpro.Tools.ConnectionDetector;
 import com.thapasujan5.netanalzyerpro.Tools.GetDeviceIP;
 import com.thapasujan5.netanalzyerpro.Tools.NetworkUtil;
 
+import org.json.JSONObject;
+
 import java.lang.reflect.Method;
 
 /**
@@ -54,7 +56,17 @@ public class Data extends Fragment implements View.OnLongClickListener {
     public static final int UNKNOW_CODE = 99;
     DhcpInfo dhcp;
     SharedPreferences sharedPreferences;
+    boolean once = false;
 
+    static JSONObject jsonObject;
+
+    public Data() {
+        jsonObject = new JSONObject();
+    }
+
+    public static JSONObject getConnectionDetails() {
+        return jsonObject;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -213,6 +225,7 @@ public class Data extends Fragment implements View.OnLongClickListener {
             } else {
                 tvNtName.setTextAppearance(android.R.style.TextAppearance_Medium);
             }
+            tvNtName.setTextColor(getContext().getResources().getColor(R.color.app_theme_background));
             tvNtType.setText(networkType());
 
 
@@ -263,28 +276,29 @@ public class Data extends Fragment implements View.OnLongClickListener {
         TelephonyManager telMgr = telephonyManager;
         int simState = telMgr.getSimState();
         tvNtName.setText("SIM Service Unavailable");
+        String statusString = null;
         switch (simState) {
             case TelephonyManager.SIM_STATE_ABSENT:
                 // do something
                 tvSimState.setText("No SIM");
                 tvNtName.setText("No SIM Card");
-                Toast.makeText(getContext().getApplicationContext(), "SIM State Absent.", Toast.LENGTH_SHORT).show();
+                statusString = "SIM Absent.";
                 break;
             case TelephonyManager.SIM_STATE_NETWORK_LOCKED:
                 // do something
                 tvSimState.setText("Netowrk Locked");
 
-                Toast.makeText(getContext().getApplicationContext(), "SIM State Network Locked.", Toast.LENGTH_SHORT).show();
+                statusString = "SIM State Network Locked.";
                 break;
             case TelephonyManager.SIM_STATE_PIN_REQUIRED:
                 // do something
                 tvSimState.setText("PIN Required");
-                Toast.makeText(getContext().getApplicationContext(), "SIM State PIN Required.", Toast.LENGTH_SHORT).show();
+                statusString = "SIM State PIN Required.";
                 break;
             case TelephonyManager.SIM_STATE_PUK_REQUIRED:
                 // do something
                 tvSimState.setText("PUK Required");
-                Toast.makeText(getContext().getApplicationContext(), "SIM State PUK Required.", Toast.LENGTH_SHORT).show();
+                statusString = "SIM State PUK Required.";
                 break;
             case TelephonyManager.SIM_STATE_READY:
                 tvSimState.setText("Ready");
@@ -294,8 +308,12 @@ public class Data extends Fragment implements View.OnLongClickListener {
             case TelephonyManager.SIM_STATE_UNKNOWN:
                 // do something
                 tvSimState.setText("Unknown");
-                Toast.makeText(getContext().getApplicationContext(), "SIM State Unknown.", Toast.LENGTH_SHORT).show();
+                statusString = "SIM State Unknown.";
                 break;
+        }
+        if (statusString != null && once == false) {
+            once = true;
+            Toast.makeText(getContext().getApplicationContext(), statusString, Toast.LENGTH_SHORT).show();
         }
 
         if (swipeRefreshLayout.isRefreshing()) {
@@ -322,7 +340,7 @@ public class Data extends Fragment implements View.OnLongClickListener {
         tvSimSerialNo.setText(telephonyManager.getSimSerialNumber().toString());
         if (getDataConnectionStatus()) {
             tvStatus.setText("Connected");
-            tvStatus.setTextColor(getContext().getResources().getColor(R.color.colorPrimary));
+            tvStatus.setTextColor(getContext().getResources().getColor(R.color.colorPrimaryold));
 
         } else {
             tvStatus.setText("Disconnected");
@@ -460,6 +478,7 @@ public class Data extends Fragment implements View.OnLongClickListener {
     protected SwipeRefreshLayout.OnRefreshListener onSwipeListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
+            once = false;
             if (isAirplaneModeOn(getContext()) == false) {
                 try {
                     if (new ConnectionDetector(getContext()).isConnectingToInternet()) {
@@ -467,7 +486,7 @@ public class Data extends Fragment implements View.OnLongClickListener {
                     }
                     setupValues();
                 } catch (Exception e) {
-                    e.printStackTrace();
+
                 }
             } else {
                 updateAirplaneModeValues();

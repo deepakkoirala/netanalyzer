@@ -66,10 +66,12 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.3"
                 android:gravity="center"
+                android:hint="@string/HintSearchBox"
                 android:imeOptions="actionDone"
                 android:singleLine="true"
-                android:textColor="#000"
+                android:textColor="@color/colorPrimary"
                 android:textColorHighlight="#00ff00"
+                android:textColorHint="@color/light_gray"
                 android:textSize="16sp" />
 
             <ImageView
@@ -77,9 +79,11 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+
                 android:contentDescription="@string/ivSearchDesc"
                 android:gravity="center"
-                android:src="@drawable/search" />
+                android:src="@drawable/search"
+                android:tint="@color/colorPrimary" />
         </LinearLayout>
 
         <LinearLayout
@@ -92,14 +96,14 @@
             <TextView
                 android:id="@+id/count"
                 style="@android:style/TextAppearance.Medium"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:selectAllOnFocus="true"
                 android:text="@string/tvEntriesText"
-                android:textColor="#000"
+                android:textColor="@color/colorPrimary"
                 android:textSize="16sp" />
 
             <ImageView
@@ -109,7 +113,9 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/ivClearDesc"
                 android:gravity="center"
-                android:src="@drawable/clean" />
+                android:src="@drawable/clean"
+
+                android:tint="@color/colorPrimary" />
 
             <ImageView
                 android:id="@+id/share"
@@ -118,7 +124,9 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/ivShareDesc"
                 android:gravity="center"
-                android:src="@drawable/share" />
+                android:src="@drawable/share"
+
+                android:tint="@color/colorPrimary" />
 
             <ImageView
                 android:id="@+id/copy"
@@ -127,7 +135,8 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/ivCopyDesc"
                 android:gravity="center"
-                android:src="@drawable/copy" />
+                android:src="@drawable/copy"
+                android:tint="@color/colorPrimary" />
         </LinearLayout>
 
         <android.support.v4.widget.SwipeRefreshLayout
@@ -144,7 +153,7 @@
 
                 android:divider="@drawable/nav_bar_divider"
                 android:dividerHeight="1dp"
-                android:listSelector="@color/light_blue" />
+                android:listSelector="@color/colorPrimary" />
         </android.support.v4.widget.SwipeRefreshLayout>
 
         <RelativeLayout

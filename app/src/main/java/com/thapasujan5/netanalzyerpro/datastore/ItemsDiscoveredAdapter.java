@@ -10,10 +10,7 @@ import android.widget.TextView;
 
 import com.thapasujan5.netanalyzerpro.R;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Locale;
 
 public class ItemsDiscoveredAdapter extends ArrayAdapter<ItemsDiscovered> {
 
@@ -40,8 +37,7 @@ public class ItemsDiscoveredAdapter extends ArrayAdapter<ItemsDiscovered> {
         }
         try {
             final ItemsDiscovered item = data.get(position);
-            ((TextView) row.findViewById(R.id.count)).setText(position + 1
-                    + ".");
+            ((TextView) row.findViewById(R.id.count)).setText((Integer.toString(position + 1)));
             ((TextView) row.findViewById(R.id.tvDns)).setText(item.dns);
             ((TextView) row.findViewById(R.id.tvIp)).setText(item.ip);
 
@@ -56,15 +52,4 @@ public class ItemsDiscoveredAdapter extends ArrayAdapter<ItemsDiscovered> {
         return row;
     }
 
-    public static String getDate(long milliSeconds, String dateFormat) {
-        // Create a DateFormatter object for displaying date in specified
-        // format.
-        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat, Locale.US);
-
-        // Create a calendar object that will convert the date and time value in
-        // milliseconds to date.
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(milliSeconds);
-        return formatter.format(calendar.getTime());
-    }
 }

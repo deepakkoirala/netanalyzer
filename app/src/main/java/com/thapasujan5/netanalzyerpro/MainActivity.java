@@ -42,7 +42,6 @@ import com.thapasujan5.netanalzyerpro.ActionMenu.RateApp;
 import com.thapasujan5.netanalzyerpro.ActionMenu.ShareApp;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnapShot;
 import com.thapasujan5.netanalzyerpro.DataStore.ViewPagerAdapter;
-import com.thapasujan5.netanalzyerpro.Notification.Notify;
 import com.thapasujan5.netanalzyerpro.PingService.FabPing;
 import com.thapasujan5.netanalzyerpro.Tools.CheckDigit;
 import com.thapasujan5.netanalzyerpro.Tools.Clipboard;
@@ -71,6 +70,7 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView;
     public static TextView tvInfo;
     ImageView navLogo, navSetting;
+    SharedPreferences.Editor editor;
 
 
     @Override
@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
         View header = navigationView.inflateHeaderView(R.layout.nav_header_main2);
         navSetting = (ImageView) header.findViewById(R.id.nav_settings);
         navSetting.setOnClickListener(new View.OnClickListener() {
@@ -113,7 +114,7 @@ public class MainActivity extends AppCompatActivity
                 drawer.closeDrawers();
             }
         });
-
+        navigationView.getMenu().getItem(1).setChecked(true);
         new AboutWhatsNew(this); //Run at first install
         initialize();
     }
@@ -149,6 +150,7 @@ public class MainActivity extends AppCompatActivity
             sharedpreferences = PreferenceManager
                     .getDefaultSharedPreferences(getBaseContext());
             nm = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+            editor = sharedpreferences.edit();
 
             networkStateReceiver = new BroadcastReceiver() {
                 @Override
@@ -269,11 +271,18 @@ public class MainActivity extends AppCompatActivity
                 tvExIpArea.setText("External IP " + extIPAdd + ", " + org + " "
                         + city + ", " + country);
                 tvExIpArea.setVisibility(View.VISIBLE);
-                if (sharedpreferences.getBoolean(getString(R.string.key_notification_sticky), true) == true) {
-                    new Notify(MainActivity.this, extIPAdd, IpMac.getInternalIP(MainActivity.this), org, city, country);
-                } else {
-                    nm.cancel(0);
-                }
+                editor.putString(getString(R.string.org), org);
+                editor.putString(getString(R.string.city), city);
+                editor.putString(getString(R.string.country), country);
+                editor.putString(getString(R.string.extIpAdd), extIPAdd);
+                editor.apply();
+                editor.commit();
+
+//                if (sharedpreferences.getBoolean(getString(R.string.key_notification_sticky), true) == true) {
+//                    new Notify(MainActivity.this, extIPAdd, IpMac.getInternalIP(MainActivity.this), org, city, country);
+//                } else {
+//                    nm.cancel(0);
+//                }
             } else {
                 if (connectionDetector.isConnectingToInternet()) {
                     tvExIpArea.setText("Limited Connectivity Found !");
@@ -311,7 +320,10 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        if (id == R.id.nav_exit) {
+            finish();
+            onDestroy();
+        }
         //noinspection SimplifiableIfStatement
         if (id == R.id.nav_settings) {
 
@@ -327,6 +339,7 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -334,7 +347,11 @@ public class MainActivity extends AppCompatActivity
         item.setChecked(true);
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
+        if (id == R.id.nav_exit) {
+            // onStop();
+            finish();
+            onDestroy();
+        }
         if (id == R.id.nav_connectiondetails) {
             viewPager.setCurrentItem(0);
         } else if (id == R.id.nav_dnsip) {
@@ -375,9 +392,11 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         try {
             unregisterReceiver(networkStateReceiver);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+        android.os.Process.killProcess(android.os.Process.myPid());
         super.onDestroy();
     }
 }

@@ -32,6 +32,7 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+                <action android:name="android.net.wifi.RSSI_CHANGED" />
             </intent-filter>
         </receiver>
 
@@ -75,7 +76,7 @@
         <activity
             android:name="com.thapasujan5.netanalzyerpro.DnsLookupActivity"
             android:configChanges="keyboard|orientation|screenSize"
-            android:label="Net Analyzer Pro:DNS-IP Directory"
+            android:label="@string/title_dnslookup"
             android:parentActivityName="com.thapasujan5.netanalzyerpro.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -84,6 +85,7 @@
         </activity>
         <activity
             android:name="com.thapasujan5.netanalzyerpro.NetworkDiscoveryActivity"
+            android:configChanges="keyboard|orientation|screenSize"
             android:label="@string/title_activity_network_discovery"
             android:parentActivityName="com.thapasujan5.netanalzyerpro.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">

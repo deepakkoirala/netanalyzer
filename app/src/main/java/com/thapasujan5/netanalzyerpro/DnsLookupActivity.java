@@ -55,6 +55,7 @@ import com.thapasujan5.netanalzyerpro.Tools.CheckDigit;
 import com.thapasujan5.netanalzyerpro.Tools.CheckNet;
 import com.thapasujan5.netanalzyerpro.Tools.Clipboard;
 import com.thapasujan5.netanalzyerpro.Tools.ConnectionDetector;
+import com.thapasujan5.netanalzyerpro.Tools.DateTimeFormatted;
 import com.thapasujan5.netanalzyerpro.Tools.IpMac;
 import com.thapasujan5.netanalzyerpro.Tools.NetworkUtil;
 import com.thapasujan5.netanalzyerpro.Tools.ShowToast;
@@ -343,12 +344,12 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
                 tvExIpArea.setText("External IP " + extIPAdd + ", " + org + " "
                         + city + ", " + country);
                 tvExIpArea.setVisibility(View.VISIBLE);
-                if (sharedpreferences.getBoolean(getString(R.string.key_notification_sticky), true) == true) {
-                    new Notify(DnsLookupActivity.this, extIPAdd, IpMac.getInternalIP(DnsLookupActivity.this), org, city, country);
-                } else {
-                    nm.cancel(0);
-                    Log.i("notification", "notification cancelled from main");
-                }
+//                if (sharedpreferences.getBoolean(getString(R.string.key_notification_sticky), true) == true) {
+//                    new Notify(DnsLookupActivity.this, extIPAdd, IpMac.getInternalIP(DnsLookupActivity.this), org, city, country);
+//                } else {
+//                    nm.cancel(0);
+//                    Log.i("notification_main", "notification_main cancelled from main");
+//                }
             } else {
                 if (connectionDetector.isConnectingToInternet()) {
                     tvExIpArea.setText("Limited Connectivity Found !");
@@ -523,7 +524,7 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
                 + "\nRegion Name: " + item.region_name
                 + "\nTime Zone: " + item.time_zone
                 + "\nZip: " + item.zip
-                + "\nLast Saved: " + ItemsAdapter.getDate(
+                + "\nLast Saved: " + DateTimeFormatted.getDate(
                 Long.parseLong(item.date), "EEE MMM dd yyyy HH:mm z")
                 + "\nCoordinate: " + item.lon
                 + ", " + item.lat
@@ -560,7 +561,7 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
                     + "\nRegion Name: " + allDbItems.get(i).region_name
                     + "\nTime Zone: " + allDbItems.get(i).time_zone
                     + "\nZip: " + allDbItems.get(i).zip
-                    + "\nLast Saved: " + ItemsAdapter.getDate(
+                    + "\nLast Saved: " + DateTimeFormatted.getDate(
                     Long.parseLong(allDbItems.get(i).date), "EEE MMM dd yyyy HH:mm z")
                     + "\nCoordinate: " + allDbItems.get(i).lon
                     + ", " + allDbItems.get(i).lat
@@ -832,6 +833,7 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
                 onBackPressed();
                 return true;
         }
+
 
         if (id == R.id.snapshot) {
             new SnapShot(this, getWindow().getDecorView().getRootView());

@@ -1,5 +1,6 @@
 package com.thapasujan5.netanalzyerpro.Fragments;
 
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,7 +11,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
-import android.net.DhcpInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -36,9 +36,8 @@ import com.thapasujan5.netanalzyerpro.MainActivity;
 import com.thapasujan5.netanalzyerpro.Tools.Clipboard;
 import com.thapasujan5.netanalzyerpro.Tools.ConnectionDetector;
 import com.thapasujan5.netanalzyerpro.Tools.DayHourMinSec;
-import com.thapasujan5.netanalzyerpro.Tools.DbToPercent;
-import com.thapasujan5.netanalzyerpro.Tools.InttoIp;
 import com.thapasujan5.netanalzyerpro.Tools.NetworkUtil;
+import com.thapasujan5.netanalzyerpro.Tools.WifiUtil;
 
 import org.json.JSONObject;
 
@@ -51,58 +50,46 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
     TextView tvSSID, tvIp, tvGateway, tvSubnet, tvDns1, tvDns2, tvLease, tvStatus, tvStrength, tvSpeed, tvFrequency, tvSecurity;
     TextView tvPercent;
     TextView tvRouterMac, tvRouterIP;
-    WifiManager wifi;
-    WifiInfo wifiInfo;
-    DhcpInfo dhcpInfo;
+
     View rootView;
     protected SwipeRefreshLayout swipeRefreshLayout;
     ImageView ivWifi;
     BroadcastReceiver receiver;
+    BroadcastReceiver receiverSwitch;
     IntentFilter filter;
     Switch tbWifiSwitch;
     SharedPreferences sharedpreferences;
     static JSONObject jsonObject;
-    static JSONObject error;
+
+
+    NotificationManager notificationManager;
 
     public WIFI() {
         jsonObject = new JSONObject();
-        error = new JSONObject();
     }
 
-    public static JSONObject getWifiDetails() {
-        if (jsonObject != null)
-            return jsonObject;
-        else {
-            try {
-                error.put("err", "null");
-                return error;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return error;
-            }
-        }
+    public static JSONObject getConnectionDetails() {
+        return jsonObject;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_wifi, container, false);
         try {
-
             initialize(rootView);
             alertWifiStatus(getContext(), swipeRefreshLayout);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return rootView;
     }
 
-
     private void initialize(View rootView) throws Exception {
+        notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
         sharedpreferences = PreferenceManager
                 .getDefaultSharedPreferences(getActivity().getBaseContext());
 
-        wifi = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
+
         swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(onSwipeListener);
         swipeRefreshLayout.setColorSchemeColors(R.color.swipeRefresh1, R.color.swipeRefresh2, R.color.swipeRefresh3, R.color.swipeRefresh4);
@@ -134,7 +121,7 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
 
         tvRouterMac = (TextView) rootView.findViewById(R.id.tvNetworkType);
         tvRouterMac.setOnLongClickListener(this);
-        tvRouterIP = (TextView) rootView.findViewById(R.id.tvIpAdd);
+        tvRouterIP = (TextView) rootView.findViewById(R.id.tvIp);
         tvRouterIP.setOnLongClickListener(this);
 
         ivWifi = (ImageView) rootView.findViewById(R.id.ivWifi);
@@ -158,15 +145,25 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
             tbWifiSwitch.setButtonTintList(buttonStates);
         }
         setupValues();
-
-        receiver = new BroadcastReceiver() {
+        receiverSwitch = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (wifi.isWifiEnabled()) {
+                if (new WifiUtil(getContext()).isWifiEnabled()) {
                     tbWifiSwitch.setChecked(true);
+
                 } else {
                     tbWifiSwitch.setChecked(false);
                 }
+                try {
+                    jsonObject.put("switch", tbWifiSwitch.isChecked());
+                } catch (Exception e) {
+                }
+            }
+        };
+        getContext().registerReceiver(receiverSwitch, new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION));
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
                 try {
                     setupValues();
                 } catch (Exception e) {
@@ -179,7 +176,6 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
         filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         filter.addAction(ConnectivityManager.EXTRA_OTHER_NETWORK_INFO);
-
         getContext().registerReceiver(receiver, filter);
     }
 
@@ -196,51 +192,23 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
     };
 
     private void setupValues() throws Exception {
-        if (wifi == null)
-            wifi = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
-        if (wifi.isWifiEnabled() && NetworkUtil.getConnectivityStatus(getContext().getApplicationContext()) == AppConstants.TYPE_WIFI) {
-
-            //Getting Base Classes
-            wifi = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
-            dhcpInfo = wifi.getDhcpInfo();
-            wifiInfo = wifi.getConnectionInfo();
-
+        if (new WifiUtil(getContext()).isWifiEnabled() && NetworkUtil.getConnectivityStatus(getContext()) == AppConstants.TYPE_WIFI) {
             //Fill DHCP Config Info
-            String ssid = wifiInfo.getSSID();
-            if (ssid.contains("\"")) {
-                ssid = ssid.replace("\"", "");
-                tvSSID.setText(ssid);
+            String ssid = new WifiUtil(getContext()).getSsid();
+            tvSSID.setText(ssid);
+            jsonObject.put(getString(R.string.ssid), ssid);
 
-            } else {
-                ssid = wifiInfo.getSSID().toString();
-                tvSSID.setText(ssid);
-            }
-            jsonObject.put("ssid", ssid);
-
-            if (Build.VERSION.SDK_INT < 23) {
-                tvSSID.setTextAppearance(getContext(), android.R.style.TextAppearance_Large);
-            } else {
-                tvSSID.setTextAppearance(android.R.style.TextAppearance_Large);
-            }
-            //tvSSID.setTextColor(getContext().getResources().getColor(R.color.colorAccent));
-            String ip = InttoIp.intToIp(wifi.getConnectionInfo()
-                    .getIpAddress());
+            String ip = new WifiUtil(getContext()).getIpAddress();
             tvIp.setText(ip);
-            jsonObject.put("ip", ip);
+            jsonObject.put(getString(R.string.ip), ip);
 
-            SharedPreferences.Editor edit = sharedpreferences.edit();
-            edit.putString("wifiip", tvIp.getText().toString().trim());
-            edit.apply();
-            edit.commit();
-
-
-            tvGateway.setText(InttoIp.intToIp(dhcpInfo.gateway));
-            tvSubnet.setText(InttoIp.intToIp(dhcpInfo.netmask));
-            tvDns1.setText(InttoIp.intToIp(dhcpInfo.dns1));
-            tvDns2.setText(InttoIp.intToIp(dhcpInfo.dns2));
+            tvGateway.setText(new WifiUtil(getContext()).getGateway());
+            tvSubnet.setText(new WifiUtil(getContext()).getNetMask());
+            tvDns1.setText(new WifiUtil(getContext()).getDns1());
+            tvDns2.setText(new WifiUtil(getContext()).getDns2());
 
             JSONObject leaseJson = new JSONObject();
-            leaseJson = DayHourMinSec.getDHMS(dhcpInfo.leaseDuration);
+            leaseJson = DayHourMinSec.getDHMS(new WifiUtil(getContext()).getLeaseDuration());
             try {
                 if (leaseJson.getString("result").contentEquals("success")) {
                     tvLease.setText(leaseJson.getString("days") + leaseJson.getString("hours") + leaseJson.getString("minutes") + leaseJson.getString("seconds"));
@@ -252,16 +220,17 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
                 e.printStackTrace();
             }
 
-            tvSpeed.setText(wifiInfo.getLinkSpeed() + "Mbps");
-            tvStrength.setText(wifiInfo.getRssi() + "dB");
-            String percent = (int) (DbToPercent.getPercentfromDb(wifiInfo.getRssi())) + "%";
+            tvSpeed.setText(new WifiUtil(getContext()).getLinkSpeed() + "Mbps");
+            tvStrength.setText(new WifiUtil(getContext()).getRssi() + "dB");
+            String percent = new WifiUtil(getContext()).getPercentSignal();
+
             tvPercent.setText(percent);
-            jsonObject.put("percent", percent);
+            jsonObject.put(getString(R.string.percent), percent);
             tvPercent.setVisibility(View.VISIBLE);
 
             if (Build.VERSION.SDK_INT >= 21) {
-                int freq = wifiInfo.getFrequency();
-                Double inGhz = Double.parseDouble(Integer.toString(freq)) / 1000;
+
+                Double inGhz = Double.parseDouble(new WifiUtil(getContext()).getFreq()) / 1000;
                 tvFrequency.setText(inGhz + "GHz");
             } else {
                 tvFrequency.setVisibility(View.GONE);
@@ -271,7 +240,7 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
             }
             if (new ConnectionDetector(getContext()).isConnectingToInternet()) {
                 tvStatus.setText("Connected");
-                tvStatus.setTextColor(getContext().getResources().getColor(R.color.colorPrimary));
+                tvStatus.setTextColor(getContext().getResources().getColor(R.color.colorPrimaryold));
                 updateSecurity();
             } else {
                 tvStatus.setText("Disconnected");
@@ -280,32 +249,27 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
             }
 
             //Fill Router Info
-            String mac = wifiInfo.getBSSID().toUpperCase();
+            String mac = tvSSID.getText().toString();
             tvRouterMac.setText(mac);
             tvRouterMac.setVisibility(View.VISIBLE);
-            jsonObject.put("mac", mac);
+            jsonObject.put(getString(R.string.mac), mac);
 
-            String routerip = InttoIp.intToIp(dhcpInfo.gateway);
+            String routerip = tvGateway.getText().toString();
             tvRouterIP.setText(routerip);
             tvRouterIP.setVisibility(View.VISIBLE);
-            jsonObject.put("routerip", routerip);
+            jsonObject.put(getString(R.string.routerip), routerip);
         } else {
-
-            if (wifi.isWifiEnabled()) {
+            if (new WifiUtil(getContext()).isWifiEnabled()) {
                 tvSSID.setText("Not Connected.");
             } else {
                 tvSSID.setText(R.string.desc_ssid);
-            }
-            if (Build.VERSION.SDK_INT < 23) {
-                tvSSID.setTextAppearance(getContext(), android.R.style.TextAppearance_Medium);
-            } else {
-                tvSSID.setTextAppearance(android.R.style.TextAppearance_Medium);
+
             }
             tvIp.setText("n/a");
             tvGateway.setText("n/a");
             tvDns1.setText("n/a");
             tvDns2.setText("n/a");
-            tvStatus.setText("n/a");
+            tvStatus.setText("Disconnected.");
             tvSpeed.setText("n/a");
             tvSpeed.setTypeface(null, Typeface.NORMAL);
             tvFrequency.setText("n/a");
@@ -316,9 +280,10 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
             tvRouterMac.setVisibility(View.GONE);
             tvRouterIP.setVisibility(View.GONE);
             tvPercent.setVisibility(View.GONE);
-        }
-        if (swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(false);
+
+            if (swipeRefreshLayout.isRefreshing()) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
         }
     }
 
@@ -329,7 +294,9 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
 //get current connected SSID for comparison to ScanResult
         WifiInfo wi = wifi.getConnectionInfo();
         String currentSSID = wi.getSSID();
+        if (currentSSID.contains("\"")) ;
         currentSSID = currentSSID.replace("\"", "");
+
 
         if (networkList != null) {
             for (ScanResult network : networkList) {
@@ -358,7 +325,7 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
     protected SwipeRefreshLayout.OnRefreshListener onSwipeListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
-            if (wifi.isWifiEnabled()) {
+            if (new WifiUtil(getContext()).isWifiEnabled()) {
                 try {
                     if (new ConnectionDetector(getContext()).isConnectingToInternet()) {
                         ((MainActivity) getContext()).reValidate();
@@ -414,12 +381,13 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
     @Override
     public void onDestroy() {
         getContext().unregisterReceiver(receiver);
+        getContext().unregisterReceiver(receiverSwitch);
         super.onDestroy();
     }
 
     @Override
     public boolean onLongClick(View v) {
-        if (wifi.isWifiEnabled() && NetworkUtil.getConnectivityStatus(getContext()) == AppConstants.TYPE_WIFI) {
+        if (new WifiUtil(getContext()).isWifiEnabled() && NetworkUtil.getConnectivityStatus(getContext()) == AppConstants.TYPE_WIFI) {
             String value = null;
             switch (v.getId()) {
                 case R.id.tvNetworkName:
@@ -456,7 +424,7 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
                 case R.id.tvNetworkType:
                     value = tvRouterMac.getText().toString().trim();
                     break;
-                case R.id.tvIpAdd:
+                case R.id.tvIp:
                     value = tvRouterIP.getText().toString().trim();
                     break;
 

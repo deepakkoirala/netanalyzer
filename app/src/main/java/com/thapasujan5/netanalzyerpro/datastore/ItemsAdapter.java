@@ -12,11 +12,9 @@ import android.widget.TextView;
 
 import com.thapasujan5.netanalyzerpro.R;
 import com.thapasujan5.netanalzyerpro.MapsActivity;
+import com.thapasujan5.netanalzyerpro.Tools.DateTimeFormatted;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Locale;
 
 public class ItemsAdapter extends ArrayAdapter<Items> {
 
@@ -54,7 +52,7 @@ public class ItemsAdapter extends ArrayAdapter<Items> {
                         .setVisibility(View.GONE);
             }
 
-            ((TextView) row.findViewById(R.id.date)).setText(getDate(
+            ((TextView) row.findViewById(R.id.date)).setText(DateTimeFormatted.getDate(
                     Long.parseLong(item.date), "EEE MMM dd yyyy HH:mm z")); // dd/MM/yyyy
             // hh:mm:ss.SSS
             if (item.location.length() > 0) {
@@ -85,17 +83,5 @@ public class ItemsAdapter extends ArrayAdapter<Items> {
 
         }
         return row;
-    }
-
-    public static String getDate(long milliSeconds, String dateFormat) {
-        // Create a DateFormatter object for displaying date in specified
-        // format.
-        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat, Locale.US);
-
-        // Create a calendar object that will convert the date and time value in
-        // milliseconds to date.
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(milliSeconds);
-        return formatter.format(calendar.getTime());
     }
 }

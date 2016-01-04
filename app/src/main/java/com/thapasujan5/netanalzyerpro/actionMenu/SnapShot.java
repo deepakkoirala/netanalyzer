@@ -124,7 +124,6 @@ public class SnapShot {
         alert.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                Toast.makeText(context.getApplicationContext(), "Cancelled", Toast.LENGTH_SHORT).show();
 
             }
         });

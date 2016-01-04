@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--Defaults-->
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimaryDark">#800000</color>
+    <color name="colorPrimary">#cc0000</color>
+
+    <color name="colorPrimaryold">#3F51B5</color>
+    <color name="colorPrimaryDarkold">#303F9F</color>
+
     <color name="colorAccent">#FF4081</color>
     <color name="black_overlay">#66000000</color>
 
+    <color name="app_theme_background">#E7E7E7</color>
+    <color name="app_theme_foreground">#BE1010</color>
     <!--TeamTreeColors-->
     <color name="background_purple">#3F2466</color>
     <color name="light_gray">#bbbbbb</color>
@@ -22,9 +28,6 @@
     <color name="swipeRefresh2">#ad78d9</color>
     <color name="swipeRefresh3">#dcadf4</color>
     <color name="swipeRefresh4">#ad78d9</color>
-
-
-
 
 
 </resources>

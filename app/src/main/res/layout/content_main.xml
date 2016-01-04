@@ -22,8 +22,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:padding="10dp"
             android:gravity="center"
+            android:padding="10dp"
             android:text="@string/isp_check"
             android:textColor="#99ff33"
             android:visibility="visible" />
@@ -45,30 +45,17 @@
         android:layout_below="@+id/llextip"
         android:orientation="vertical">
 
-        <TabWidget
-            android:id="@android:id/tabs"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:orientation="horizontal" />
-
-        <FrameLayout
-            android:id="@android:id/tabcontent"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="0" />
-
         <android.support.v4.view.ViewPager
             android:id="@+id/pager"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:overScrollMode="never">
-
+            android:animateLayoutChanges="true"
+            android:overScrollMode="always">
 
             <android.support.v4.view.PagerTabStrip
                 android:id="@+id/pager_title_strip"
-                style="@android:style/TextAppearance.Large"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top"

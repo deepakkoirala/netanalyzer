@@ -2,8 +2,13 @@ package com.thapasujan5.netanalzyerpro.Notification;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.util.Log;
 
-import com.thapasujan5.netanalzyerpro.Tools.IpMac;
+import com.thapasujan5.netanalyzerpro.R;
+import com.thapasujan5.netanalzyerpro.AppConstants;
+import com.thapasujan5.netanalzyerpro.Tools.NetworkUtil;
 import com.thapasujan5.netanalzyerpro.Tools.UserFunctions;
 
 import org.json.JSONObject;
@@ -40,7 +45,7 @@ public class NotificationService extends IntentService {
             if (intentType == null) return;
             if (intentType.contentEquals("RebootReceiver")) {
                 //Do reboot stuff
-                //handle other types of callers, like a notification.
+                //handle other types of callers, like a notification_main.
                 String org, city, country, extIPAdd;
                 boolean data = false;
                 UserFunctions f = new UserFunctions();
@@ -52,14 +57,36 @@ public class NotificationService extends IntentService {
                         city = json.getString("city");
                         country = json.getString("country");
                         data = true;
-                        new Notify(getApplicationContext(), extIPAdd, IpMac.getInternalIP(getApplicationContext()), org, city, country);
+                        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        SharedPreferences.Editor editor = sp.edit();
+
+                        editor.putString(getString(R.string.org), org);
+                        editor.putString(getString(R.string.city), city);
+                        editor.putString(getString(R.string.country), country);
+                        editor.putString(getString(R.string.extIpAdd), extIPAdd);
+                        editor.apply();
+                        editor.commit();
+
+
+                        int source = -1;
+                        if (NetworkUtil.getConnectivityStatus(getApplicationContext()) == AppConstants.TYPE_WIFI) {
+                            source = AppConstants.TYPE_WIFI;
+                        } else {
+                            source = AppConstants.TYPE_MOBILE;
+                        }
+                        if (source != -1) {
+                            Log.i("NotificationService", "To Notify");
+                            new Notify(getApplicationContext(), source);
+                        } else {
+                            Log.i("NotificationService", "Error with Connections");
+                        }
 
                     } else if (json.getString("status").contentEquals("fail")) {
 
                     }
 
                 } catch (Exception e) {
-                    new Notify(getApplicationContext(), "Network Alert !","You've Limited Access ", null, null, null);
+                    // new Notify(getApplicationContext());
                 }
             }
         } catch (Exception e) {
