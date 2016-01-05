@@ -42,7 +42,7 @@ public class FileCache {
     public boolean deleteFile(String filename) {
 
         boolean result = false;
-        Log.d("FileCache", "Inside deletefile");
+       // Log.d("FileCache", "Inside deletefile");
         File f = getFile(filename);
         if (f.delete()) {
             result = true;

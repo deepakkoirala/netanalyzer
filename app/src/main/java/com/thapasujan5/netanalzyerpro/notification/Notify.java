@@ -82,7 +82,7 @@ public class Notify {
         File file = fc.getFile(AppConstants.url_weather_icon + sp.getString(context.getString(R.string.icon_weather), ""));
         Bitmap bitmap = null;
         if (file.exists() == false) {
-            Log.d("Notify", "To Download: " + AppConstants.url_weather_icon + sp.getString(context.getString(R.string.icon_weather), ""));
+           // Log.d("Notify", "To Download: " + AppConstants.url_weather_icon + sp.getString(context.getString(R.string.icon_weather), ""));
             new DownloadFileFromUrl(context, AppConstants.url_weather_icon + sp.getString(context.getString(R.string.icon_weather), ""));
         } else {
             bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
@@ -114,9 +114,9 @@ public class Notify {
                 notification.flags |= Notification.FLAG_ONGOING_EVENT; //Do not clear the notification
             }
 
-            notification.defaults |= Notification.DEFAULT_LIGHTS; // LED
-            notification.defaults |= Notification.DEFAULT_VIBRATE; //Vibration
-            notification.defaults |= Notification.DEFAULT_SOUND; // Sound
+//            notification.defaults |= Notification.DEFAULT_LIGHTS; // LED
+//            notification.defaults |= Notification.DEFAULT_VIBRATE; //Vibration
+//            notification.defaults |= Notification.DEFAULT_SOUND; // Sound
             mNotificationManager.notify(0, notification);
         }
     }
@@ -136,7 +136,7 @@ public class Notify {
         File file = fc.getFile(AppConstants.url_weather_icon + sp.getString(context.getString(R.string.icon_weather), ""));
         Bitmap bitmap = null;
         if (file.exists() == false) {
-            Log.d("Notify", "To Download: " + AppConstants.url_weather_icon + sp.getString(context.getString(R.string.icon_weather), ""));
+          //  Log.d("Notify", "To Download: " + AppConstants.url_weather_icon + sp.getString(context.getString(R.string.icon_weather), ""));
             new DownloadFileFromUrl(context, AppConstants.url_weather_icon + sp.getString(context.getString(R.string.icon_weather), ""));
         } else {
             bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
@@ -168,9 +168,9 @@ public class Notify {
                 notification.flags |= Notification.FLAG_ONGOING_EVENT; //Do not clear the notification
             }
 
-            notification.defaults |= Notification.DEFAULT_LIGHTS; // LED
-            notification.defaults |= Notification.DEFAULT_VIBRATE; //Vibration
-            notification.defaults |= Notification.DEFAULT_SOUND; // Sound
+//            notification.defaults |= Notification.DEFAULT_LIGHTS; // LED
+//            notification.defaults |= Notification.DEFAULT_VIBRATE; //Vibration
+//            notification.defaults |= Notification.DEFAULT_SOUND; // Sound
             mNotificationManager.notify(0, notification);
         }
     }

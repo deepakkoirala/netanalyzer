@@ -21,7 +21,7 @@ public class WeatherUpdater extends TimerTask {
 
     @Override
     public void run() {
-        Log.d("WeatherUpdater", "Scheduled Update.");
+      //  Log.d("WeatherUpdater", "Scheduled Update.");
         Intent serviceIntent = new Intent(context, Service.class);
         serviceIntent.putExtra("receiver", "reboot");
         context.startService(serviceIntent);

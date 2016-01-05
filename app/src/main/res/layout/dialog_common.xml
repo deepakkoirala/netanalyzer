@@ -20,7 +20,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:contentDescription="Title Image"
-            android:src="@drawable/ic_action_about"></ImageView>
+            android:src="@mipmap/about"
+            android:tint="@color/app_theme_foreground"></ImageView>
 
         <TextView
             android:id="@+id/titleText"

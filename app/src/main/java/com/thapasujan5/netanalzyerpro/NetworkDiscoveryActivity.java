@@ -212,7 +212,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
     SwipeRefreshLayout.OnRefreshListener SwipeListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
-            if (wifiManager.isWifiEnabled()) {
+            if (wifiManager.isWifiEnabled() && NetworkUtil.getConnectivityStatus(NetworkDiscoveryActivity.this) == AppConstants.TYPE_WIFI) {
                 new NetworkDiscovery(NetworkDiscoveryActivity.this).execute();
             } else {
                 WIFI.alertWifiStatus(NetworkDiscoveryActivity.this, swipeRefreshLayout);
@@ -230,24 +230,24 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
                     //Active Internet
                     if (jsonObject != null) {
                         //Restore WIFI details to View now
-                        tvSsid.setText(jsonObject.optString(getString(R.string.ssid), "Internal Error !"));
-                        tvPercent.setText(jsonObject.optString(getString(R.string.percent), "Internal Error !"));
+                        tvSsid.setText(jsonObject.optString(getString(R.string.ssid), ""));
+                        tvPercent.setText(jsonObject.optString(getString(R.string.percent), ""));
                         if (Build.VERSION.SDK_INT < 23) {
                             tvPercent.setTextAppearance(this, android.R.style.TextAppearance_Large);
                         } else {
                             tvPercent.setTextAppearance(android.R.style.TextAppearance_Large);
                         }
                         tvPercent.setTextColor(getResources().getColor(R.color.app_theme_background));
-                        tvRouterip.setText(jsonObject.optString(getString(R.string.routerip), "Internal Error !"));
-                        tvMac.setText(jsonObject.optString(getString(R.string.mac), "Internal Error !"));
+                        tvRouterip.setText(jsonObject.optString(getString(R.string.routerip), ""));
+                        tvMac.setText(jsonObject.optString(getString(R.string.mac), ""));
 
 
                         //Save this json values for lastTimeValues()
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString(jsonObject.optString(getString(R.string.ssid)), "Internal Error !");
-                        editor.putString(jsonObject.optString(getString(R.string.routerip)), "Internal Error !");
-                        editor.putString(jsonObject.optString(getString(R.string.mac)), "Internal Error !");
-                        editor.putString(getString(R.string.time), System.currentTimeMillis() + "");
+                        editor.putString(jsonObject.optString(getString(R.string.ssid)), "Check Connection");
+                        editor.putString(jsonObject.optString(getString(R.string.routerip)), "");
+                        editor.putString(jsonObject.optString(getString(R.string.mac)), "");
+                        editor.putString(getString(R.string.time), "Last Scan:" + System.currentTimeMillis() + "");
                         editor.apply();
                         editor.commit();
 
@@ -293,7 +293,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
     }
 
     private void restoreLastValues(JSONObject jsonObject) {
-        tvSsid.setText(sharedPreferences.getString(getString(R.string.ssid), "WIFI Disconnected !"));
+        tvSsid.setText(sharedPreferences.getString(getString(R.string.ssid), "WIFI Disconnected"));
         tvPercent.setText(DateTimeFormatted.getDate(Long.parseLong(sharedPreferences.getString(getString(R.string.time), (Long.parseLong(System.currentTimeMillis() + "") + ""))), "EEE MMM dd yyyy HH:mm"));
         if (Build.VERSION.SDK_INT < 23) {
             tvPercent.setTextAppearance(this, android.R.style.TextAppearance_Small);
@@ -302,8 +302,8 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
         }
 
         tvPercent.setTextColor(this.getResources().getColor(R.color.app_theme_background));
-        tvMac.setText(sharedPreferences.getString(getString(R.string.mac), "n/a"));
-        tvRouterip.setText(sharedPreferences.getString(getString(R.string.routerip), "n/a"));
+        tvMac.setText(sharedPreferences.getString(getString(R.string.mac), ""));
+        tvRouterip.setText(sharedPreferences.getString(getString(R.string.routerip), ""));
 
 
     }

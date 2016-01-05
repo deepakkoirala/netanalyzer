@@ -46,7 +46,7 @@ public class Service extends IntentService {
             String intentType = intent.getExtras().getString("receiver");
             if (intentType == null) return;
             if (intentType.contentEquals("rssi_changed")) {
-                Log.d("service", "rssi_changed");
+              //  Log.d("service", "rssi_changed");
                 int source = -1;
                 if (NetworkUtil.getConnectivityStatus(getApplicationContext()) == AppConstants.TYPE_WIFI) {
                     source = AppConstants.TYPE_WIFI;
@@ -63,7 +63,7 @@ public class Service extends IntentService {
 
             }
             if (intentType.contentEquals("reboot")) {
-                Log.d("service", "reboot");
+             //   Log.d("service", "reboot");
                 //Do reboot stuff
                 //handle other types of callers, like a notification_main.
                 String org, city, country, extIPAdd;
