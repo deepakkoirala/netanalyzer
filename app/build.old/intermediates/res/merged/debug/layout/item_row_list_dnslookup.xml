@@ -1,0 +1,100 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:orientation="vertical"
+    android:padding="3dp">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/count"
+            style="@android:style/TextAppearance.Large"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="1"
+
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/name"
+            style="@android:style/TextAppearance.Medium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_weight="0.3"
+
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="www.thisisaverylongdnsnameexample.com"
+            android:textColor="#000" />
+
+        <ImageView
+            android:id="@+id/ivLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"
+            android:contentDescription="View"
+            android:gravity="right"
+
+            android:src="@android:drawable/ic_menu_mylocation" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/ip"
+            style="@android:style/TextAppearance.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="5dp"
+            android:text="192.168.1.1"
+
+            />
+
+        <TextView
+            android:id="@+id/isp"
+            style="@android:style/TextAppearance.Small"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="TPG Internet"
+
+
+            />
+
+        <TextView
+            android:id="@+id/location"
+            style="@android:style/TextAppearance.Small"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Hurstvillie, Australia"
+
+
+            />
+
+        <TextView
+            android:id="@+id/date"
+            style="@android:style/TextAppearance.Small"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Sat Nov 8 14:55 2015 GMT +11:00"
+
+
+            />
+    </LinearLayout>
+
+</LinearLayout><!-- From: file:/C:/Users/Sujan%20Thapa/Documents/AndroidStudioWorkspace/NetAnalyzerPro/app/src/main/res/layout/item_row_list_dnslookup.xml -->

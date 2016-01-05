@@ -42,16 +42,22 @@ import com.thapasujan5.netanalzyerpro.ActionMenu.RateApp;
 import com.thapasujan5.netanalzyerpro.ActionMenu.ShareApp;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnapShot;
 import com.thapasujan5.netanalzyerpro.DataStore.ViewPagerAdapter;
+import com.thapasujan5.netanalzyerpro.Notification.Notify;
 import com.thapasujan5.netanalzyerpro.PingService.FabPing;
 import com.thapasujan5.netanalzyerpro.Tools.CheckDigit;
 import com.thapasujan5.netanalzyerpro.Tools.Clipboard;
 import com.thapasujan5.netanalzyerpro.Tools.ConnectionDetector;
 import com.thapasujan5.netanalzyerpro.Tools.IpMac;
+import com.thapasujan5.netanalzyerpro.Tools.NetworkUtil;
 import com.thapasujan5.netanalzyerpro.Tools.ShowToast;
 import com.thapasujan5.netanalzyerpro.Tools.UserFunctions;
 import com.thapasujan5.netanalzyerpro.Tools.ZoomOutPageTransformer;
+import com.thapasujan5.netanalzyerpro.Weather.WeatherUpdater;
 
 import org.json.JSONObject;
+
+import java.util.Date;
+import java.util.Timer;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -71,7 +77,6 @@ public class MainActivity extends AppCompatActivity
     public static TextView tvInfo;
     ImageView navLogo, navSetting;
     SharedPreferences.Editor editor;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +122,16 @@ public class MainActivity extends AppCompatActivity
         navigationView.getMenu().getItem(1).setChecked(true);
         new AboutWhatsNew(this); //Run at first install
         initialize();
+        if (NetworkUtil.getConnectivityStatus(this) == AppConstants.TYPE_WIFI) {
+            new Notify(this, AppConstants.TYPE_WIFI);
+        } else if (NetworkUtil.getConnectivityStatus(this) == AppConstants.TYPE_MOBILE) {
+
+        } else if (NetworkUtil.getConnectivityStatus(this) == AppConstants.TYPE_NOT_CONNECTED) {
+            new Notify(this);
+        }
+        new Timer().scheduleAtFixedRate(new WeatherUpdater(getApplicationContext()), new Date(), AppConstants.WEATHER_UPDATE_DURATION); //1Hour
     }
+
 
     private void changeColorSate(NavigationView navigationView) {
         ColorStateList textStateList = new ColorStateList(

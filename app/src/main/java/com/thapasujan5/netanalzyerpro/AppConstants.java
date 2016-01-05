@@ -23,10 +23,15 @@ public class AppConstants {
     public static String col_item_time_zone = "time_zone";
 
     public static String ip_ip = "http://209.58.180.196/json/";
+    public static String url_weather_api = "http://162.243.58.21/data/2.5/weather?units=metric&cnt=7&lang=en&appid=68fddab87d63335009484f1a9f788026&q=";
+    public static String url_weather_icon = "http://162.243.58.21/img/w/";
 
     public static final int TYPE_WIFI = 1;
     public static final int TYPE_MOBILE = 2;
     public static final int TYPE_NOT_CONNECTED = 0;
 
+    public static final int MAX_SIGNAL_DBM_VALUE = 31;
+    public static final int UNKNOW_CODE = 99;
+    public static final long WEATHER_UPDATE_DURATION = 60 * 60000; //1hour because api is renewed every hour.
 
 }

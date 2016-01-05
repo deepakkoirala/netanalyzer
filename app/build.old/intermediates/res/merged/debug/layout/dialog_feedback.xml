@@ -1,0 +1,80 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="#fff"
+    android:orientation="vertical"
+    tools:context="app.MainActivity">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:background="@drawable/dialog_bg"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:contentDescription="Title Image"
+            android:src="@mipmap/about"></ImageView>
+
+        <TextView
+            android:id="@+id/titleText"
+            style="@android:style/TextAppearance.Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            android:text="Report"
+            android:textColor="#fff"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/nav_bar_divider"></View>
+
+    <EditText
+        android:id="@+id/etSubject"
+        style="@android:style/TextAppearance.Small"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:cursorVisible="true"
+        android:gravity="center"
+        android:hint="@string/feedbackSubject"
+        android:padding="10dp"
+        android:singleLine="true"
+        android:textColor="@color/black_overlay" />
+
+    <EditText
+        android:id="@+id/etMessage"
+        style="@android:style/TextAppearance.Small"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:hint="@string/feedbackDetails"
+        android:padding="10dp"
+        android:singleLine="true"
+        android:textColor="#000" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnSendFeedback"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Submit"
+            android:textSize="@dimen/dialogButtonTextSize" />
+    </LinearLayout>
+
+</LinearLayout><!-- From: file:/C:/Users/Sujan%20Thapa/Documents/AndroidStudioWorkspace/NetAnalyzerPro/app/src/main/res/layout/dialog_feedback.xml -->

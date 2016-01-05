@@ -32,6 +32,7 @@ import com.thapasujan5.netanalzyerpro.AppConstants;
 import com.thapasujan5.netanalzyerpro.MainActivity;
 import com.thapasujan5.netanalzyerpro.Tools.Clipboard;
 import com.thapasujan5.netanalzyerpro.Tools.ConnectionDetector;
+import com.thapasujan5.netanalzyerpro.Tools.DataUtil;
 import com.thapasujan5.netanalzyerpro.Tools.GetDeviceIP;
 import com.thapasujan5.netanalzyerpro.Tools.NetworkUtil;
 
@@ -52,8 +53,7 @@ public class Data extends Fragment implements View.OnLongClickListener {
     protected SwipeRefreshLayout swipeRefreshLayout;
     ConnectivityManager cm;
     TelephonyManager telephonyManager;
-    public int MAX_SIGNAL_DBM_VALUE = 31;
-    public static final int UNKNOW_CODE = 99;
+
     DhcpInfo dhcp;
     SharedPreferences sharedPreferences;
     boolean once = false;
@@ -73,7 +73,7 @@ public class Data extends Fragment implements View.OnLongClickListener {
         rootView = inflater.inflate(R.layout.fragment_data, container, false);
         try {
             initialize();
-            if (isAirplaneModeOn(getContext())) {
+            if (new DataUtil(getContext()).isAirplaneModeOn()) {
                 tvNtName.setText("Airplane Mode.");
                 alertAirplaneMode(getContext());
             }
@@ -143,16 +143,6 @@ public class Data extends Fragment implements View.OnLongClickListener {
         setupValues();
     }
 
-    @SuppressWarnings("deprecation")
-    private static boolean isAirplaneModeOn(Context context) {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
-        /* API 17 and above */
-            return Settings.Global.getInt(context.getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
-        } else {
-        /* below */
-            return Settings.System.getInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) != 0;
-        }
-    }
 
     public class AndroidPhoneStateListener extends PhoneStateListener {
 
@@ -160,13 +150,13 @@ public class Data extends Fragment implements View.OnLongClickListener {
         @Override
         public void onSignalStrengthsChanged(SignalStrength signalStrength) {
             super.onSignalStrengthsChanged(signalStrength);
-            if (null != signalStrength && signalStrength.getGsmSignalStrength() != UNKNOW_CODE) {
+            if (null != signalStrength && signalStrength.getGsmSignalStrength() != AppConstants.UNKNOW_CODE) {
 
 
                 int SignalStrength_ASU = signalStrength.getGsmSignalStrength(); // -> asu
                 int SignalStrength_dBm = (2 * SignalStrength_ASU) - 113; // -> dBm
 
-                int signalStrengthPercent = calculateSignalStrengthInPercent(signalStrength.getGsmSignalStrength());
+                int signalStrengthPercent = new DataUtil(getContext()).calculateSignalStrengthInPercent(signalStrength.getGsmSignalStrength());
                 tvPercent.setText(signalStrengthPercent + "%");
 
                 tvSignalStrength.setText(SignalStrength_dBm + "dB " + SignalStrength_ASU + "asu");
@@ -177,10 +167,6 @@ public class Data extends Fragment implements View.OnLongClickListener {
 
             }
         }
-    }
-
-    private int calculateSignalStrengthInPercent(int signalStrength) {
-        return (int) ((float) signalStrength / MAX_SIGNAL_DBM_VALUE * 100);
     }
 
 
@@ -216,7 +202,7 @@ public class Data extends Fragment implements View.OnLongClickListener {
 
 
     private void setupValues() throws Exception {
-        if (isAirplaneModeOn(getContext()) == false) {
+        if (new DataUtil(getContext()).isAirplaneModeOn() == false) {
 
             //setup values now
             tvNtName.setText(telephonyManager.getNetworkOperatorName());
@@ -259,7 +245,7 @@ public class Data extends Fragment implements View.OnLongClickListener {
     }
 
     private void updateAirplaneModeValues() {
-        Toast.makeText(getContext().getApplicationContext(), "Airplane mode active.", 500).show();
+        Toast.makeText(getContext().getApplicationContext(), "Airplane mode active.", Toast.LENGTH_SHORT).show();
         tvNtName.setText("Airplane Mode.");
         tvNtName.setVisibility(View.VISIBLE);
         tvNtType.setVisibility(View.INVISIBLE);
@@ -332,9 +318,9 @@ public class Data extends Fragment implements View.OnLongClickListener {
         } else if (telephonyManager.getPhoneType() == TelephonyManager.PHONE_TYPE_NONE) {
             SimType = "None";
         }
-        tvNtName.setText(telephonyManager.getNetworkOperatorName());
+        tvNtName.setText(new DataUtil(getContext()).getOperatorName());
         tvSimType.setText(SimType);
-        tvPhone.setText(telephonyManager.getLine1Number() + "");
+        tvPhone.setText(new DataUtil(getContext()).getLine1Number());
         tvImei.setText(telephonyManager.getDeviceId() + "");
         tvImeisv.setText(telephonyManager.getDeviceSoftwareVersion());
         tvSimSerialNo.setText(telephonyManager.getSimSerialNumber().toString());
@@ -479,7 +465,7 @@ public class Data extends Fragment implements View.OnLongClickListener {
         @Override
         public void onRefresh() {
             once = false;
-            if (isAirplaneModeOn(getContext()) == false) {
+            if (new DataUtil(getContext()).isAirplaneModeOn() == false) {
                 try {
                     if (new ConnectionDetector(getContext()).isConnectingToInternet()) {
                         ((MainActivity) getContext()).reValidate();
@@ -505,7 +491,7 @@ public class Data extends Fragment implements View.OnLongClickListener {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                boolean isEnabled = isAirplaneModeOn(context);
+                boolean isEnabled = new DataUtil(getContext()).isAirplaneModeOn();
                 if (isEnabled == true) {
                     updateAirplaneModeValues();
                     setSettings(context, isEnabled ? 1 : 0);

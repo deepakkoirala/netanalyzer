@@ -1,5 +1,7 @@
 package com.thapasujan5.netanalzyerpro.Tools;
 
+import android.text.format.Time;
+
 import org.json.JSONObject;
 
 import java.util.concurrent.TimeUnit;
@@ -20,6 +22,7 @@ public class DayHourMinSec {
             if (day != 0) {
                 jsonObject.put("days", Integer.toString(day) + " Day ");
             } else if (day == 1) {
+
                 jsonObject.put("days", Integer.toString(day) + " Days ");
             } else {
                 jsonObject.put("days", "");

@@ -13,7 +13,8 @@
         android:layout_margin="10dp"
         android:layout_marginRight="5dp"
         android:contentDescription="Icon"
-        android:src="@mipmap/ic_facebook" />
+        android:src="@mipmap/ic_facebook"
+        android:tint="@color/app_theme_foreground" />
 
     <TextView
         android:id="@+id/name"
@@ -21,6 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Default Text" />
+        android:text="Default Text"
+        android:textColor="@color/colorPrimary" />
 
 </LinearLayout>

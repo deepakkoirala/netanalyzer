@@ -16,7 +16,7 @@
     <string name="ivClearDesc">Clear</string>
     <string name="ivShareDesc">Share</string>
     <string name="ivCopyDesc">Copy</string>
-    <string name="newFeatures">- Minor Fixes.</string>
+    <string name="newFeatures">- New Look and Feel.\n- WiFi and DHCP in Notification.\n- Weather Feed in Notification.\n- Network Discovery.\n- Performance Improvements.</string>
     <string name="oops_something_went_wrong_try_in_a_while_">Oops! We can\'t figure out what\'s that.</string>
     <string name="feedbackSubject">Subject of Feedback</string>
     <string name="about_content"><b><u>Developer</u></b>\nSujan Thapa\nSydney, Australia\n+61452065052\nthapasujan5@gmail.com</string>
@@ -125,6 +125,10 @@
     <string name="country">country</string>
     <string name="extIpAdd">extIpAdd</string>
     <string name="intIp">intIp</string>
+    <string name="main_weather">main_weather</string>
+    <string name="icon_weather">icon_weather</string>
+    <string name="temp_weather">temp_weather</string>
+    <string name="name_weather">name_weather</string>
 
 </resources>
 

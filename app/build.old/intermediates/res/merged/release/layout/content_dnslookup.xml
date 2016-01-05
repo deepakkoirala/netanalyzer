@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <LinearLayout
+        android:id="@+id/llextip"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/extip"
+            style="@android:style/TextAppearance.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="15dp"
+            android:gravity="center"
+            android:text="@string/isp_check"
+            android:textColor="#99ff33"
+            android:visibility="visible" />
+
+        <ProgressBar
+            android:id="@+id/pbExip"
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:gravity="center"
+            android:visibility="visible" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/container"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/llextip">
+
+        <TextView
+            android:id="@+id/header"
+            style="@android:style/TextAppearance.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:paddingBottom="0dp"
+            android:text="@string/EditTextHeader"
+            android:textColor="#000"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:id="@+id/llinput"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/header"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/input"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                android:gravity="center"
+                android:hint="@string/HintSearchBox"
+                android:imeOptions="actionDone"
+                android:singleLine="true"
+                android:textColor="@color/colorPrimary"
+                android:textColorHighlight="#00ff00"
+                android:textColorHint="@color/light_gray"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/find"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+
+                android:contentDescription="@string/ivSearchDesc"
+                android:gravity="center"
+                android:src="@drawable/search"
+                android:tint="@color/colorPrimary" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/llinput"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/count"
+                style="@android:style/TextAppearance.Medium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:selectAllOnFocus="true"
+                android:text="@string/tvEntriesText"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/clearlist"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:contentDescription="@string/ivClearDesc"
+                android:gravity="center"
+                android:src="@drawable/clean"
+
+                android:tint="@color/colorPrimary" />
+
+            <ImageView
+                android:id="@+id/share"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:contentDescription="@string/ivShareDesc"
+                android:gravity="center"
+                android:src="@drawable/share"
+
+                android:tint="@color/colorPrimary" />
+
+            <ImageView
+                android:id="@+id/copy"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:contentDescription="@string/ivCopyDesc"
+                android:gravity="center"
+                android:src="@drawable/copy"
+                android:tint="@color/colorPrimary" />
+        </LinearLayout>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/tools">
+
+            <ListView
+                android:id="@+id/listview"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/tools"
+
+                android:divider="@drawable/nav_bar_divider"
+                android:dividerHeight="1dp"
+                android:listSelector="@color/colorPrimary" />
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <RelativeLayout
+            android:id="@+id/rvPB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:visibility="visible">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:padding="10dp"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/tvInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="You have no saved searches yet ! Enable Cellular Data or WIFI first to start tracking the ISPs." />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>
+<!-- From: file:/C:/Users/Sujan%20Thapa/Documents/AndroidStudioWorkspace/NetAnalyzerPro/app/src/main/res/layout/content_dnslookup.xml -->

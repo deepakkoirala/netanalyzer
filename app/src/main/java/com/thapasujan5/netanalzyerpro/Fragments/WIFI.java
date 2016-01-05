@@ -249,7 +249,7 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
             }
 
             //Fill Router Info
-            String mac = tvSSID.getText().toString();
+            String mac = new WifiUtil(getContext()).getMacAddress();
             tvRouterMac.setText(mac);
             tvRouterMac.setVisibility(View.VISIBLE);
             jsonObject.put(getString(R.string.mac), mac);

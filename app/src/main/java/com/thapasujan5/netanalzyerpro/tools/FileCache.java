@@ -1,8 +1,11 @@
 package com.thapasujan5.netanalzyerpro.Tools;
 
-import java.io.File;
-
 import android.content.Context;
+import android.util.Log;
+
+import com.thapasujan5.netanalyzerpro.R;
+
+import java.io.File;
 
 public class FileCache {
 
@@ -14,7 +17,7 @@ public class FileCache {
                 android.os.Environment.MEDIA_MOUNTED))
             cacheDir = new File(
                     android.os.Environment.getExternalStorageDirectory(),
-                    "LMS");
+                    context.getResources().getString(R.string.app_name));
         else
             cacheDir = context.getCacheDir();
         if (!cacheDir.exists())
@@ -22,14 +25,29 @@ public class FileCache {
     }
 
     public File getFile(String url) {
-        // I identify images by hashcode. Not a perfect solution, good for the
-        // demo.
+
         String filename = String.valueOf(url.hashCode());
         // Another possible solution (thanks to grantland)
         // String filename = URLEncoder.encode(url);
+        // String filename = url.substring(url.lastIndexOf("/") + 1,
+        // url.lastIndexOf("."))
+        // + "_" + String.valueOf(url.hashCode())
+        // +GetExtension.GetFileExtension(url);
         File f = new File(cacheDir, filename);
+        Log.d("FileCache", "Returned:" + url);
         return f;
 
+    }
+
+    public boolean deleteFile(String filename) {
+
+        boolean result = false;
+        Log.d("FileCache", "Inside deletefile");
+        File f = getFile(filename);
+        if (f.delete()) {
+            result = true;
+        }
+        return result;
     }
 
     public void clear() {
@@ -40,4 +58,7 @@ public class FileCache {
             f.delete();
     }
 
+    public File[] listallFiles() {
+        return cacheDir.listFiles();
+    }
 }

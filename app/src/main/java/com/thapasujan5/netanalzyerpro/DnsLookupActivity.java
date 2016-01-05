@@ -49,7 +49,6 @@ import com.thapasujan5.netanalzyerpro.DataStore.ItemsAdapter;
 import com.thapasujan5.netanalzyerpro.DataStore.ReportChoices;
 import com.thapasujan5.netanalzyerpro.DataStore.ReportChoicesAdapter;
 import com.thapasujan5.netanalzyerpro.Database.DAO;
-import com.thapasujan5.netanalzyerpro.Notification.Notify;
 import com.thapasujan5.netanalzyerpro.PingService.PingRequest;
 import com.thapasujan5.netanalzyerpro.Tools.CheckDigit;
 import com.thapasujan5.netanalzyerpro.Tools.CheckNet;
@@ -166,6 +165,7 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
             listview.setOnItemClickListener(this);
             listview.setOnItemLongClickListener(this);
             listview.setAdapter(adapterMain);
+            ;
 
             pbExip = (ProgressBar) findViewById(R.id.pbExip);
             pbMain = (ProgressBar) findViewById(R.id.progressBar);
@@ -366,26 +366,28 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
     public boolean onItemLongClick(AdapterView<?> parent, View view,
                                    int position, long id) {
         //clicked Item
+
         view.setBackgroundColor(Color.parseColor("#00ffffff"));
         final Items myItem = dbItems.get(position);
-
+//        TextView name = (TextView) view.findViewById(R.id.name);
+//        name.setTextColor(this.getResources().getColor(R.color.app_theme_background));
         //Possible Menus
         String[] choices = {"Open " + myItem.ip,
                 "Copy " + myItem.ip, "Export data... ", "Remove from list",
                 "Ping " + myItem.ip, "View on Map", "Details..."};
         //Finalized MenuItmes
         ArrayList<ReportChoices> choice = new ArrayList<ReportChoices>();
-        choice.add(new ReportChoices(choices[0], android.R.drawable.ic_menu_send));
+        choice.add(new ReportChoices(choices[0], R.mipmap.open));
         choice.add(new ReportChoices(choices[1],
-                android.R.drawable.ic_menu_edit));
+                R.mipmap.copy_content));
         choice.add(new ReportChoices(choices[2],
-                android.R.drawable.ic_menu_add));
+                R.mipmap.importexport));
         choice.add(new ReportChoices(choices[3],
-                android.R.drawable.ic_menu_delete));
-        choice.add(new ReportChoices(choices[4], android.R.drawable.ic_menu_revert));
-        choice.add(new ReportChoices(choices[5], android.R.drawable.ic_menu_mapmode));
+                R.mipmap.delete));
+        choice.add(new ReportChoices(choices[4], R.mipmap.merge));
+        choice.add(new ReportChoices(choices[5], R.mipmap.place));
         choice.add(new ReportChoices(choices[6],
-                android.R.drawable.ic_menu_more));
+                R.mipmap.details));
 
         //Link model(adapter) with datasource (choice)
         ReportChoicesAdapter adapter = new ReportChoicesAdapter(this, R.layout.item_row_context_menu,

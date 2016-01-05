@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:layout_weight="0.3"
+
             android:ellipsize="end"
             android:singleLine="true"
             android:text="www.thisisaverylongdnsnameexample.com"
