@@ -20,18 +20,19 @@ import com.thapasujan5.netanalzyerpro.PingService.PingRequest;
 public class FabPortScan {
     public FabPortScan(final Context context) {
         AlertDialog.Builder d = new AlertDialog.Builder(context);
-        d.setTitle("Quick Ping Service");
+        d.setTitle("Quick Port Scan Service");
 
         final EditText editText = new EditText(context);
         editText.setHint("Enter DNS or IP ");
         editText.setSingleLine();
         editText.setGravity(Gravity.CENTER);
         d.setView(editText);
-        d.setPositiveButton("Ping", new DialogInterface.OnClickListener() {
+        d.setPositiveButton("Scan", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (editText.getText().toString().trim().length() > 0) {
-                    new PingRequest(editText.getText().toString().trim(), context).execute();
+                    new PortScanRequest(editText.getText().toString().trim(), context).execute();
+                    //new FabPortScan(editText.getText().toString().trim(), context).execute();
                     dialog.dismiss();
                 } else {
                     Toast.makeText(context, "Address required !", Toast.LENGTH_SHORT).show();

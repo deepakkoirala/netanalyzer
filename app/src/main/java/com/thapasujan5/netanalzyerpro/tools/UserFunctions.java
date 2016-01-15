@@ -30,7 +30,12 @@ public class UserFunctions {
     }
 
     public JSONObject getWeatherInfo(String city, String country) {
-        JSONObject json = jsonParser.getJSONFromUrl(AppConstants.url_weather_api + city + "," + country);
+        JSONObject json = jsonParser.getJSONFromUrl(AppConstants.url_weather_api + "&q=" + city + "," + country);
+        return json;
+    }
+
+    public JSONObject getWeatherInfoLatLon(String lat, String lon) {
+        JSONObject json = jsonParser.getJSONFromUrl(AppConstants.url_weather_api + "&lat=" + lat + "&lon=" + lon);
         return json;
     }
 }

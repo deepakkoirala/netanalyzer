@@ -32,6 +32,8 @@ public class JSONParser {
             URL obj = new URL(url);
             HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
             conn.setRequestMethod("GET");
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(5000);
             is = conn.getInputStream();
 
         } catch (UnsupportedEncodingException e) {

@@ -33,7 +33,6 @@ public class AboutWhatsNew {
 
     private void runCode() {
 
-
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if (check == false) {
             SharedPreferences.Editor editor = prefs.edit();

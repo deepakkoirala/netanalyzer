@@ -13,34 +13,34 @@ import com.thapasujan5.netanalyzerpro.R;
 
 import java.util.ArrayList;
 
-public class SnackBarAdapter extends ArrayAdapter<ReportChoices> {
+public class SnackBarAdapter extends ArrayAdapter<SnackBarItems> {
 
-	Context context;
-	int layoutResourceId;
-	ArrayList<ReportChoices> data = null;
+    Context context;
+    int layoutResourceId;
+    ArrayList<SnackBarItems> data = null;
 
-	public SnackBarAdapter(Context context, int layoutResourceId,
-						   ArrayList<ReportChoices> data) {
+    public SnackBarAdapter(Context context, int layoutResourceId,
+                           ArrayList<SnackBarItems> data) {
 
-		super(context, layoutResourceId, data);
-		this.layoutResourceId = layoutResourceId;
-		this.context = context;
-		this.data = data;
-	}
+        super(context, layoutResourceId, data);
+        this.layoutResourceId = layoutResourceId;
+        this.context = context;
+        this.data = data;
+    }
 
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		View row = convertView;
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View row = convertView;
 
-		if (row == null) {
-			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-			row = inflater.inflate(layoutResourceId, parent, false);
-		}
+        if (row == null) {
+            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+            row = inflater.inflate(layoutResourceId, parent, false);
+        }
 
-		ReportChoices i = data.get(position);
+        SnackBarItems i = data.get(position);
 
-		((ImageView) row.findViewById(R.id.icon)).setImageResource(i.icon);
-		((TextView) row.findViewById(R.id.name)).setText(i.name);
-		return row;
-	}
+        ((ImageView) row.findViewById(R.id.icon)).setImageResource(i.icon);
+        ((TextView) row.findViewById(R.id.name)).setText(i.name);
+        return row;
+    }
 }

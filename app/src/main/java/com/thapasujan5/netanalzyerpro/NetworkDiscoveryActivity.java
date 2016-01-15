@@ -8,14 +8,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -27,33 +26,40 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdView;
 import com.thapasujan5.netanalyzerpro.R;
+import com.thapasujan5.netanalzyerpro.ActionMenu.ShowBannerAd;
+import com.thapasujan5.netanalzyerpro.ActionMenu.SnackBarActions;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnapShot;
 import com.thapasujan5.netanalzyerpro.DataStore.ItemsDiscovered;
 import com.thapasujan5.netanalzyerpro.DataStore.ItemsDiscoveredAdapter;
 import com.thapasujan5.netanalzyerpro.Fragments.WIFI;
-import com.thapasujan5.netanalzyerpro.PingService.FabPing;
+import com.thapasujan5.netanalzyerpro.Notification.Notify;
 import com.thapasujan5.netanalzyerpro.PingService.PingRequest;
+import com.thapasujan5.netanalzyerpro.PortScanner.PortScanRequest;
 import com.thapasujan5.netanalzyerpro.Tools.Clipboard;
 import com.thapasujan5.netanalzyerpro.Tools.ConnectionDetector;
 import com.thapasujan5.netanalzyerpro.Tools.DateTimeFormatted;
-import com.thapasujan5.netanalzyerpro.Tools.IpMac;
 import com.thapasujan5.netanalzyerpro.Tools.NetworkUtil;
 
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class NetworkDiscoveryActivity extends AppCompatActivity {
     ItemsDiscoveredAdapter adapter;
@@ -62,11 +68,12 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
     JSONObject jsonObject;
 
     SwipeRefreshLayout swipeRefreshLayout;
-    TextView tvSsid, tvIp, tvMac, tvRouterip, tvPercent, tvInfo;
+    TextView tvSsid, tvMac, tvRouterip, tvPercent, tvInfo, tvChannel;
     Switch aSwitch;
     ProgressBar progressBar;
+    TextView tvScanPercent;
     ImageView ivCancel;
-    LinearLayout llPb;
+    RelativeLayout llPb;
 
     WifiManager wifiManager;
     BroadcastReceiver receiver;
@@ -75,14 +82,18 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     boolean once = false;
-    int ttl = 200, timeout = 2000;
-
+    int ttl = 64;
+    NetworkDiscovery ns;
+    int[] colors = {Color.RED, Color.BLUE, Color.GREEN, Color.DKGRAY, Color.MAGENTA, Color.BLACK};
+    Random r;
+    AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_network_discovery);
+        adView = (AdView) findViewById(R.id.adView);
+        new ShowBannerAd(this, adView);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -90,20 +101,18 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Perform Quick Ping from here.", Snackbar.LENGTH_SHORT)
-                        .setAction("Continue", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                new FabPing(NetworkDiscoveryActivity.this);
-                            }
-                        }).show();
+                new SnackBarActions(NetworkDiscoveryActivity.this, view);
             }
         });
-
+        r = new Random();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         init();
         restoreWifiDetails();
         setUpSubTitle();
+        if (sharedPreferences.getBoolean(getString(R.string.startup_scan), false) == true) {
+            ns = new NetworkDiscovery(this);
+            ns.execute();
+        }
 
     }
 
@@ -113,21 +122,24 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(adapter);
         listView.setOnItemLongClickListener(ItemLongClicked);
-        //View Init
-        tvSsid = (TextView) findViewById(R.id.tvSsid);
+        //View Locate
+        tvSsid = (TextView) findViewById(R.id.tvNetworkName);
         tvPercent = (TextView) findViewById(R.id.tvPercentage);
-        tvRouterip = (TextView) findViewById(R.id.tvRouterIp);
-        tvMac = (TextView) findViewById(R.id.tvMac);
+        tvRouterip = (TextView) findViewById(R.id.tvIp);
+        tvMac = (TextView) findViewById(R.id.tvNetworkType);
         aSwitch = (Switch) findViewById(R.id.tbWifiSwitch);
         aSwitch.setOnCheckedChangeListener(WifiSwitchChanged);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(SwipeListener);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        llPb = (LinearLayout) findViewById(R.id.llPb);
+        llPb = (RelativeLayout) findViewById(R.id.llPb);
         llPb.setVisibility(View.GONE);
+        tvScanPercent = (TextView) findViewById(R.id.tvScanPercent);
+        tvScanPercent.setText("");
         ivCancel = (ImageView) findViewById(R.id.ivCancel);
         ivCancel.setOnClickListener(ScanCancelled);
         tvInfo = (TextView) findViewById(R.id.tvInfo);
+        tvChannel = (TextView) findViewById(R.id.tvChannel);
         if (items.size() > 1) {
             tvInfo.setVisibility(View.GONE);
         } else {
@@ -137,6 +149,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
         wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        editor = sharedPreferences.edit();
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -155,70 +168,15 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 
         registerReceiver(receiver, filter);
+
     }
 
-    ListView.OnItemLongClickListener ItemLongClicked = new AdapterView.OnItemLongClickListener() {
-        @Override
-        public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-            final ItemsDiscovered item = items.get(position);
-            AlertDialog.Builder alert = new AlertDialog.Builder(NetworkDiscoveryActivity.this);
-
-            String[] ContextMenuItems = {"Copy IP", "Copy Name", "Delete", "Ping"};
-            alert.setItems(ContextMenuItems, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    String result = null;
-                    switch (which) {
-                        case 0:
-                            if (Clipboard.copyToClipboard(NetworkDiscoveryActivity.this, item.ip))
-                                result = "Text Copied to Clipboard";
-                            break;
-                        case 1:
-                            if (Clipboard.copyToClipboard(NetworkDiscoveryActivity.this, item.dns))
-                                result = "Text Copied to Clipboard";
-                            break;
-                        case 2:
-                            items.remove(position);
-                            result = "Deleted";
-                            adapter.notifyDataSetChanged();
-                            break;
-                        case 3:
-                            new PingRequest(item.ip, NetworkDiscoveryActivity.this).execute();
-                            break;
-                    }
-                    if (result != null)
-                        Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
-                }
-            });
-            Dialog d = alert.create();
-            d.setTitle(item.dns);
-            d.show();
-            return false;
-        }
-    };
-
-    Switch.OnCheckedChangeListener WifiSwitchChanged = new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            final WifiManager wifi = (WifiManager) NetworkDiscoveryActivity.this.getSystemService(Context.WIFI_SERVICE);
-            if (isChecked) {
-                wifi.setWifiEnabled(true);
-
-            } else {
-                wifi.setWifiEnabled(false);
-            }
-        }
-    };
-    SwipeRefreshLayout.OnRefreshListener SwipeListener = new SwipeRefreshLayout.OnRefreshListener() {
-        @Override
-        public void onRefresh() {
-            if (wifiManager.isWifiEnabled() && NetworkUtil.getConnectivityStatus(NetworkDiscoveryActivity.this) == AppConstants.TYPE_WIFI) {
-                new NetworkDiscovery(NetworkDiscoveryActivity.this).execute();
-            } else {
-                WIFI.alertWifiStatus(NetworkDiscoveryActivity.this, swipeRefreshLayout);
-            }
-        }
-    };
+    @Override
+    protected void onResume() {
+        new Notify(this);
+        new ShowBannerAd(this, adView);
+        super.onResume();
+    }
 
     private void restoreWifiDetails() {
         jsonObject = new JSONObject();
@@ -232,22 +190,17 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
                         //Restore WIFI details to View now
                         tvSsid.setText(jsonObject.optString(getString(R.string.ssid), ""));
                         tvPercent.setText(jsonObject.optString(getString(R.string.percent), ""));
-                        if (Build.VERSION.SDK_INT < 23) {
-                            tvPercent.setTextAppearance(this, android.R.style.TextAppearance_Large);
-                        } else {
-                            tvPercent.setTextAppearance(android.R.style.TextAppearance_Large);
-                        }
+
                         tvPercent.setTextColor(getResources().getColor(R.color.app_theme_background));
                         tvRouterip.setText(jsonObject.optString(getString(R.string.routerip), ""));
                         tvMac.setText(jsonObject.optString(getString(R.string.mac), ""));
-
-
+                        tvChannel.setText(jsonObject.optString(getString(R.string.channel), ""));
                         //Save this json values for lastTimeValues()
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString(jsonObject.optString(getString(R.string.ssid)), "Check Connection");
                         editor.putString(jsonObject.optString(getString(R.string.routerip)), "");
                         editor.putString(jsonObject.optString(getString(R.string.mac)), "");
-                        editor.putString(getString(R.string.time), "Last Scan:" + System.currentTimeMillis() + "");
+                        editor.putString(jsonObject.optString(getString(R.string.channel)), "");
                         editor.apply();
                         editor.commit();
 
@@ -294,18 +247,17 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
 
     private void restoreLastValues(JSONObject jsonObject) {
         tvSsid.setText(sharedPreferences.getString(getString(R.string.ssid), "WIFI Disconnected"));
-        tvPercent.setText(DateTimeFormatted.getDate(Long.parseLong(sharedPreferences.getString(getString(R.string.time), (Long.parseLong(System.currentTimeMillis() + "") + ""))), "EEE MMM dd yyyy HH:mm"));
-        if (Build.VERSION.SDK_INT < 23) {
-            tvPercent.setTextAppearance(this, android.R.style.TextAppearance_Small);
-        } else {
-            tvPercent.setTextAppearance(android.R.style.TextAppearance_Small);
-        }
 
+        if (sharedPreferences.getString(getString(R.string.time), "null").contains("null")) {
+            tvPercent.setText("Last Scan: Not Scanned yet.");
+        } else {
+            String time = DateTimeFormatted.getDate(Long.parseLong(sharedPreferences.getString(getString(R.string.time), null)), "EEE MMM dd yyyy HH:mm");
+            tvPercent.setText("Last Scan:" + time);
+        }
         tvPercent.setTextColor(this.getResources().getColor(R.color.app_theme_background));
         tvMac.setText(sharedPreferences.getString(getString(R.string.mac), ""));
+        tvChannel.setText(sharedPreferences.getString(getString(R.string.channel), ""));
         tvRouterip.setText(sharedPreferences.getString(getString(R.string.routerip), ""));
-
-
     }
 
 
@@ -318,7 +270,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
                 return true;
         }
         if (id == R.id.scan) {
-            NetworkDiscovery ns = new NetworkDiscovery(this);
+            ns = new NetworkDiscovery(this);
             ns.execute();
         }
 
@@ -333,16 +285,13 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             llPb.setVisibility(View.GONE);
-            ttl = 1;
-            timeout = 1;
-            NetworkDiscovery ns = new NetworkDiscovery(NetworkDiscoveryActivity.this);
-            ns.cancelTask();
+            ns.cancel(true);
         }
     };
 
     private class NetworkDiscovery extends AsyncTask<Void, Integer, ItemsDiscovered> {
         Context context;
-
+        Process process;
 
         public NetworkDiscovery(Context context) {
             this.context = context;
@@ -350,39 +299,45 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            llPb.setVisibility(View.VISIBLE);
+            if (NetworkUtil.getConnectivityStatus(context) == AppConstants.TYPE_WIFI) {
 
-            setProgressBarIndeterminateVisibility(true);
-            items.clear();
-            if (items.size() > 1) {
-                tvInfo.setVisibility(View.GONE);
+                llPb.setVisibility(View.VISIBLE);
+                items.clear();
+                if (items.size() > 1) {
+                    tvInfo.setVisibility(View.GONE);
+                } else {
+                    tvInfo.setVisibility(View.VISIBLE);
+                }
+                progressBar.setMax(100);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(getString(R.string.time), System.currentTimeMillis() + "");
+                editor.apply();
+                editor.commit();
             } else {
-                tvInfo.setVisibility(View.VISIBLE);
+                WIFI.alertWifiStatus(NetworkDiscoveryActivity.this, swipeRefreshLayout);
+                return;
             }
-            progressBar.setMax(100);
             super.onPreExecute();
         }
 
-        public void cancelTask() {
-            cancel(true);
-            llPb.setVisibility(View.GONE);
-        }
 
         @Override
         protected void onCancelled() {
-            cancel(true);
             llPb.setVisibility(View.GONE);
+            if (swipeRefreshLayout.isRefreshing())
+                swipeRefreshLayout.setRefreshing(false);
             super.onCancelled();
         }
 
         @Override
         protected void onProgressUpdate(Integer... values) {
             double percent = (double) values[0] / (double) 255.0 * 100.0;
+            tvScanPercent.setText((new DecimalFormat("#.#").format(percent)) + "%" + "    " + values[0] + "/" + "255");
+            tvScanPercent.setTextColor(colors[r.nextInt(colors.length)]);
             progressBar.setProgress((int) percent);
-            if (items.size() > 1) {
+
+            if (items.size() > 0) {
                 tvInfo.setVisibility(View.GONE);
-            } else {
-                tvInfo.setVisibility(View.VISIBLE);
             }
             adapter.notifyDataSetChanged();
             super.onProgressUpdate(values);
@@ -396,21 +351,35 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
                         .getByInetAddress(InetAddress.getByName(jsonObject.optString(getString(R.string.routerip), "192.168.1.1")));
                 String addr = jsonObject.optString(getString(R.string.routerip), "192.168.1.1");
                 for (int i = 1; i <= 255; i++) {
+                    if (isCancelled()) {
+                        Log.d("NDA", "cancelled");
+                        break;
+                    }
                     // build the next IP address
                     addr = addr.substring(0, addr.lastIndexOf('.') + 1) + i;
                     InetAddress pingAddr = InetAddress.getByName(addr);
 
                     // set timeout and ttl for ping
                     Log.i("target", addr);
-                    if (isCancelled()) return null;
-                    if (i > 25) {
-                        ttl = 64;
-                        timeout = 50;
+                    String str = "";
+                    process = Runtime.getRuntime().exec(
+                            "/system/bin/ping -c 1 " + addr);
+                    BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(process.getInputStream()));
+                    int j;
+                    char[] buffer = new char[4096];
+                    StringBuffer output = new StringBuffer();
+                    while ((j = reader.read(buffer)) > 0) {
+
+                        output.append(buffer, 0, j);
                     }
-                    if (pingAddr.isReachable(iFace, ttl, timeout)) {
+                    reader.close();
+                    str = output.toString();
+                    if (str.contains("100%") == false) {
                         ItemsDiscovered item = new ItemsDiscovered(pingAddr.getHostName(), pingAddr.getHostAddress(), "");
                         items.add(item);
                     }
+                    process.destroy();
                     publishProgress(i);
                 }
             } catch (UnknownHostException ex) {
@@ -422,6 +391,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(ItemsDiscovered itemsDiscovered) {
+            restoreWifiDetails();
             if (items.size() > 1 == false) {
                 tvInfo.setVisibility(View.VISIBLE);
             } else {
@@ -452,18 +422,18 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
             if (new ConnectionDetector(this).isConnectingToInternet()) {
                 // Get Local IP either from WIFI or Data
                 // WIFI
-                String intIP = IpMac.getInternalIP(this);
+                String intIP = NetworkUtil.getIPAddress(true);
                 // Set Internal IP
                 if (intIP != null) {
                     if (intIP.length() > 7) {
                         ab.setSubtitle(Html.fromHtml("<fontcolor='#99ff00'><small>" +
-                                intIP + " " + IpMac.getDeviceMacAdd(this).toUpperCase() + "</small></fontcolor>"));
+                                intIP + " " + NetworkUtil.getMACAddress(getString(R.string.wlan0)).toUpperCase() + "</small></fontcolor>"));
                     }
                 } // Get Ex IP if network is connected
 
             } else {
                 ab.setSubtitle(Html.fromHtml("<fontcolor='#99ff00'><small>"
-                        + IpMac.getDeviceMacAdd(this).toUpperCase() + "</small</fontcolor>"));
+                        + NetworkUtil.getMACAddress(getString(R.string.wlan0)).toUpperCase() + "</small</fontcolor>"));
             }
             if (swipeRefreshLayout.isRefreshing()) {
                 swipeRefreshLayout.setRefreshing(false);
@@ -473,6 +443,72 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
         }
     }
 
+    ListView.OnItemLongClickListener ItemLongClicked = new AdapterView.OnItemLongClickListener() {
+        @Override
+        public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+            final ItemsDiscovered item = items.get(position);
+            AlertDialog.Builder alert = new AlertDialog.Builder(NetworkDiscoveryActivity.this);
+
+            String[] ContextMenuItems = {"Copy IP", "Copy Name", "Delete", "Ping", "Scan Ports"};
+            alert.setItems(ContextMenuItems, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String result = null;
+                    switch (which) {
+                        case 0:
+                            if (Clipboard.copyToClipboard(NetworkDiscoveryActivity.this, item.ip))
+                                result = "Text Copied to Clipboard";
+                            break;
+                        case 1:
+                            if (Clipboard.copyToClipboard(NetworkDiscoveryActivity.this, item.dns))
+                                result = "Text Copied to Clipboard";
+                            break;
+                        case 2:
+                            items.remove(position);
+                            result = "Deleted";
+                            adapter.notifyDataSetChanged();
+                            break;
+                        case 3:
+                            new PingRequest(item.ip, NetworkDiscoveryActivity.this).execute();
+                            break;
+                        case 4:
+                            new PortScanRequest(item.ip, NetworkDiscoveryActivity.this).execute();
+                    }
+                    if (result != null)
+                        Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+                }
+            });
+            Dialog d = alert.create();
+            d.setTitle(item.dns);
+            d.show();
+            return false;
+        }
+    };
+
+    Switch.OnCheckedChangeListener WifiSwitchChanged = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            final WifiManager wifi = (WifiManager) NetworkDiscoveryActivity.this.getSystemService(Context.WIFI_SERVICE);
+            if (isChecked) {
+                wifi.setWifiEnabled(true);
+
+            } else {
+                wifi.setWifiEnabled(false);
+            }
+        }
+    };
+    SwipeRefreshLayout.OnRefreshListener SwipeListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            if (wifiManager.isWifiEnabled() && NetworkUtil.getConnectivityStatus(NetworkDiscoveryActivity.this) == AppConstants.TYPE_WIFI) {
+                ns = new NetworkDiscovery(NetworkDiscoveryActivity.this);
+                ns.execute();
+            } else {
+                WIFI.alertWifiStatus(NetworkDiscoveryActivity.this, swipeRefreshLayout);
+            }
+        }
+    };
+
     @Override
     protected void onStop() {
         try {
@@ -481,5 +517,6 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
         } catch (Exception e) {
 
         }
+        super.onStop();
     }
 }

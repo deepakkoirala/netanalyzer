@@ -1,9 +1,12 @@
 package com.thapasujan5.netanalzyerpro.Tools;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.provider.Settings;
-import android.telephony.PhoneStateListener;
-import android.telephony.SignalStrength;
+import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 
 import com.thapasujan5.netanalzyerpro.AppConstants;
@@ -28,7 +31,6 @@ public class DataUtil {
     }
 
 
-
     public int calculateSignalStrengthInPercent(int signalStrength) {
         return (int) ((float) signalStrength / AppConstants.MAX_SIGNAL_DBM_VALUE * 100);
     }
@@ -46,7 +48,17 @@ public class DataUtil {
     }
 
     public String getLine1Number() {
-        return telephonyManager.getLine1Number().toString();
+        if (Build.VERSION.SDK_INT >= 23 &&
+                ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(context, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ((Activity) context).requestPermissions(new String[]{Manifest.permission.READ_SMS},
+                    1);
+        } else {
+            return telephonyManager.getLine1Number().toString();
+        }
+        return "";
     }
 
 }
+
+

@@ -1,6 +1,7 @@
 package com.thapasujan5.netanalzyerpro.Tools;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.File;
@@ -13,7 +14,7 @@ import java.net.URL;
 /**
  * Created by Sujan Thapa on 5/01/2016.
  */
-public class DownloadFileFromUrl implements Runnable {
+public class DownloadFileFromUrl extends AsyncTask<Void, Void, Void> {
     Context context;
     FileCache fileCache;
     String url;
@@ -27,12 +28,10 @@ public class DownloadFileFromUrl implements Runnable {
         imageLoader = new ImageLoader(context);
         this.url = url;
         memoryCache = new MemoryCache();
-        run();
     }
 
     @Override
-    public void run() {
-
+    protected Void doInBackground(Void... params) {
         File f = fileCache.getFile(url);
 
         try {
@@ -55,5 +54,6 @@ public class DownloadFileFromUrl implements Runnable {
             if (ex instanceof OutOfMemoryError)
                 memoryCache.clear();
         }
+        return null;
     }
 }

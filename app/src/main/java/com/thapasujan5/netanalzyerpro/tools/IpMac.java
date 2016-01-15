@@ -17,7 +17,7 @@ public class IpMac {
             intIP = wifiIP;
         } else {
             // Data
-            intIP = GetDeviceIP.getDeviceIP();
+            intIP = NetworkUtil.getIPAddress(true);
         }
         return intIP;
     }

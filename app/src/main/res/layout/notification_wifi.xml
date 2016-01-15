@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@color/colorPrimary">
 
     <ImageView
@@ -9,8 +9,7 @@
         android:layout_width="40dp"
         android:layout_height="20dp"
         android:layout_marginRight="2dp"
-        android:src="@mipmap/ic_launcher"
-        />
+        android:src="@mipmap/ic_launcher" />
 
     <TextView
         android:id="@+id/tvPercent"
@@ -21,6 +20,18 @@
         android:gravity="center"
         android:singleLine="true"
         android:text="100%"
+        android:textColor="#FFF"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/tvChanel"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvPercent"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="14s"
         android:textColor="#FFF"
         android:textSize="12sp" />
 

@@ -12,8 +12,12 @@
                 android:title="@string/title_dnslookup" />
             <item
                 android:id="@+id/nav_networkdiscovery"
-                android:icon="@mipmap/search"
+                android:icon="@mipmap/ic_network_check"
                 android:title="@string/title_networkdiscovery" />
+            <item
+                android:id="@+id/nav_portscanner"
+                android:icon="@mipmap/ic_computer"
+                android:title="@string/port_scanner" />
             <item
                 android:id="@+id/nav_ping"
                 android:icon="@mipmap/merge"
@@ -54,6 +58,10 @@
                 android:id="@+id/nav_settings"
                 android:icon="@drawable/ic_setting_dark"
                 android:title="@string/title_settings" />
+            <item
+                android:id="@+id/nav_clear_cache"
+                android:icon="@mipmap/ic_clear"
+                android:title="@string/clear_cache" />
             <item
                 android:id="@+id/nav_exit"
                 android:icon="@mipmap/exit_black"

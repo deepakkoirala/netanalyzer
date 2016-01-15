@@ -1,5 +1,13 @@
 apply plugin: 'com.android.application'
 
+def computeVersionName() {
+    return "1.3.6"
+}
+
+def computeVersionCode() {
+    return 37
+}
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.1"
@@ -8,9 +16,8 @@ android {
         applicationId "com.thapasujan5.netanalyzerpro"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 26
-        versionName "1.3.1"
-        
+        versionCode computeVersionCode()
+        versionName computeVersionName()
     }
     buildTypes {
         release {
@@ -18,13 +25,41 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors {
+        paid {
+            applicationId "com.thapasujan5.netanalyzerpro"
+            //buildConfigFields "public final static com.thapasujan5.netanalyzerpro.AppConstants.MonetizationType monetizationType = com.thapasujan5.netanalyzerpro.AppConstants.MonetizationType.PAID;"
+            minSdkVersion 15
+            targetSdkVersion 23
+            versionCode computeVersionCode()
+            versionName computeVersionName()
+
+        }
+        free {
+            applicationId "com.thapasujan5.serversearch"
+            // buildConfigFields "public final static com.thapasujan5.netanalyzerpro.AppConstants.MonetizationType monetizationType = com.thapasujan5.netanalyzerpro.AppConstants.MonetizationType.FREE;"
+            minSdkVersion 15
+            targetSdkVersion 23
+            versionCode computeVersionCode()
+            versionName computeVersionName()
+        }
+    }
+
 }
+
+
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile files('libs/acra-4.6.2.jar')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.0'
-    compile 'com.android.support:design:23.1.0'
-    compile 'com.google.android.gms:play-services:8.3.0'
-    compile 'com.android.support:support-v4:23.1.0'
+
+
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:design:23.1.1'
+    compile 'com.google.android.gms:play-services:8.4.0'
+    compile 'com.android.support:support-v4:23.1.1'
+    compile 'com.google.android.gms:play-services-ads:8.4.0'
+    compile 'com.google.android.gms:play-services-identity:8.4.0'
+    compile 'com.google.android.gms:play-services-gcm:8.4.0'
 }

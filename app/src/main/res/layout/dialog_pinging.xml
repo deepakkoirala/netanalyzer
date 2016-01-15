@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/dialog_bg"
+
     android:orientation="vertical"
     android:padding="10dp"
     tools:context="app.MainActivity">
@@ -14,11 +14,10 @@
 
         <TextView
             android:id="@+id/titleText"
-            style="@android:style/TextAppearance.Medium"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Pinging: 192.168.1.1"
-            android:textColor="#fff"></TextView>
+            android:textColor="#ff0000"></TextView>
     </LinearLayout>
 
     <View
@@ -36,8 +35,7 @@
         android:layout_marginTop="30dp"
         android:gravity="center"
         android:text="Please wait..."
-        android:textColor="#fff"
-        ></TextView>
+        android:textColor="@color/app_theme_foreground"></TextView>
 
     <ProgressBar
         android:id="@+id/pbPinging"
@@ -56,19 +54,21 @@
 
         <Button
             android:id="@+id/btnMinimize"
-
+            style="@android:style/Holo.Light.ButtonBar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Hide" />
+            android:text="Hide"
+            android:textColor="@color/app_theme_foreground" />
 
         <Button
             android:id="@+id/btnCancel"
-
+            style="@android:style/Holo.Light.ButtonBar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Cancel" />
+            android:text="Cancel"
+            android:textColor="@color/app_theme_foreground" />
 
     </LinearLayout>
 

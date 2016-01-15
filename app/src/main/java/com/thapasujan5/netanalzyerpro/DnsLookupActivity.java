@@ -17,7 +17,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -42,20 +41,25 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdView;
 import com.thapasujan5.netanalyzerpro.R;
+import com.thapasujan5.netanalzyerpro.ActionMenu.SetISP;
+import com.thapasujan5.netanalzyerpro.ActionMenu.ShowBannerAd;
+import com.thapasujan5.netanalzyerpro.ActionMenu.SnackBarActions;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnapShot;
 import com.thapasujan5.netanalzyerpro.DataStore.Items;
 import com.thapasujan5.netanalzyerpro.DataStore.ItemsAdapter;
 import com.thapasujan5.netanalzyerpro.DataStore.ReportChoices;
 import com.thapasujan5.netanalzyerpro.DataStore.ReportChoicesAdapter;
 import com.thapasujan5.netanalzyerpro.Database.DAO;
+import com.thapasujan5.netanalzyerpro.Notification.Notify;
 import com.thapasujan5.netanalzyerpro.PingService.PingRequest;
+import com.thapasujan5.netanalzyerpro.PortScanner.PortScanRequest;
 import com.thapasujan5.netanalzyerpro.Tools.CheckDigit;
 import com.thapasujan5.netanalzyerpro.Tools.CheckNet;
 import com.thapasujan5.netanalzyerpro.Tools.Clipboard;
 import com.thapasujan5.netanalzyerpro.Tools.ConnectionDetector;
 import com.thapasujan5.netanalzyerpro.Tools.DateTimeFormatted;
-import com.thapasujan5.netanalzyerpro.Tools.IpMac;
 import com.thapasujan5.netanalzyerpro.Tools.NetworkUtil;
 import com.thapasujan5.netanalzyerpro.Tools.ShowToast;
 import com.thapasujan5.netanalzyerpro.Tools.UserFunctions;
@@ -87,30 +91,32 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
     String extIPAdd;
     boolean intentServiceResult;
     SharedPreferences sharedpreferences;
+    SharedPreferences.Editor editor;
     NotificationManager nm;
     IntentFilter filter;
     protected SwipeRefreshLayout swipeRefreshLayout;
 
-
+    AdView adView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dnslookup);
+        adView = (AdView) findViewById(R.id.adView);
+        new ShowBannerAd(this, adView);
         Bundle fields = getIntent().getExtras();
         if (fields != null) {
             intentServiceResult = fields.getBoolean("isr");
         }
+        new ShowBannerAd(this,(AdView) findViewById(R.id.adView));
         initialize();
     }
 
     private void initialize() {
-        Log.i("f", "initialize");
         try {
             sharedpreferences = PreferenceManager
                     .getDefaultSharedPreferences(getBaseContext());
             nm = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-//            ActionBar actionBar = getActionBar();
-//            actionBar.setHomeButtonEnabled(true);
+            editor = sharedpreferences.edit();
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -121,7 +127,6 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
                 public void onReceive(Context context, Intent intent) {
                     Log.w("Network Listener", "Network Type Changed");
                     String status = NetworkUtil.getConnectivityStatusString(context);
-
                     reValidate();
                 }
             };
@@ -326,8 +331,9 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
                     city = json.getString("city");
                     country = json.getString("country");
                     data = true;
+                    SetISP.setISP(editor, DnsLookupActivity.this, extIPAdd, org, city, country);
                 } else if (json.getString("status").contentEquals("fail")) {
-
+                    SetISP.setISP(editor, DnsLookupActivity.this, extIPAdd, org, city, country);
                 }
 
             } catch (Exception e) {
@@ -344,12 +350,6 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
                 tvExIpArea.setText("External IP " + extIPAdd + ", " + org + " "
                         + city + ", " + country);
                 tvExIpArea.setVisibility(View.VISIBLE);
-//                if (sharedpreferences.getBoolean(getString(R.string.key_notification_sticky), true) == true) {
-//                    new Notify(DnsLookupActivity.this, extIPAdd, IpMac.getInternalIP(DnsLookupActivity.this), org, city, country);
-//                } else {
-//                    nm.cancel(0);
-//                    Log.i("notification_main", "notification_main cancelled from main");
-//                }
             } else {
                 if (connectionDetector.isConnectingToInternet()) {
                     tvExIpArea.setText("Limited Connectivity Found !");
@@ -369,12 +369,10 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
 
         view.setBackgroundColor(Color.parseColor("#00ffffff"));
         final Items myItem = dbItems.get(position);
-//        TextView name = (TextView) view.findViewById(R.id.name);
-//        name.setTextColor(this.getResources().getColor(R.color.app_theme_background));
-        //Possible Menus
+
         String[] choices = {"Open " + myItem.ip,
                 "Copy " + myItem.ip, "Export data... ", "Remove from list",
-                "Ping " + myItem.ip, "View on Map", "Details..."};
+                "Ping " + myItem.ip, "View on Map", "Details...", "Scan Ports"};
         //Finalized MenuItmes
         ArrayList<ReportChoices> choice = new ArrayList<ReportChoices>();
         choice.add(new ReportChoices(choices[0], R.mipmap.open));
@@ -388,13 +386,12 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
         choice.add(new ReportChoices(choices[5], R.mipmap.place));
         choice.add(new ReportChoices(choices[6],
                 R.mipmap.details));
+        choice.add(new ReportChoices(choices[7],
+                R.mipmap.ic_computer));
 
-        //Link model(adapter) with datasource (choice)
+
         ReportChoicesAdapter adapter = new ReportChoicesAdapter(this, R.layout.item_row_context_menu,
                 choice);
-
-        @SuppressWarnings("deprecation")
-
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setAdapter(adapter, new DialogInterface.OnClickListener() {
             @Override
@@ -472,6 +469,10 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
                     } else {
                         new ShowToast(getApplicationContext(), "No geo-location data found !", Color.WHITE, 0, Color.RED, Toast.LENGTH_SHORT, Gravity.BOTTOM);
                     }
+                }
+                if (which == 7) {
+                    //Port Scan
+                    new PortScanRequest(myItem.ip, DnsLookupActivity.this).execute();
                 }
                 if (which == 6) {
                     //Details
@@ -581,57 +582,9 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
         //Get the id of clicked item and decide function accordingly
         int id = arg0.getId();
         //Functions starts now
+
         if (id == R.id.fab) {
-            Snackbar.make(arg0, "Perform Quick Ping from here.", Snackbar.LENGTH_LONG)
-                    .setAction("Continue", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            AlertDialog.Builder d = new AlertDialog.Builder(DnsLookupActivity.this);
-                            d.setTitle("Quick Ping Service");
-
-                            final EditText editText = new EditText(DnsLookupActivity.this);
-                            editText.setHint("Enter DNS or IP ");
-                            editText.setSingleLine();
-                            editText.setGravity(Gravity.CENTER);
-                            d.setView(editText);
-                            d.setPositiveButton("Ping", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (editText.getText().toString().trim().length() > 0) {
-                                        new PingRequest(editText.getText().toString().trim(), DnsLookupActivity.this).execute();
-                                        dialog.dismiss();
-                                    } else {
-                                        Toast.makeText(DnsLookupActivity.this, "Address required !", Toast.LENGTH_SHORT).show();
-
-                                        editText.requestFocus();
-                                    }
-                                }
-                            });
-                            d.setNegativeButton("Close", null);
-
-
-                            editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                                @Override
-                                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                                    if ((actionId == EditorInfo.IME_ACTION_DONE)) {
-                                        InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                                        in.hideSoftInputFromWindow(editText.getApplicationWindowToken(),
-                                                InputMethodManager.HIDE_NOT_ALWAYS);
-                                        if (editText.getText().toString().trim().length() > 0) {
-                                            new PingRequest(editText.getText().toString().trim(), DnsLookupActivity.this).execute();
-                                        } else {
-                                            Toast.makeText(DnsLookupActivity.this, "Address required !", Toast.LENGTH_SHORT).show();
-                                            editText.requestFocus();
-                                        }
-                                        return true;
-                                    }
-                                    return false;
-                                }
-                            });
-                            final Dialog dialog = d.create();
-                            dialog.show();
-                        }
-                    }).show();
+            new SnackBarActions(this, arg0);
         }
 
         if (id == R.id.extip) {
@@ -790,8 +743,9 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     protected void onResume() {
-
         reValidate();
+        new Notify(this);
+        new ShowBannerAd(this, adView);
         super.onResume();
     }
 
@@ -803,18 +757,18 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
             if (connectionDetector.isConnectingToInternet()) {
                 // Get Local IP either from WIFI or Data
                 // WIFI
-                intIP = IpMac.getInternalIP(DnsLookupActivity.this);
+                intIP = NetworkUtil.getIPAddress(true);
                 // Set Internal IP
                 if (intIP != null) {
                     if (intIP.length() > 7) {
                         ab.setSubtitle(Html.fromHtml("<fontcolor='#99ff00'><small>" +
-                                intIP + " " + IpMac.getDeviceMacAdd(this).toUpperCase() + "</small></fontcolor>"));
+                                intIP + " " + NetworkUtil.getMACAddress(getString(R.string.wlan0)).toUpperCase() + "</small></fontcolor>"));
                     }
                 } // Get Ex IP if network is connected
                 new ExternalIPFinder().execute();
             } else {
                 ab.setSubtitle(Html.fromHtml("<fontcolor='#99ff00'><small>"
-                        + IpMac.getDeviceMacAdd(this).toUpperCase() + "</small</fontcolor>"));
+                        + NetworkUtil.getMACAddress(getString(R.string.wlan0)).toUpperCase() + "</small</fontcolor>"));
                 tvExIpArea.setText(R.string.no_connection);
                 tvExIpArea.setVisibility(View.VISIBLE);
             }
@@ -835,14 +789,10 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
                 onBackPressed();
                 return true;
         }
-
-
         if (id == R.id.snapshot) {
             new SnapShot(this, getWindow().getDecorView().getRootView());
             return true;
-
         }
-
         return super.onOptionsItemSelected(item);
     }
 

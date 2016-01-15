@@ -7,12 +7,13 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.thapasujan5.netanalyzerpro.R;
-import com.thapasujan5.netanalzyerpro.AppConstants;
-import com.thapasujan5.netanalzyerpro.Tools.NetworkUtil;
+import com.thapasujan5.netanalzyerpro.LocationServices.Locate;
 import com.thapasujan5.netanalzyerpro.Tools.UserFunctions;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.logging.Handler;
 
 /**
  * Created by Suzan on 11/7/2015.
@@ -41,64 +42,66 @@ public class Service extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-        try {
-            String intentType = intent.getExtras().getString("receiver");
-            if (intentType == null) return;
-            if (intentType.contentEquals("rssi_changed")) {
-              //  Log.d("service", "rssi_changed");
-                int source = -1;
-                if (NetworkUtil.getConnectivityStatus(getApplicationContext()) == AppConstants.TYPE_WIFI) {
-                    source = AppConstants.TYPE_WIFI;
-                } else {
-                    source = AppConstants.TYPE_MOBILE;
-                }
-                if (source != -1) {
-                    //  Log.i("Service", "To Notify");
-                    new Notify(getApplicationContext(), source);
-                } else {
-                    //    Log.i("Service", "Error with Connections");
+        if (sp.getBoolean(getString(R.string.key_notification_sticky), true)) {
+            try {
+                Log.i("Service", "To Locator");
+                Locate.initLocation(getApplicationContext());
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.i("Service", "Exception to init Location.");
+            }
+
+            try {
+                String intentType = intent.getExtras().getString("receiver");
+                if (intentType == null) return;
+
+                if (intentType.contentEquals("rssi_changed")) {
+                    Log.i("service rssi_changed", "To Notify.");
                     new Notify(getApplicationContext());
                 }
 
-            }
-            if (intentType.contentEquals("reboot")) {
-             //   Log.d("service", "reboot");
-                //Do reboot stuff
-                //handle other types of callers, like a notification_main.
-                String org, city, country, extIPAdd;
-                boolean data = false;
-                UserFunctions f = new UserFunctions();
-                try {
-                    JSONObject json = f.getOwnInfo();
+                if (intentType.contentEquals("reboot")) {
+                    UserFunctions f = new UserFunctions();
+                    SharedPreferences.Editor editor = sp.edit();
+                    Log.i("service reboot", "To Notify.");
+                    String org = "", city = "", country = "", extIPAdd = "";
+                    try {
+                        JSONObject json = f.getOwnInfo();
+                        if (json.getString("status").contentEquals("success")) {
+                            extIPAdd = json.getString("query");
+                            org = json.getString("org");
+                            city = json.getString("city");
+                            country = json.getString("country");
 
-                    if (json.getString("status").contentEquals("success")) {
-                        extIPAdd = json.getString("query");
-                        org = json.getString("org");
-                        city = json.getString("city");
-                        country = json.getString("country");
-                        data = true;
-                        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                        SharedPreferences.Editor editor = sp.edit();
+                            editor.putString(getString(R.string.org), org);
+                            editor.putString(getString(R.string.city), city);
+                            editor.putString(getString(R.string.country), country);
+                            editor.putString(getString(R.string.extIpAdd), extIPAdd);
+                            editor.apply();
+                            editor.commit();
 
-                        editor.putString(getString(R.string.org), org);
-                        editor.putString(getString(R.string.city), city);
-                        editor.putString(getString(R.string.country), country);
-                        editor.putString(getString(R.string.extIpAdd), extIPAdd);
-                        editor.apply();
-                        editor.commit();
+                        } else if (json.getString("status").contentEquals("fail")) {
 
-//                        Calendar cal = Calendar.getInstance();
-//
-//                        int millisecond = cal.get(Calendar.MILLISECOND);
-//                        int second = cal.get(Calendar.SECOND);
-//                        int minute = cal.get(Calendar.MINUTE);
-//                        //12 hour format
-//                        int hour = cal.get(Calendar.HOUR);
-//                        //24 hour format
-//                        int hourofday = cal.get(Calendar.HOUR_OF_DAY);
-                        //Get Weather Info.
-                        JSONObject jsonObject = f.getWeatherInfo(city, country);
+                        }
+                        JSONObject jsonObject;
+                        if (sp.getString("lat", "").length() > 0 || sp.getString("lon", "").length() > 0) {
+                            Log.i("Service", "Get Weather using lon/lat");
+                            editor.putString(getString(R.string.weather_source), getString(R.string.geolocation));
+                            editor.apply();
+                            editor.commit();
+                            jsonObject = f.getWeatherInfoLatLon(sp.getString(getString(R.string.lat), city), sp.getString(getString(R.string.lon), country));
+
+                        } else {
+                            Log.i("Service", "Get Weather Using ISP Info");
+                            editor.putString(getString(R.string.weather_source), getString(R.string.isp));
+                            editor.apply();
+                            editor.commit();
+                            jsonObject = f.getWeatherInfo(city, country);
+
+
+                        }
 
                         JSONArray array = jsonObject.getJSONArray("weather");
                         JSONObject weather = array.getJSONObject(0);
@@ -114,31 +117,17 @@ public class Service extends IntentService {
                         editor.putString(getString(R.string.temp_weather), tempWeather);
                         editor.apply();
                         editor.commit();
-                        //      MyLocation.getMyLoation(getApplicationContext());
-                        int source = -1;
-                        if (NetworkUtil.getConnectivityStatus(getApplicationContext()) == AppConstants.TYPE_WIFI) {
-                            source = AppConstants.TYPE_WIFI;
-                        } else {
-                            source = AppConstants.TYPE_MOBILE;
-                        }
-                        if (source != -1) {
-                            //  Log.i("Service", "To Notify");
-                            new Notify(getApplicationContext(), source);
-                        } else {
-                            //    Log.i("Service", "Error with Connections");
-                            new Notify(getApplicationContext());
-                        }
-                    } else if (json.getString("status").contentEquals("fail")) {
 
+                    } catch (Exception e) {
+                        new Notify(getApplicationContext());
                     }
-
-                } catch (Exception e) {
-                    //sLog.d("NS", "err");
                     new Notify(getApplicationContext());
                 }
+            } catch (Exception e) {
+                new Notify(getApplicationContext());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            // User has disabled notfication service so no need to proced from this point.
         }
     }
 }

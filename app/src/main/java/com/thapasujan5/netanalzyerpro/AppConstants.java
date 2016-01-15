@@ -23,15 +23,27 @@ public class AppConstants {
     public static String col_item_time_zone = "time_zone";
 
     public static String ip_ip = "http://209.58.180.196/json/";
-    public static String url_weather_api = "http://162.243.58.21/data/2.5/weather?units=metric&cnt=7&lang=en&appid=68fddab87d63335009484f1a9f788026&q=";
+    public static String url_weather_api = "http://162.243.58.21/data/2.5/weather?units=metric&cnt=7&lang=en&appid=68fddab87d63335009484f1a9f788026";
     public static String url_weather_icon = "http://162.243.58.21/img/w/";
 
+    public static final int TYPE_NOT_CONNECTED = 0;
     public static final int TYPE_WIFI = 1;
     public static final int TYPE_MOBILE = 2;
-    public static final int TYPE_NOT_CONNECTED = 0;
+
 
     public static final int MAX_SIGNAL_DBM_VALUE = 31;
     public static final int UNKNOW_CODE = 99;
-    public static final long WEATHER_UPDATE_DURATION = 60 * 60000; //1hour because api is renewed every hour.
+    public static final long WEATHER_UPDATE_DURATION = 30 * 60000; //1hour because api is renewed every hour.
 
+    public static final int READ_CONTACTS = 0;
+    public static final int READ_SMS = 1;
+    public static final int ACCESS_FINE_LOCATION = 2;
+    public static final int ACCESS_CORASE_LOCATION = 3;
+    public static final int READ_PHONE_STATE = 4;
+    public static final int READ_EXTERNAL_STORAGE = 5;
+    public static final int WRITE_EXTERNAL_STORAGE = 6;
+
+    public enum MonetizationType {
+        PAID, FREE
+    }
 }

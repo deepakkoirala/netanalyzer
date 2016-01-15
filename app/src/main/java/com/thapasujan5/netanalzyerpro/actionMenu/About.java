@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thapasujan5.netanalyzerpro.R;
+import com.thapasujan5.netanalzyerpro.Tools.GetVersionName;
 import com.thapasujan5.netanalzyerpro.Tools.SendEmail;
 import com.thapasujan5.netanalzyerpro.Tools.SocialIntentProvider;
 
@@ -31,7 +32,7 @@ public class About {
         TextView tvTitle, tvMessage;
         tvTitle = (TextView) d.findViewById(R.id.titleText);
         tvTitle.setText(context.getString(R.string.app_name) + " "
-                + context.getString(R.string.version));
+                + GetVersionName.getAppVersionName(context));
         tvMessage = (TextView) d.findViewById(R.id.message);
         ImageView icon = (ImageView) d.findViewById(R.id.icon);
         icon.setImageResource(R.mipmap.ic_launcher);

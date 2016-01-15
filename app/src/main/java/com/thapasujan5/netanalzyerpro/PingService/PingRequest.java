@@ -4,9 +4,12 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.text.Html;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -33,10 +36,13 @@ public class PingRequest extends AsyncTask<Void, Void, Void> {
     ProgressBar pb;
     Button btnHide, btnCancel;
     Context context;
+    String packets;
 
     public PingRequest(String ip, Context mContext) {
         this.ip = ip;
         this.context = mContext;
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mContext.getApplicationContext());
+        packets = sp.getString(mContext.getString(R.string.key_ping), "4");
     }
 
     @Override
@@ -86,24 +92,28 @@ public class PingRequest extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... params) {
 
         String str = "";
+        Log.i("PingPackets", packets);
         try {
             Process process = Runtime.getRuntime().exec(
-                    "/system/bin/ping -c 8 " + ip);
+                    "/system/bin/ping -c " + packets + " " + ip);
+
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(process.getInputStream()));
-            int i;
+            int j;
             char[] buffer = new char[4096];
             StringBuffer output = new StringBuffer();
-            while ((i = reader.read(buffer)) > 0) {
+            while ((j = reader.read(buffer)) > 0) {
 
-                output.append(buffer, 0, i);
+                output.append(buffer, 0, j);
             }
             reader.close();
             // body.append(output.toString()+"\n");
             str = output.toString();
             pingResult = str;
+            process.destroy();
 
         } catch (IOException e) {
+
             e.printStackTrace();
         }
 

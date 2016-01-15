@@ -33,7 +33,6 @@ import com.thapasujan5.netanalzyerpro.MainActivity;
 import com.thapasujan5.netanalzyerpro.Tools.Clipboard;
 import com.thapasujan5.netanalzyerpro.Tools.ConnectionDetector;
 import com.thapasujan5.netanalzyerpro.Tools.DataUtil;
-import com.thapasujan5.netanalzyerpro.Tools.GetDeviceIP;
 import com.thapasujan5.netanalzyerpro.Tools.NetworkUtil;
 
 import org.json.JSONObject;
@@ -184,13 +183,13 @@ public class Data extends Fragment implements View.OnLongClickListener {
                 }
             };
             filter = new IntentFilter();
-            filter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
+            // filter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
             filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-            filter.addAction(ConnectivityManager.EXTRA_OTHER_NETWORK_INFO);
-            filter.addAction(ConnectivityManager.EXTRA_NETWORK);
+            // filter.addAction(ConnectivityManager.EXTRA_OTHER_NETWORK_INFO);
+            // filter.addAction(ConnectivityManager.EXTRA_NETWORK);
             filter.addAction("android.intent.action.AIRPLANE_MODE");
-            filter.addAction(TelephonyManager.EXTRA_STATE);
-            filter.addAction(TelephonyManager.EXTRA_STATE_IDLE);
+            //   filter.addAction(TelephonyManager.EXTRA_STATE);
+            //  filter.addAction(TelephonyManager.EXTRA_STATE_IDLE);
 
             getContext().registerReceiver(receiver, filter);
             AndroidPhoneStateListener phoneStateListener = new AndroidPhoneStateListener();
@@ -222,9 +221,9 @@ public class Data extends Fragment implements View.OnLongClickListener {
             if (getDataConnectionStatus()) {
                 if (NetworkUtil.getConnectivityStatus(getContext()) == AppConstants.TYPE_MOBILE) {
 
-                    tvIp.setText(GetDeviceIP.getDeviceIP());
+                    tvIp.setText(NetworkUtil.getIPAddress(true));
                     tvCellularGateway.setVisibility(View.VISIBLE);
-                    tvCellularGateway.setText(GetDeviceIP.getDeviceIP());
+                    tvCellularGateway.setText(NetworkUtil.getIPAddress(true));
                     SharedPreferences.Editor edit = sharedPreferences.edit();
                     edit.putString("cellip", tvIp.getText().toString().trim());
                     edit.apply();
@@ -326,7 +325,7 @@ public class Data extends Fragment implements View.OnLongClickListener {
         tvSimSerialNo.setText(telephonyManager.getSimSerialNumber().toString());
         if (getDataConnectionStatus()) {
             tvStatus.setText("Connected");
-            tvStatus.setTextColor(getContext().getResources().getColor(R.color.colorPrimaryold));
+            tvStatus.setTextColor(getContext().getResources().getColor(R.color.app_theme_foreground));
 
         } else {
             tvStatus.setText("Disconnected");
@@ -335,7 +334,7 @@ public class Data extends Fragment implements View.OnLongClickListener {
     }
 
     private boolean getDataConnectionStatus() {
-        ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        // ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         boolean mobileDataEnabled = false; // Assume disabled
         try {
             Class cmClass = Class.forName(cm.getClass().getName());
@@ -349,9 +348,9 @@ public class Data extends Fragment implements View.OnLongClickListener {
     }
 
     private String networkType() {
-        TelephonyManager teleMan = (TelephonyManager)
-                getContext().getSystemService(Context.TELEPHONY_SERVICE);
-        int networkType = teleMan.getNetworkType();
+//        TelephonyManager teleMan = (TelephonyManager)
+//                getContext().getSystemService(Context.TELEPHONY_SERVICE);
+        int networkType = telephonyManager.getNetworkType();
         switch (networkType) {
             case TelephonyManager.NETWORK_TYPE_1xRTT:
                 return "1xRTT";
@@ -391,7 +390,7 @@ public class Data extends Fragment implements View.OnLongClickListener {
 
     @Override
     public boolean onLongClick(View v) {
-        final WifiManager wifi = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
+//        final WifiManager wifi = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
 
         String value = null;
         switch (v.getId()) {

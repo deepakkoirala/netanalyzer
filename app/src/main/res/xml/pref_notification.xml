@@ -2,10 +2,7 @@
 
     <!-- A 'parent' preference, which enables/disables child preferences (below)
          when checked/unchecked. -->
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="@string/key_notification_sticky"
-        android:title="@string/pref_title_new_isp_notifications" />
+
 
     <!-- Allows the user to choose a ringtone in the 'notification_main' category. -->
     <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
@@ -20,9 +17,20 @@
     <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
     <SwitchPreference
         android:defaultValue="true"
+        android:icon="@mipmap/ic_reader"
+        android:key="@string/key_notification_sticky"
+        android:switchTextOff="Notifications Off"
+        android:switchTextOn="Notify"
+        android:title="@string/pref_title_new_isp_notifications" />
+    <SwitchPreference
+        android:defaultValue="true"
         android:dependency="@string/key_notification_sticky"
+        android:icon="@mipmap/ic_swap"
         android:key="@string/key_notification_ongoing"
+        android:switchTextOff="Ongoing Off"
+        android:switchTextOn="Ongoing On"
         android:title="@string/notification_ongoing" />
+
     <!-- <SwitchPreference
          android:defaultValue="true"
          android:dependency="notifications_new_message"

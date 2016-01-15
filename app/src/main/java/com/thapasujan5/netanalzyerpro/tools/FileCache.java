@@ -1,7 +1,6 @@
 package com.thapasujan5.netanalzyerpro.Tools;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.thapasujan5.netanalyzerpro.R;
 
@@ -13,15 +12,19 @@ public class FileCache {
 
     public FileCache(Context context) {
         // Find the dir to save cached images
-        if (android.os.Environment.getExternalStorageState().equals(
+        if (android.os.Environment.getDataDirectory().equals(
                 android.os.Environment.MEDIA_MOUNTED))
             cacheDir = new File(
-                    android.os.Environment.getExternalStorageDirectory(),
+                    android.os.Environment.getDataDirectory(),
                     context.getResources().getString(R.string.app_name));
         else
             cacheDir = context.getCacheDir();
         if (!cacheDir.exists())
             cacheDir.mkdirs();
+    }
+
+    public File getDirecotry() {
+        return cacheDir;
     }
 
     public File getFile(String url) {
@@ -34,7 +37,7 @@ public class FileCache {
         // + "_" + String.valueOf(url.hashCode())
         // +GetExtension.GetFileExtension(url);
         File f = new File(cacheDir, filename);
-        Log.d("FileCache", "Returned:" + url);
+
         return f;
 
     }
@@ -42,7 +45,7 @@ public class FileCache {
     public boolean deleteFile(String filename) {
 
         boolean result = false;
-       // Log.d("FileCache", "Inside deletefile");
+        // Log.d("FileCache", "Inside deletefile");
         File f = getFile(filename);
         if (f.delete()) {
             result = true;

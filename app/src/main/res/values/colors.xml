@@ -3,24 +3,14 @@
     <!--Defaults-->
     <color name="colorPrimaryDark">#800000</color>
     <color name="colorPrimary">#cc0000</color>
-
-    <color name="colorPrimaryold">#3F51B5</color>
-    <color name="colorPrimaryDarkold">#303F9F</color>
-
     <color name="colorAccent">#FF4081</color>
     <color name="black_overlay">#66000000</color>
+    <color name="light_gray">#bbbbbb</color>
 
     <color name="app_theme_background">#E7E7E7</color>
     <color name="app_theme_foreground">#BE1010</color>
     <!--TeamTreeColors-->
-    <color name="background_purple">#3F2466</color>
-    <color name="light_gray">#bbbbbb</color>
-    <color name="apptheme_color">#61408c</color>
-    <color name="light_purple_button">#e1d2f3</color>
-    <color name="pressed_purple_button">#ba9dda</color>
-    <color name="focused_purple_button">#d6c3ed</color>
-    <color name="text_color">#250054</color>
-    <color name="light_purple_background">#e9e4ed</color>
+
 
     <color name="light_blue">#33b5e5</color>
 

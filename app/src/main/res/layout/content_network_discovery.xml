@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -15,120 +16,65 @@
         android:layout_centerInParent="true"
         android:text="Swipe down for instant scanning." />
 
-    <RelativeLayout
-        android:id="@+id/rlWifiDetails"
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         android:background="@color/colorPrimary"
-        android:padding="@dimen/padding_wifi_details">
+        android:visibility="gone"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/adunitid"></com.google.android.gms.ads.AdView>
 
-        <ImageView
-            android:id="@+id/ivWifi"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:src="@mipmap/ic_wifi_logo"
-            android:tint="@color/app_theme_background" />
+    <include
+        android:id="@+id/rlWifiDetails"
+        layout="@layout/content_wifi_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/adView"></include>
 
-        <LinearLayout
-            android:id="@+id/llSsidPercent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/ivWifi"
-            android:orientation="horizontal">
-
-
-            <TextView
-                android:id="@+id/tvSsid"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_toRightOf="@+id/ivWifi"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:text="Check Wifi Connection."
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/app_theme_background" />
-
-            <TextView
-                android:id="@+id/tvPercentage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/tvNetworkName"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="0%"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/app_theme_background" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/rlOperatorDetails"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/llSsidPercent"
-            android:layout_marginLeft="5dp"
-            android:layout_toRightOf="@+id/ivWifi"
-            android:orientation="horizontal">
-
-
-            <TextView
-                android:id="@+id/tvRouterIp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
-                android:layout_weight="1"
-                android:text="Getting IP ADD."
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/app_theme_background" />
-
-            <TextView
-                android:id="@+id/tvMac"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:gravity="left"
-                android:text="Getting MAC ID."
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/app_theme_background" />
-
-
-            <Switch
-                android:id="@+id/tbWifiSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:buttonTint="@color/colorPrimary"
-                android:gravity="end" />
-        </LinearLayout>
-
-    </RelativeLayout>
-
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/llPb"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/rlWifiDetails"
-        android:orientation="horizontal">
+        android:layout_below="@+id/rlWifiDetails">
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="@android:style/Widget.DeviceDefault.ProgressBar.Horizontal"
+        <TextView
+            android:id="@+id/tvScanPercent"
+            style="@android:style/TextAppearance.DeviceDefault.Large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:text="0%"
+            android:textColor="#000" />
+
+        <LinearLayout
+            android:id="@+id/llView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1" />
+            android:layout_below="@+id/tvScanPercent"
+            android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/ivCancel"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_toRightOf="@+id/progressBar"
-            android:src="@mipmap/cancel"
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="@android:style/Widget.DeviceDefault.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@color/light_gray"
+                android:indeterminate="false" />
 
-            android:tint="@color/colorPrimary" />
-    </LinearLayout>
+            <ImageView
+                android:id="@+id/ivCancel"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_toRightOf="@+id/progressBar"
+                android:src="@mipmap/cancel"
+                android:tint="@color/colorPrimary" />
+        </LinearLayout>
+    </RelativeLayout>
 
 
     <android.support.v4.widget.SwipeRefreshLayout

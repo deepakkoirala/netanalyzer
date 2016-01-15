@@ -2,8 +2,11 @@ package com.thapasujan5.netanalzyerpro;
 
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.media.Ringtone;
@@ -11,17 +14,25 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
+import android.preference.SwitchPreference;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import com.thapasujan5.netanalyzerpro.R;
+import com.thapasujan5.netanalzyerpro.Notification.Notify;
+import com.thapasujan5.netanalzyerpro.Tools.FileCache;
+import com.thapasujan5.netanalzyerpro.Tools.GetCode;
 
 import java.util.List;
 
@@ -36,14 +47,17 @@ import java.util.List;
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
-public class SettingsActivity extends AppCompatPreferenceActivity {
+public class SettingsActivity extends AppCompatPreferenceActivity implements View.OnClickListener {
     NotificationManager nm;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupActionBar();
         nm = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+
     }
 
     /**
@@ -178,6 +192,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 || NotificationPreferenceFragment.class.getName().equals(fragmentName);
     }
 
+    @Override
+    public void onClick(View v) {
+
+    }
+
     /**
      * This fragment shows general preferences only. It is used when the
      * activity is showing a two-pane settings UI.
@@ -189,6 +208,84 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_general);
             setHasOptionsMenu(true);
+            final ListPreference list = (ListPreference) findPreference(getString(R.string.key_temperature));
+            list.setValueIndex(0);
+            list.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    bindPreferenceSummaryToValue(list);
+                    new Notify(getActivity().getApplicationContext());
+                    return true;
+                }
+            });
+            final ListPreference ping = (ListPreference) findPreference(getString(R.string.key_ping));
+            ping.setValueIndex(2);
+            ping.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    Toast.makeText(getActivity().getApplicationContext(), "Default Ping Packet is now " + ping.getValue(), Toast.LENGTH_SHORT)
+                            .show();
+                    bindPreferenceSummaryToValue(ping);
+                    return true;
+                }
+            });
+            final Preference button = findPreference(getString(R.string.key_clear_cache));
+            if (button != null) {
+                //if (Build.VERSION.SDK_INT >= 21)
+                //  button.getIcon().setTint(getActivity().getResources().getColor(R.color.app_theme_foreground));
+                button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        Log.d("inside", button.getKey());
+                        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity().getApplicationContext());
+                        alert.setTitle("Confirm Action");
+                        alert.setMessage("This will only delete general data generated but not the DNS saved.");
+                        alert.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                FileCache fc = new FileCache(getActivity());
+                                fc.clear();
+                            }
+                        });
+                        alert.setNegativeButton("Cancel", null);
+                        Dialog d = alert.create();
+                        d.show();
+
+                        return true;
+                    }
+                });
+            }
+            final EditTextPreference time = (EditTextPreference) findPreference(getString(R.string.key_time_interval));
+            time.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+//                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
+//                    SharedPreferences.Editor editor = sharedPreferences.edit();
+//                    editor.putInt(getString(R.string.key_time_interval), Integer.parseInt(time.getText().toString()));
+//                    editor.apply();
+//                    editor.commit();
+//                    Log.d("time", newValue.toString());
+                    return true;
+                }
+            });
+            final EditTextPreference distance = (EditTextPreference) findPreference(getString(R.string.key_distance_interval));
+            distance.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+//                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
+//                    SharedPreferences.Editor editor = sharedPreferences.edit();
+//                    editor.putInt(getString(R.string.key_distance_interval),Integer.parseInt(distance.getText().toString()));
+//                    editor.apply();
+//                    editor.commit();
+//                    Log.d("distance", newValue.toString());
+                    return true;
+                }
+            });
+
+            bindPreferenceSummaryToValue(time);
+            bindPreferenceSummaryToValue(distance);
+            bindPreferenceSummaryToValue(list);
+            bindPreferenceSummaryToValue(ping);
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
@@ -220,13 +317,53 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_notification);
             setHasOptionsMenu(true);
+            final SwitchPreference ongoing = (SwitchPreference) findPreference(getString(R.string.key_notification_ongoing));
+            final SwitchPreference sticky = (SwitchPreference) findPreference(getString(R.string.key_notification_sticky));
+            ongoing.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    new Notify(getActivity().getApplicationContext());
+                    return true;
+                }
+            });
+            ongoing.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    new Notify(getActivity().getApplicationContext());
+                    return true;
+                }
+            });
+            sticky.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    if (sticky.isChecked() == false) {
+                        Log.i("clicked", "sticky " + sticky.isChecked());
+                        NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
+                        notificationManager.cancel(GetCode.getCode(getActivity().getApplicationContext()));
+                        new Notify(getActivity().getApplicationContext());
+                    } else {
+                        new Notify(getActivity().getApplicationContext());
+                    }
+                    return true;
+                }
+            });
+            sticky.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
 
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-//            bindPreferenceSummaryToValue(findPreference(getString(R.string.key_notification_sticky)));
-//            bindPreferenceSummaryToValue(findPreference(getString(R.string.key_notification_ongoing)));
+                    if (sticky.isChecked() == false) {
+                        Log.i("Pre changed", "sticky " + sticky.isChecked());
+                        NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
+                        notificationManager.cancel(GetCode.getCode(getActivity().getApplicationContext()));
+                        new Notify(getActivity().getApplicationContext());
+                    } else {
+                        new Notify(getActivity().getApplicationContext());
+                    }
+                    return true;
+                }
+            });
+
+
         }
 
         @Override

@@ -1,13 +1,12 @@
 package com.thapasujan5.netanalzyerpro.PortScanner;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.text.Html;
-import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -16,17 +15,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thapasujan5.netanalyzerpro.R;
+import com.thapasujan5.netanalzyerpro.DataStore.ScanResult;
 import com.thapasujan5.netanalzyerpro.Tools.Clipboard;
-import com.thapasujan5.netanalzyerpro.Tools.ShowToast;
+import com.thapasujan5.netanalzyerpro.Tools.NetworkUtil;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 /**
  * Created by Suzan on 12/10/2015.
  */
-public class PortScanRequest extends AsyncTask<Void, Void, Void> {
+public class PortScanRequest extends AsyncTask<Void, Void, ArrayList<ScanResult>> {
     String ip, pingResult = null;
     Dialog dialog;
     TextView tvTitle;
@@ -48,8 +46,9 @@ public class PortScanRequest extends AsyncTask<Void, Void, Void> {
 
         pb = (ProgressBar) dialog.findViewById(R.id.pbPinging);
         pb.setIndeterminate(true);
+
         tvTitle = (TextView) dialog.findViewById(R.id.titleText);
-        tvTitle.setText(Html.fromHtml("<b>Pinging " + ip + "</b>"));
+        tvTitle.setText(Html.fromHtml("<b>Scanning " + ip + "</b>"));
         btnCancel = (Button) dialog.findViewById(R.id.btnCancel);
         btnCancel.setOnClickListener(new View.OnClickListener() {
 
@@ -68,7 +67,6 @@ public class PortScanRequest extends AsyncTask<Void, Void, Void> {
                 dialog.dismiss();
             }
         });
-
         dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
 
             @Override
@@ -76,102 +74,50 @@ public class PortScanRequest extends AsyncTask<Void, Void, Void> {
                 cancel(true);
             }
         });
-
         dialog.show();
-
         super.onPreExecute();
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
-
-        String str = "";
-        try {
-            Process process = Runtime.getRuntime().exec(
-                    "/system/bin/ping -c 8 " + ip);
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream()));
-            int i;
-            char[] buffer = new char[4096];
-            StringBuffer output = new StringBuffer();
-            while ((i = reader.read(buffer)) > 0) {
-
-                output.append(buffer, 0, i);
-            }
-            reader.close();
-            // body.append(output.toString()+"\n");
-            str = output.toString();
-            pingResult = str;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+    protected ArrayList<ScanResult> doInBackground(Void... params) {
+        return PortScanner.scanHost(NetworkUtil.getIPAddress(true));
     }
 
     @Override
-    protected void onPostExecute(Void result) {
+    protected void onPostExecute(ArrayList<ScanResult> scanResults) {
         dialog.dismiss();
-        if (pingResult.length() > 0) {
-            final Dialog d = new Dialog(context);
-            d.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            d.setContentView(R.layout.dialog_ping_result);
-            final TextView tvPingResult = (TextView) d
-                    .findViewById(R.id.tvPingResut);
-            tvPingResult.setText(pingResult);
-            final TextView tvTitleArea = (TextView) d
-                    .findViewById(R.id.tvtitleArea);
-            tvTitleArea.setText(Html.fromHtml("<b>Ping Statistics for " + ip + "</b>"));
-            Button btnShare = (Button) d.findViewById(R.id.btnShare);
-            btnShare.setOnClickListener(new View.OnClickListener() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
-                @Override
-                public void onClick(View v) {
-                    Intent sendIntent = new Intent();
-                    sendIntent.setAction(Intent.ACTION_SEND);
-                    sendIntent.putExtra(Intent.EXTRA_TEXT, pingResult);
-                    sendIntent.setType("text/plain");
-                    context.startActivity(Intent.createChooser(sendIntent,
-                            "Share using"));
-//                    overridePendingTransition(R.anim.slide_in,
-//                            R.anim.slide_out);
-                }
-            });
-            Button btnCopy = (Button) d.findViewById(R.id.btnCopy);
-            btnCopy.setOnClickListener(new View.OnClickListener() {
+        if (Build.VERSION.SDK_INT >= 21)
+            alert.setIcon(context.getResources().getDrawable(R.mipmap.ic_computer, context.getTheme()));
+        else
+            alert.setIcon(context.getResources().getDrawable(R.mipmap.ic_computer));
 
-                @Override
-                public void onClick(View v) {
-                    // copy ip to clipboard
-                    boolean status = Clipboard.copyToClipboard(
-                            context, pingResult);
-                    if (status) {
-                        new ShowToast(context,
-                                "Copied to Clipboard", Color.WHITE,
-                                R.drawable.action_bar_bg, 0,
-                                Toast.LENGTH_LONG, Gravity.BOTTOM);
-                    }
-                    d.dismiss();
-                }
-
-            });
-            Button btnClose = (Button) d.findViewById(R.id.btnClose);
-            btnClose.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    d.dismiss();
-                }
-            });
-
-
-            d.show();
-        } else {
-            new ShowToast(context.getApplicationContext(), "Server unreachable.",
-                    Color.YELLOW, R.drawable.action_bar_bg, 0, 2000,
-                    Gravity.BOTTOM);
+        final ArrayList<String> openPorts = new ArrayList<String>();
+        for (ScanResult scanResult : scanResults) {
+            openPorts.add(Integer.toString(scanResult.getPort()));
         }
-        super.onPostExecute(result);
-    }
+        if (scanResults.size() > 0) {
+            alert.setTitle("Open Ports : " + scanResults.size());
+            String[] toArray = new String[openPorts.size()];
+            toArray = openPorts.toArray(toArray);
+            alert.setItems(toArray, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (Clipboard.copyToClipboard(context, openPorts.get(which)))
+                        Toast.makeText(context.getApplicationContext(), "Text copied to clipboard.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            alert.setTitle("Port Scan Summary");
+            alert.setMessage("No open ports found in targeted host:" + ip);
+        }
 
+        Dialog d = alert.create();
+        d.show();
+
+        super.
+
+                onPostExecute(scanResults);
+    }
 }

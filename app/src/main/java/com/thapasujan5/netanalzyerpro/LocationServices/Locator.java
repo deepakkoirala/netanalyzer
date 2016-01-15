@@ -1,15 +1,18 @@
 package com.thapasujan5.netanalzyerpro.LocationServices;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.thapasujan5.netanalyzerpro.R;
 import com.thapasujan5.netanalzyerpro.Tools.ConnectionDetector;
 
 /**
@@ -26,8 +29,8 @@ public class Locator implements LocationListener {
 
     static private final String LOG_TAG = "locator";
 
-    static private final int TIME_INTERVAL = 100; // minimum time between updates in milliseconds
-    static private final int DISTANCE_INTERVAL = 1; // minimum distance between updates in meters
+    static private int TIME_INTERVAL; // minimum time between updates in milliseconds
+    static private int DISTANCE_INTERVAL; // minimum distance between updates in meters
 
     static public enum Method {
         NETWORK,
@@ -43,6 +46,11 @@ public class Locator implements LocationListener {
     public Locator(Context context) {
         super();
         this.context = context;
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        this.TIME_INTERVAL = Integer.parseInt(sp.getString(context.getString(R.string.key_time_interval), 1 + "")) * 60 * 1000; //default is 1 min
+        this.DISTANCE_INTERVAL = Integer.parseInt(sp.getString(context.getString(R.string.key_distance_interval), 10 + "")); //default is 10 meter
+
+        Log.i("tim/dis", TIME_INTERVAL + "/" + DISTANCE_INTERVAL);
         // {zac 2015/11/21 : require explicit checking of permission for API >=23}
         if (Build.VERSION.SDK_INT >= 23 &&
                 ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&

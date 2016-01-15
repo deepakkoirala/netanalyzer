@@ -54,7 +54,7 @@
                 android:layout_height="100dp"
                 android:layout_marginBottom="10dp"
                 android:contentDescription="Sujan Thapa"
-                android:src="@drawable/profile_picture_full"></ImageView>
+                android:src="@mipmap/profile_pic"></ImageView>
 
             <ImageView
                 android:id="@+id/ivFbLogo"
