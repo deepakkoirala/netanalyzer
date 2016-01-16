@@ -66,7 +66,7 @@ import java.io.File;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    TextView tvExIpArea, navUpgrade;
+    TextView tvExIpArea, navUpgrade, tvAppName;
     ConnectionDetector connectionDetector;
     String intIP;
     ProgressBar pbExip;
@@ -87,15 +87,18 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (BuildConfig.FLAVOR.contentEquals("free")) {
-            this.setTitle(this.getString(R.string.app_name) + " Lite");
+            this.setTitle("Net Analyzer Lite");
         } else {
 
         }
+        if (this.getPackageName().contentEquals("com.thapasujan5.serversearch"))
+            this.setTitle("Net Analyzer Lite");
         adView = (AdView) findViewById(R.id.adView);
         requestPermissions = new RequestPermissions(this);
         requestPermissions.getPermission(Manifest.permission.ACCESS_FINE_LOCATION, AppConstants.ACCESS_FINE_LOCATION);
         requestPermissions.getPermission(Manifest.permission.READ_PHONE_STATE, AppConstants.READ_PHONE_STATE);
         requestPermissions.getPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, AppConstants.WRITE_EXTERNAL_STORAGE);
+        requestPermissions.getPermission(Manifest.permission.SYSTEM_ALERT_WINDOW, AppConstants.SYSTEM_ALERT_WINDOW);
         try {
             initView();
             new ShowBannerAd(this, adView);
@@ -181,8 +184,10 @@ public class MainActivity extends AppCompatActivity
                 drawer.closeDrawers();
             }
         });
-        if (BuildConfig.FLAVOR.contentEquals("free")) {
+        if (BuildConfig.FLAVOR.contentEquals("free") || (this.getPackageName().contentEquals("com.thapasujan5.serversearch"))) {
             navUpgrade = (TextView) header.findViewById(R.id.upgrade);
+            tvAppName = (TextView) header.findViewById(R.id.tvAppName);
+            tvAppName.setText("Net Analyzer Lite");
             navUpgrade.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

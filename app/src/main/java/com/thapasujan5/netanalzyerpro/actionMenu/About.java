@@ -31,8 +31,12 @@ public class About {
         d.setContentView(R.layout.dialog_about);
         TextView tvTitle, tvMessage;
         tvTitle = (TextView) d.findViewById(R.id.titleText);
-        tvTitle.setText(context.getString(R.string.app_name) + " "
-                + GetVersionName.getAppVersionName(context));
+        if (context.getPackageName().contentEquals("com.thapasujan5.serversearch"))
+            tvTitle.setText("Net Analyzer Lite "
+                    + GetVersionName.getAppVersionName(context));
+        else {
+            tvTitle.setText("Net Analyzer");
+        }
         tvMessage = (TextView) d.findViewById(R.id.message);
         ImageView icon = (ImageView) d.findViewById(R.id.icon);
         icon.setImageResource(R.mipmap.ic_launcher);

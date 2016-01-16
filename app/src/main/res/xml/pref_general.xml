@@ -59,12 +59,4 @@
             android:summary="Minimum distance travelled.(meters)"
             android:title="By Distance(meter) " />
     </PreferenceCategory>
-
-    <!--<Preference-->
-    <!--android:icon="@mipmap/ic_clear"-->
-    <!--android:key="@string/key_clear_cache"-->
-    <!--android:summary="Clean application cache data."-->
-    <!--android:title="Clear Cache"-->
-    <!--android:widgetLayout="@layout/button" />-->
-
 </PreferenceScreen>

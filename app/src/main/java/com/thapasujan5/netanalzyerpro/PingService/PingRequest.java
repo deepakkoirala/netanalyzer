@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import com.thapasujan5.netanalyzerpro.R;
 import com.thapasujan5.netanalzyerpro.Tools.Clipboard;
+import com.thapasujan5.netanalzyerpro.Tools.RequestPermissions;
 import com.thapasujan5.netanalzyerpro.Tools.ShowToast;
 
 import java.io.BufferedReader;
@@ -47,11 +49,9 @@ public class PingRequest extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected void onPreExecute() {
-
         dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_pinging);
-
         pb = (ProgressBar) dialog.findViewById(R.id.pbPinging);
         pb.setIndeterminate(true);
         tvTitle = (TextView) dialog.findViewById(R.id.titleText);
@@ -67,14 +67,7 @@ public class PingRequest extends AsyncTask<Void, Void, Void> {
             }
         });
         btnHide = (Button) dialog.findViewById(R.id.btnMinimize);
-        btnHide.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
+        btnHide.setVisibility(View.GONE);
         dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
 
             @Override
@@ -82,9 +75,8 @@ public class PingRequest extends AsyncTask<Void, Void, Void> {
                 cancel(true);
             }
         });
-
+        dialog.setCancelable(false);
         dialog.show();
-
         super.onPreExecute();
     }
 
@@ -103,7 +95,9 @@ public class PingRequest extends AsyncTask<Void, Void, Void> {
             char[] buffer = new char[4096];
             StringBuffer output = new StringBuffer();
             while ((j = reader.read(buffer)) > 0) {
-
+                if (isCancelled()) {
+                    break;
+                }
                 output.append(buffer, 0, j);
             }
             reader.close();
@@ -173,9 +167,11 @@ public class PingRequest extends AsyncTask<Void, Void, Void> {
                     d.dismiss();
                 }
             });
-
-
-            d.show();
+            try {
+                d.show();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
             new ShowToast(context.getApplicationContext(), "Server unreachable.",
                     Color.YELLOW, R.drawable.action_bar_bg, 0, 2000,
@@ -183,5 +179,4 @@ public class PingRequest extends AsyncTask<Void, Void, Void> {
         }
         super.onPostExecute(result);
     }
-
 }

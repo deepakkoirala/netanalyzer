@@ -19,6 +19,7 @@ public class RequestPermissions implements ActivityCompat.OnRequestPermissionsRe
     private int code;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+    boolean result = false;
 
     public RequestPermissions(Context context) {
         this.context = context;
@@ -131,8 +132,26 @@ public class RequestPermissions implements ActivityCompat.OnRequestPermissionsRe
                 }
                 break;
             }
+            case AppConstants.SYSTEM_ALERT_WINDOW: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    result = true;
+                } else {
+                    editor.putBoolean(context.getString(R.string.access_corase_location), false);
+                    editor.apply();
+                    editor.commit();
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                break;
+            }
 
 
         }
+    }
+
+    public interface listener {
+        void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults);
     }
 }

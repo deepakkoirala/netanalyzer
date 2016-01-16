@@ -114,10 +114,11 @@ public class PortScanRequest extends AsyncTask<Void, Void, ArrayList<ScanResult>
         }
 
         Dialog d = alert.create();
-        d.show();
-
-        super.
-
-                onPostExecute(scanResults);
+        try {
+            d.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        super.onPostExecute(scanResults);
     }
 }

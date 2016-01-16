@@ -209,7 +209,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Vie
             addPreferencesFromResource(R.xml.pref_general);
             setHasOptionsMenu(true);
             final ListPreference list = (ListPreference) findPreference(getString(R.string.key_temperature));
-            list.setValueIndex(0);
             list.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -219,7 +218,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Vie
                 }
             });
             final ListPreference ping = (ListPreference) findPreference(getString(R.string.key_ping));
-            ping.setValueIndex(2);
             ping.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -229,32 +227,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Vie
                     return true;
                 }
             });
-            final Preference button = findPreference(getString(R.string.key_clear_cache));
-            if (button != null) {
-                //if (Build.VERSION.SDK_INT >= 21)
-                //  button.getIcon().setTint(getActivity().getResources().getColor(R.color.app_theme_foreground));
-                button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                    @Override
-                    public boolean onPreferenceClick(Preference preference) {
-                        Log.d("inside", button.getKey());
-                        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity().getApplicationContext());
-                        alert.setTitle("Confirm Action");
-                        alert.setMessage("This will only delete general data generated but not the DNS saved.");
-                        alert.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                FileCache fc = new FileCache(getActivity());
-                                fc.clear();
-                            }
-                        });
-                        alert.setNegativeButton("Cancel", null);
-                        Dialog d = alert.create();
-                        d.show();
-
-                        return true;
-                    }
-                });
-            }
             final EditTextPreference time = (EditTextPreference) findPreference(getString(R.string.key_time_interval));
             time.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override

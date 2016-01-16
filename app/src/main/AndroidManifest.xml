@@ -104,9 +104,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thapasujan5.netanalzyerpro.MainActivity" />
         </activity>
-        <activity
-            android:name=".SettingsActivitytemp"
-            android:label="@string/title_activity_settings_activitytemp"></activity>
     </application>
 
 </manifest>

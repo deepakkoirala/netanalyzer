@@ -352,7 +352,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
                 String addr = jsonObject.optString(getString(R.string.routerip), "192.168.1.1");
                 for (int i = 1; i <= 255; i++) {
                     if (isCancelled()) {
-                        Log.d("NDA", "cancelled");
+                        Log.i("NDA", "cancelled");
                         break;
                     }
                     // build the next IP address
@@ -360,7 +360,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
                     InetAddress pingAddr = InetAddress.getByName(addr);
 
                     // set timeout and ttl for ping
-                    Log.i("target", addr);
+                   // Log.i("target", addr);
                     String str = "";
                     process = Runtime.getRuntime().exec(
                             "/system/bin/ping -c 1 " + addr);
@@ -513,7 +513,9 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
     protected void onStop() {
         try {
             unregisterReceiver(receiver);
-            super.onStop();
+            if (ns != null && ns.isCancelled() == false) {
+                ns.cancel(true);
+            }
         } catch (Exception e) {
 
         }
