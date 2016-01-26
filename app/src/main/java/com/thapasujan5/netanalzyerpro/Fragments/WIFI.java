@@ -35,7 +35,8 @@ import android.widget.Toast;
 import com.thapasujan5.netanalyzerpro.R;
 import com.thapasujan5.netanalzyerpro.AppConstants;
 import com.thapasujan5.netanalzyerpro.MainActivity;
-import com.thapasujan5.netanalzyerpro.Notification.Notify;
+import com.thapasujan5.netanalzyerpro.Notification.NotificationISP;
+import com.thapasujan5.netanalzyerpro.Notification.ReceiverReboot;
 import com.thapasujan5.netanalzyerpro.Tools.Clipboard;
 import com.thapasujan5.netanalzyerpro.Tools.ConnectionDetector;
 import com.thapasujan5.netanalzyerpro.Tools.DayHourMinSec;
@@ -344,7 +345,7 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
         @Override
         public void onRefresh() {
             ((MainActivity) getContext()).reValidate();
-            new Notify(getContext());
+            new ReceiverReboot().onReceive(getContext(), new Intent(getContext(), MainActivity.class));
             if (new WifiUtil(getContext()).isWifiEnabled()) {
                 try {
                     setupValues();

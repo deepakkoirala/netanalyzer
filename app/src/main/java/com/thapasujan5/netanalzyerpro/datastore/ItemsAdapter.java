@@ -2,7 +2,9 @@ package com.thapasujan5.netanalzyerpro.DataStore;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thapasujan5.netanalyzerpro.R;
+import com.thapasujan5.netanalzyerpro.ActionMenu.UpgradeToPro;
 import com.thapasujan5.netanalzyerpro.MapsActivity;
 import com.thapasujan5.netanalzyerpro.Tools.DateTimeFormatted;
 
@@ -32,7 +35,7 @@ public class ItemsAdapter extends ArrayAdapter<Items> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, final View convertView, ViewGroup parent) {
         View row = convertView;
         row = null;
         if (row == null) {
@@ -68,12 +71,23 @@ public class ItemsAdapter extends ArrayAdapter<Items> {
                 ivLocation.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent openMap = new Intent(context, MapsActivity.class);
-                        openMap.putExtra("location", item.location);
-                        openMap.putExtra("lat", Double.parseDouble(item.lat));
-                        openMap.putExtra("lon", Double.parseDouble(item.lon));
-                        context.startActivity(openMap);
-                        ((Activity) context).overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+                        if (getContext().getPackageName().contentEquals("com.thapasujan5.serversearch") == false) {
+                            Intent openMap = new Intent(context, MapsActivity.class);
+                            openMap.putExtra("location", item.location);
+                            openMap.putExtra("lat", Double.parseDouble(item.lat));
+                            openMap.putExtra("lon", Double.parseDouble(item.lon));
+                            context.startActivity(openMap);
+                            ((Activity) context).overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+                        } else {
+                            new AlertDialog.Builder(getContext()).setTitle("Net Analyzer Lite").
+                                    setMessage("This feature requires Full Version of Net Analyzer.").
+                                    setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            new UpgradeToPro(getContext());
+                                        }
+                                    }).setNegativeButton("Cancel", null).show();
+                        }
                     }
                 });
             } else {

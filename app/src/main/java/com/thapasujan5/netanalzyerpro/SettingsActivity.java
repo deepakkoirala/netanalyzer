@@ -2,11 +2,8 @@ package com.thapasujan5.netanalzyerpro;
 
 
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.media.Ringtone;
@@ -30,8 +27,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.thapasujan5.netanalyzerpro.R;
-import com.thapasujan5.netanalzyerpro.Notification.Notify;
-import com.thapasujan5.netanalzyerpro.Tools.FileCache;
+import com.thapasujan5.netanalzyerpro.Notification.NotificationISP;
 import com.thapasujan5.netanalzyerpro.Tools.GetCode;
 
 import java.util.List;
@@ -213,11 +209,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Vie
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     bindPreferenceSummaryToValue(list);
-                    new Notify(getActivity().getApplicationContext());
+                    new NotificationISP(getActivity().getApplicationContext());
                     return true;
                 }
             });
             final ListPreference ping = (ListPreference) findPreference(getString(R.string.key_ping));
+
             ping.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -294,14 +291,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Vie
             ongoing.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    new Notify(getActivity().getApplicationContext());
+                    new NotificationISP(getActivity().getApplicationContext());
                     return true;
                 }
             });
             ongoing.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    new Notify(getActivity().getApplicationContext());
+                    new NotificationISP(getActivity().getApplicationContext());
                     return true;
                 }
             });
@@ -312,9 +309,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Vie
                         Log.i("clicked", "sticky " + sticky.isChecked());
                         NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
                         notificationManager.cancel(GetCode.getCode(getActivity().getApplicationContext()));
-                        new Notify(getActivity().getApplicationContext());
+                        new NotificationISP(getActivity().getApplicationContext());
                     } else {
-                        new Notify(getActivity().getApplicationContext());
+                        new NotificationISP(getActivity().getApplicationContext());
                     }
                     return true;
                 }
@@ -327,9 +324,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Vie
                         Log.i("Pre changed", "sticky " + sticky.isChecked());
                         NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
                         notificationManager.cancel(GetCode.getCode(getActivity().getApplicationContext()));
-                        new Notify(getActivity().getApplicationContext());
+                        new NotificationISP(getActivity().getApplicationContext());
                     } else {
-                        new Notify(getActivity().getApplicationContext());
+                        new NotificationISP(getActivity().getApplicationContext());
                     }
                     return true;
                 }

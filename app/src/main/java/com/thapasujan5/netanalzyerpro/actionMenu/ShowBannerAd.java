@@ -10,7 +10,7 @@ import android.view.View;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.thapasujan5.netanalyzerpro.R;
+import com.thapasujan5.netanalyzerpro.BuildConfig;
 
 /**
  * Created by Sujan Thapa on 13/01/2016.
@@ -31,7 +31,7 @@ public class ShowBannerAd {
             choice = false;
         }
         if (choice) {
-           // Log.i("Ads", "GetAds");
+            // Log.i("Ads", "GetAds");
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -47,9 +47,15 @@ public class ShowBannerAd {
                                 public void run() {
                                     // TODO Auto-generated method stub
                                     // Write your code here to the admob
-                                    adRequest = new AdRequest.Builder()
-                                            //.addTestDevice("BCF7DE10DC5E699BCC5185E5B89929C8")
-                                            .build();
+                                    if (BuildConfig.DEBUG) {
+                                        adRequest = new AdRequest.Builder()
+                                                .addTestDevice("BCF7DE10DC5E699BCC5185E5B89929C8")
+                                                .build();
+                                    } else {
+                                        adRequest = new AdRequest.Builder()
+                                                // .addTestDevice("BCF7DE10DC5E699BCC5185E5B89929C8")
+                                                .build();
+                                    }
                                     adView.loadAd(adRequest);
                                 }
                             });

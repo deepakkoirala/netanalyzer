@@ -35,7 +35,7 @@ public class About {
             tvTitle.setText("Net Analyzer Lite "
                     + GetVersionName.getAppVersionName(context));
         else {
-            tvTitle.setText("Net Analyzer");
+            tvTitle.setText("Net Analyzer " + GetVersionName.getAppVersionName(context));
         }
         tvMessage = (TextView) d.findViewById(R.id.message);
         ImageView icon = (ImageView) d.findViewById(R.id.icon);

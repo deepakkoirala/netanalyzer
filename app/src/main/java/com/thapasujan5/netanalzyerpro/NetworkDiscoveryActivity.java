@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -41,13 +42,14 @@ import com.thapasujan5.netanalzyerpro.ActionMenu.SnapShot;
 import com.thapasujan5.netanalzyerpro.DataStore.ItemsDiscovered;
 import com.thapasujan5.netanalzyerpro.DataStore.ItemsDiscoveredAdapter;
 import com.thapasujan5.netanalzyerpro.Fragments.WIFI;
-import com.thapasujan5.netanalzyerpro.Notification.Notify;
+import com.thapasujan5.netanalzyerpro.Notification.NotificationISP;
 import com.thapasujan5.netanalzyerpro.PingService.PingRequest;
 import com.thapasujan5.netanalzyerpro.PortScanner.PortScanRequest;
 import com.thapasujan5.netanalzyerpro.Tools.Clipboard;
 import com.thapasujan5.netanalzyerpro.Tools.ConnectionDetector;
 import com.thapasujan5.netanalzyerpro.Tools.DateTimeFormatted;
 import com.thapasujan5.netanalzyerpro.Tools.NetworkUtil;
+import com.thapasujan5.netanalzyerpro.Tools.WifiUtil;
 
 import org.json.JSONObject;
 
@@ -55,7 +57,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -82,7 +83,6 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     boolean once = false;
-    int ttl = 64;
     NetworkDiscovery ns;
     int[] colors = {Color.RED, Color.BLUE, Color.GREEN, Color.DKGRAY, Color.MAGENTA, Color.BLACK};
     Random r;
@@ -92,6 +92,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_network_discovery);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         adView = (AdView) findViewById(R.id.adView);
         new ShowBannerAd(this, adView);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -173,7 +174,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        new Notify(this);
+        new NotificationISP(this);
         new ShowBannerAd(this, adView);
         super.onResume();
     }
@@ -331,6 +332,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
 
         @Override
         protected void onProgressUpdate(Integer... values) {
+            adapter.notifyDataSetChanged();
             double percent = (double) values[0] / (double) 255.0 * 100.0;
             tvScanPercent.setText((new DecimalFormat("#.#").format(percent)) + "%" + "    " + values[0] + "/" + "255");
             tvScanPercent.setTextColor(colors[r.nextInt(colors.length)]);
@@ -339,7 +341,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
             if (items.size() > 0) {
                 tvInfo.setVisibility(View.GONE);
             }
-            adapter.notifyDataSetChanged();
+
             super.onProgressUpdate(values);
         }
 
@@ -347,40 +349,51 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
         protected ItemsDiscovered doInBackground(Void... params) {
 
             try {
-                NetworkInterface iFace = NetworkInterface
-                        .getByInetAddress(InetAddress.getByName(jsonObject.optString(getString(R.string.routerip), "192.168.1.1")));
-                String addr = jsonObject.optString(getString(R.string.routerip), "192.168.1.1");
+                String gateway = new WifiUtil(NetworkDiscoveryActivity.this).getGateway();
+//                NetworkInterface iFace = NetworkInterface
+//                        .getByInetAddress(InetAddress.getByName(gateway));
+
                 for (int i = 1; i <= 255; i++) {
                     if (isCancelled()) {
                         Log.i("NDA", "cancelled");
                         break;
                     }
-                    // build the next IP address
-                    addr = addr.substring(0, addr.lastIndexOf('.') + 1) + i;
-                    InetAddress pingAddr = InetAddress.getByName(addr);
+                    if (gateway != null) {
+                        // build the next IP address
+                        gateway = gateway.substring(0, gateway.lastIndexOf('.') + 1) + i;
+                        InetAddress pingAddr = InetAddress.getByName(gateway);
 
-                    // set timeout and ttl for ping
-                   // Log.i("target", addr);
-                    String str = "";
-                    process = Runtime.getRuntime().exec(
-                            "/system/bin/ping -c 1 " + addr);
-                    BufferedReader reader = new BufferedReader(
-                            new InputStreamReader(process.getInputStream()));
-                    int j;
-                    char[] buffer = new char[4096];
-                    StringBuffer output = new StringBuffer();
-                    while ((j = reader.read(buffer)) > 0) {
+                        // set timeout and ttl for ping
+                        // Log.i("target", gateway);
+                        String str = "";
+                        process = Runtime.getRuntime().exec(
+                                "/system/bin/ping -c 1 " + gateway);
+                        BufferedReader reader = new BufferedReader(
+                                new InputStreamReader(process.getInputStream()));
+                        int j;
+                        char[] buffer = new char[4096];
+                        StringBuffer output = new StringBuffer();
+                        while ((j = reader.read(buffer)) > 0) {
 
-                        output.append(buffer, 0, j);
+                            output.append(buffer, 0, j);
+                        }
+                        reader.close();
+                        str = output.toString();
+                        if (str.contains("100%") == false) {
+                            ItemsDiscovered item = new ItemsDiscovered(pingAddr.getHostName(), pingAddr.getHostAddress(), "");
+                            items.add(item);
+
+                        }
+                        publishProgress(i);
+                        try {
+                            process.destroy();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    } else {
+                        break;
                     }
-                    reader.close();
-                    str = output.toString();
-                    if (str.contains("100%") == false) {
-                        ItemsDiscovered item = new ItemsDiscovered(pingAddr.getHostName(), pingAddr.getHostAddress(), "");
-                        items.add(item);
-                    }
-                    process.destroy();
-                    publishProgress(i);
                 }
             } catch (UnknownHostException ex) {
             } catch (IOException ex) {

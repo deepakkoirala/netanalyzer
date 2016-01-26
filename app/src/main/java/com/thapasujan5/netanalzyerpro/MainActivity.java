@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -28,6 +29,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -48,7 +50,7 @@ import com.thapasujan5.netanalzyerpro.ActionMenu.SnackBarActions;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnapShot;
 import com.thapasujan5.netanalzyerpro.ActionMenu.UpgradeToPro;
 import com.thapasujan5.netanalzyerpro.DataStore.ViewPagerAdapter;
-import com.thapasujan5.netanalzyerpro.Notification.Notify;
+import com.thapasujan5.netanalzyerpro.Notification.NotificationISP;
 import com.thapasujan5.netanalzyerpro.PingService.FabPing;
 import com.thapasujan5.netanalzyerpro.PortScanner.FabPortScan;
 import com.thapasujan5.netanalzyerpro.Tools.CheckDigit;
@@ -86,8 +88,22 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         if (BuildConfig.FLAVOR.contentEquals("free")) {
             this.setTitle("Net Analyzer Lite");
+            new AlertDialog.Builder(this).setTitle("Net Analyzer Lite").
+                    setMessage("Get Full Version of this app now.").
+                    setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            new UpgradeToPro(MainActivity.this);
+                        }
+                    }).setNegativeButton("Cancel", null).show();
         } else {
 
         }
@@ -111,6 +127,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
+        try {
+            reValidate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         super.onResume();
     }
 
@@ -209,7 +230,6 @@ public class MainActivity extends AppCompatActivity
         //pagerTabStrip.setDrawFullUnderline(true);
         //pagerTabStrip.setTabIndicatorColor(Color.RED);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-
         tvExIpArea = (TextView) findViewById(R.id.extip);
     }
 
@@ -217,6 +237,7 @@ public class MainActivity extends AppCompatActivity
     public void reValidate() {
         {
             try {
+                new ShowBannerAd(this, adView);
                 android.support.v7.app.ActionBar ab = getSupportActionBar();
                 //ab.setDisplayHomeAsUpEnabled(true);
                 if (connectionDetector.isConnectingToInternet()) {
@@ -261,12 +282,16 @@ public class MainActivity extends AppCompatActivity
             UserFunctions f = new UserFunctions();
             try {
                 JSONObject json = f.getOwnInfo();
+                if (isCancelled())
+                    return null;
                 if (json.getString("status").contentEquals("success")) {
                     extIPAdd = json.getString("query");
                     org = json.getString("org");
                     city = json.getString("city");
                     country = json.getString("country");
                     data = true;
+                    if (isCancelled())
+                        return null;
                     SetISP.setISP(editor, MainActivity.this, extIPAdd, org, city, country);
                 } else if (json.getString("status").contentEquals("fail")) {
                     SetISP.setISP(editor, MainActivity.this, "", "", "", "");
@@ -278,6 +303,13 @@ public class MainActivity extends AppCompatActivity
             return null;
         }
 
+        @Override
+        protected void onCancelled() {
+            pbExip.setVisibility(View.INVISIBLE);
+            tvExIpArea.setText("Operation Interrupted !");
+            tvExIpArea.setVisibility(View.VISIBLE);
+            super.onCancelled();
+        }
 
         @Override
         protected void onPostExecute(Void result) {
@@ -354,8 +386,19 @@ public class MainActivity extends AppCompatActivity
             onDestroy();
         }
         if (id == R.id.nav_portscanner) {
+            if (this.getPackageName().contentEquals("com.thapasujan5.serversearch")==false) {
+                new FabPortScan(MainActivity.this);
+            } else {
+                new AlertDialog.Builder(this).setTitle("Net Analyzer Lite").
+                        setMessage("This feature requires Full Version of Net Analyzer.").
+                        setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                new UpgradeToPro(MainActivity.this);
+                            }
+                        }).setNegativeButton("Cancel", null).show();
 
-            new FabPortScan(MainActivity.this);
+            }
         }
         if (id == R.id.nav_connectiondetails) {
             viewPager.setCurrentItem(0);
@@ -397,7 +440,7 @@ public class MainActivity extends AppCompatActivity
                         for (String s : children) {
                             if (!s.equals("lib")) {
                                 deleteDir(new File(appDir, s));
-                                new Notify(MainActivity.this);
+                                new NotificationISP(MainActivity.this);
                                 Toast.makeText(getApplicationContext(), "Cache Cleared", Toast.LENGTH_SHORT).show();
                                 Log.i("TAG", "**************** File /data/data/APP_PACKAGE/" + s + " DELETED *******************");
 
@@ -437,7 +480,6 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         try {
             unregisterReceiver(networkStateReceiver);
-
         } catch (Exception e) {
             e.printStackTrace();
         }

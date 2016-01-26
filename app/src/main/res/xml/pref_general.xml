@@ -34,7 +34,7 @@
         android:positiveButtonText="@null"
         android:title="Temperature Unit" />
     <ListPreference
-        android:defaultValue="-1"
+        android:defaultValue="4"
         android:entries="@array/pref_ping_packets"
         android:entryValues="@array/pref_ping_values"
         android:icon="@mipmap/merge"
@@ -47,12 +47,14 @@
         android:title="Weather Update Frequency">
 
         <EditTextPreference
+            android:defaultValue="10"
             android:icon="@mipmap/time"
             android:inputType="numberSigned"
             android:key="@string/key_time_interval"
             android:summary="Minimum time elapsed.(minutes)"
             android:title="By Time(minute)" />
         <EditTextPreference
+            android:defaultValue="10"
             android:icon="@mipmap/directions"
             android:inputType="numberSigned|numberDecimal"
             android:key="@string/key_distance_interval"

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.thapasujan5.netanalyzerpro.R;
-import com.thapasujan5.netanalzyerpro.Notification.Notify;
+import com.thapasujan5.netanalzyerpro.Notification.NotificationISP;
 
 /**
  * Created by Sujan Thapa on 10/01/2016.
@@ -17,6 +17,6 @@ public class SetISP {
         editor.putString(context.getString(R.string.extIpAdd), extIPAdd);
         editor.apply();
         editor.commit();
-        new Notify(context);
+        new NotificationISP(context);
     }
 }

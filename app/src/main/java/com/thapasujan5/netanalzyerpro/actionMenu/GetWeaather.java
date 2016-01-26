@@ -8,6 +8,7 @@ import android.util.Log;
 import com.thapasujan5.netanalyzerpro.R;
 import com.thapasujan5.netanalzyerpro.Tools.UserFunctions;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -17,40 +18,54 @@ public class GetWeaather {
     SharedPreferences sp;
     SharedPreferences.Editor editor;
     Context context;
+    UserFunctions f;
 
     public GetWeaather(Context context) {
         this.context = context;
         sp = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         editor = sp.edit();
+        f = new UserFunctions();
     }
 
-    private boolean getInfo() {
-        UserFunctions f = new UserFunctions();
+    public boolean getInfo() {
+        JSONObject jsonObject;
+        if (sp.getString("lat", "").length() > 0 || sp.getString("lon", "").length() > 0) {
+            Log.i("GetWeather", "Get Weather using lon/lat");
+            editor.putString(context.getString(R.string.weather_source), context.getString(R.string.geolocation));
+            editor.apply();
+            editor.commit();
+            jsonObject = f.getWeatherInfoLatLon(sp.getString(context.getString(R.string.lat), ""),
+                    sp.getString(context.getString(R.string.lon), ""));
 
-        Log.i("service reboot", "To NotificationISP.");
-        String org, city , country , extIPAdd;
+        } else {
+            Log.i("GetWeather", "Get Weather Using ISP Info");
+            editor.putString(context.getString(R.string.weather_source), context.getString(R.string.isp));
+            editor.apply();
+            editor.commit();
+            jsonObject = f.getWeatherInfo(sp.getString(context.getString(R.string.city), ""), sp.getString(context.getString(R.string.country), ""));
+        }
         try {
-            JSONObject json = f.getOwnInfo();
-            if (json.getString("status").contentEquals("success")) {
-                extIPAdd = json.getString("query");
-                org = json.getString("org");
-                city = json.getString("city");
-                country = json.getString("country");
+            if (jsonObject != null) {
+                JSONArray array = jsonObject.getJSONArray("weather");
+                JSONObject weather = array.getJSONObject(0);
+                String mainWeather = weather.optString("main");
+                String iconWeather = weather.optString("icon");
 
-                editor.putString(context.getString(R.string.org), org);
-                editor.putString(context.getString(R.string.city), city);
-                editor.putString(context.getString(R.string.country), country);
-                editor.putString(context.getString(R.string.extIpAdd), extIPAdd);
+                JSONObject main = jsonObject.getJSONObject("main");
+                String tempWeather = main.optString("temp");
+
+                editor.putString(context.getString(R.string.name_weather), jsonObject.optString("name"));
+                editor.putString(context.getString(R.string.main_weather), mainWeather);
+                editor.putString(context.getString(R.string.icon_weather), iconWeather + ".png");
+                editor.putString(context.getString(R.string.temp_weather), tempWeather);
                 editor.apply();
                 editor.commit();
                 return true;
-
-            } else if (json.getString("status").contentEquals("fail")) {
+            } else {
                 return false;
             }
         } catch (Exception e) {
             return false;
         }
-        return false;
     }
 }

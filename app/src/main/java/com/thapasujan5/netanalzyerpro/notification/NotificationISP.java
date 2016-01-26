@@ -14,6 +14,8 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.thapasujan5.netanalyzerpro.R;
+import com.thapasujan5.netanalzyerpro.ActionMenu.GetISP;
+import com.thapasujan5.netanalzyerpro.ActionMenu.GetWeaather;
 import com.thapasujan5.netanalzyerpro.AppConstants;
 import com.thapasujan5.netanalzyerpro.MainActivity;
 import com.thapasujan5.netanalzyerpro.Tools.DataUtil;
@@ -44,11 +46,12 @@ public class NotificationISP {
     FileCache fc;
 
     NotificationManager notificationManager;
-    NotificationCompat.Builder n;
+    NotificationCompat.Builder defaultNotify;
     android.app.Notification notification;
     Intent notificationIntent;
     PendingIntent pendingIntent;
     RemoteViews contentView;
+    boolean weatherInfoAvailable = false, ispInfoAvailable = false;
 
 
     public NotificationISP(Context context) {
@@ -57,7 +60,7 @@ public class NotificationISP {
         notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationIntent = new Intent(context, MainActivity.class);
         pendingIntent = PendingIntent.getActivity(context, GetCode.getCode(context), notificationIntent, 0);
-        n = new NotificationCompat.Builder(context);
+        defaultNotify = new NotificationCompat.Builder(context);
         fc = new FileCache(context);
         imageLoader = new ImageLoader(context);
         sp = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
@@ -72,25 +75,29 @@ public class NotificationISP {
         if (source == AppConstants.TYPE_NOT_CONNECTED) {
             NotifyDefault();
         } else {
-            getWeather();
-            getISPInfo();
-            if (source == AppConstants.TYPE_WIFI) {
-                NotifyWifi();
-            } else if (source == AppConstants.TYPE_MOBILE) {
-                NotifyData();
+
+            if (NetworkUtil.getConnectivityStatus(context) == AppConstants.TYPE_WIFI || NetworkUtil.getConnectivityStatus(context) == AppConstants.TYPE_MOBILE) {
+                getWeather();
+                getISPInfo();
+                if (source == AppConstants.TYPE_WIFI) {
+                    NotifyWifi();
+                } else if (source == AppConstants.TYPE_MOBILE) {
+                    NotifyData();
+                }
             }
         }
     }
 
     private void NotifyDefault() {
-        n.setContentIntent(pendingIntent).setTicker("Ticker").setSmallIcon(R.mipmap.about).setContentTitle("Network Alert.").setContentText("Review your network connection.")
+        defaultNotify.setContentIntent(pendingIntent).setTicker("Net Analyzer Alert").setSmallIcon(R.drawable.ic_notifications_black_24dp).setContentTitle("Net Analyzer.").setContentText("You are not connected to the Internet.")
                 .setAutoCancel(true);
-        fireNotify();
+        defaultNotify.setAutoCancel(true);
+        notificationManager.notify(GetCode.getCode(context), defaultNotify.build());
     }
 
     private void NotifyWifi() {
         getWifiData();
-        int icon = R.mipmap.ic_wifi_logo;
+        int icon = R.drawable.iclauncher_notify;
         long when = System.currentTimeMillis();
         notification = new android.app.Notification(icon, context.getResources().getString(R.string.app_name), when);
 
@@ -115,29 +122,29 @@ public class NotificationISP {
 
         notification.contentView = contentView;
         notification.contentIntent = pendingIntent;
-        fireNotify();
+        if (weatherInfoAvailable && ispInfoAvailable) {
+            fireNotify();
+        }
     }
 
     private void fireNotify() {
-        if (notification == null) {
-            new NotificationISP(context);
-        }
         if (sp.getBoolean(context.getString(R.string.key_notification_sticky), true) == true) {
             if (sp.getBoolean(context.getString(R.string.key_notification_ongoing), true) == true) {
-
-                notification.flags |= android.app.Notification.FLAG_ONGOING_EVENT; //Do not clear the notification
+                if (notification != null)
+                    notification.flags |= android.app.Notification.FLAG_ONGOING_EVENT; //Do not clear the notification
             }
 
 //            notification.defaults |= NotificationISP.DEFAULT_LIGHTS; // LED
 //            notification.defaults |= NotificationISP.DEFAULT_VIBRATE; //Vibration
 //            notification.defaults |= NotificationISP.DEFAULT_SOUND; // Sound
-            notificationManager.notify(GetCode.getCode(context), notification);
+            if (notification != null)
+                notificationManager.notify(GetCode.getCode(context), notification);
         }
     }
 
     private void NotifyData() {
         getMobileData();
-        int icon = R.mipmap.ic_data;
+        int icon = R.drawable.iclauncher_notify;
         long when = System.currentTimeMillis();
         notification = new android.app.Notification(icon, context.getResources().getString(R.string.app_name), when);
 
@@ -175,7 +182,7 @@ public class NotificationISP {
         else
             channel = "";
         getISPInfo();
-        getWeather();
+
     }
 
     private void getMobileData() {
@@ -185,34 +192,39 @@ public class NotificationISP {
     }
 
     private void getISPInfo() {
-        org = sp.getString(context.getString(R.string.org), "");
-        city = sp.getString(context.getString(R.string.city), "");
-        country = sp.getString(context.getString(R.string.country), "");
-        extIpAdd = sp.getString(context.getString(R.string.extIpAdd), "");
 
+        if (Integer.toString(NetworkUtil.getConnectivityStatus(context)).contentEquals(sp.getString(context.getString(R.string.source_isp_info), ""))) {
+            org = sp.getString(context.getString(R.string.org), "");
+            city = sp.getString(context.getString(R.string.city), "");
+            country = sp.getString(context.getString(R.string.country), "");
+            extIpAdd = sp.getString(context.getString(R.string.extIpAdd), "");
+            ispInfoAvailable = true;
+        } else {
+            new GetISP(context).getInfo();
+        }
     }
 
     private String getWeather() {
         if (sp.getString(context.getString(R.string.weather_source), "isp").contains(context.getString(R.string.isp))) {
-            if (sp.getString("lat", "").length() > 0 || sp.getString("lon", "").length() > 0) {
-                new ReceiverReboot().onReceive(context, new Intent(context, MainActivity.class));
+            if (sp.getString("lat", "").length() > 0 == false || sp.getString("lon", "").length() > 0 == false) {
+                new GetWeaather(context).getInfo();
+                return "";
             }
         }
         File file = fc.getFile(AppConstants.url_weather_icon + sp.getString(context.getString(R.string.icon_weather), ""));
 
         if (file.exists() == false) {
             String url = AppConstants.url_weather_icon + sp.getString(context.getString(R.string.icon_weather), "");
-            //   Log.i("NotificationISP", "Url: " + url);
-            if (url.contains("png") || url.contains("PNG") || url.contains("jpg") || url.contains("jpeg") || url.contains("JPG") || url.contains("JPEG")) {
-                // Log.i("NotificationISP", "To Download: " + url);
+            if (url.contains("png") || url.contains("PNG") || url.contains("jpg") || url.contains("jpeg") || url.contains("JPG") || url.contains("JPEG")) {// Log.i("NotificationISP", "To Download: " + url);
                 new DownloadFileFromUrl(context, AppConstants.url_weather_icon + sp.getString(context.getString(R.string.icon_weather), "")).execute();
             } else {
-                //  Log.i("NotificationISP", "To Receiver");
-                new ReceiverReboot().onReceive(context, new Intent(context, MainActivity.class));
+                new GetWeaather(context).getInfo();
+                return "";
             }
         } else {
             Log.i("NotificationISP", "Using: " + AppConstants.url_weather_icon + sp.getString(context.getString(R.string.icon_weather), ""));
             bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+            weatherInfoAvailable = true;
         }
 
         String value = sp.getString(context.getString(R.string.temp_weather), "");

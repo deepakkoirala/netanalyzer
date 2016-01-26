@@ -47,12 +47,13 @@ import com.thapasujan5.netanalzyerpro.ActionMenu.SetISP;
 import com.thapasujan5.netanalzyerpro.ActionMenu.ShowBannerAd;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnackBarActions;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnapShot;
+import com.thapasujan5.netanalzyerpro.ActionMenu.UpgradeToPro;
 import com.thapasujan5.netanalzyerpro.DataStore.Items;
 import com.thapasujan5.netanalzyerpro.DataStore.ItemsAdapter;
 import com.thapasujan5.netanalzyerpro.DataStore.ReportChoices;
 import com.thapasujan5.netanalzyerpro.DataStore.ReportChoicesAdapter;
 import com.thapasujan5.netanalzyerpro.Database.DAO;
-import com.thapasujan5.netanalzyerpro.Notification.Notify;
+import com.thapasujan5.netanalzyerpro.Notification.NotificationISP;
 import com.thapasujan5.netanalzyerpro.PingService.PingRequest;
 import com.thapasujan5.netanalzyerpro.PortScanner.PortScanRequest;
 import com.thapasujan5.netanalzyerpro.Tools.CheckDigit;
@@ -97,17 +98,19 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
     protected SwipeRefreshLayout swipeRefreshLayout;
 
     AdView adView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dnslookup);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         adView = (AdView) findViewById(R.id.adView);
         new ShowBannerAd(this, adView);
         Bundle fields = getIntent().getExtras();
         if (fields != null) {
             intentServiceResult = fields.getBoolean("isr");
         }
-        new ShowBannerAd(this,(AdView) findViewById(R.id.adView));
+        new ShowBannerAd(this, (AdView) findViewById(R.id.adView));
         initialize();
     }
 
@@ -170,7 +173,6 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
             listview.setOnItemClickListener(this);
             listview.setOnItemLongClickListener(this);
             listview.setAdapter(adapterMain);
-            ;
 
             pbExip = (ProgressBar) findViewById(R.id.pbExip);
             pbMain = (ProgressBar) findViewById(R.id.progressBar);
@@ -459,20 +461,49 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
                     new PingRequest(myItem.ip, DnsLookupActivity.this).execute();
                 }
                 if (which == 5) {
-                    if (myItem.lon.length() > 0 && myItem.lat.length() > 0) {
-                        Intent openMap = new Intent(DnsLookupActivity.this, MapsActivity.class);
-                        openMap.putExtra("location", myItem.location);
-                        openMap.putExtra("lat", Double.parseDouble(myItem.lat));
-                        openMap.putExtra("lon", Double.parseDouble(myItem.lon));
-                        startActivity(openMap);
-                        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+                    //map
+                    if (DnsLookupActivity.this.getPackageName().contentEquals("com.thapasujan5.serversearch") == false) {
+                        if (myItem.lon.length() > 0 && myItem.lat.length() > 0) {
+                            Intent openMap = new Intent(DnsLookupActivity.this, MapsActivity.class);
+                            openMap.putExtra("location", myItem.location);
+                            openMap.putExtra("lat", Double.parseDouble(myItem.lat));
+                            openMap.putExtra("lon", Double.parseDouble(myItem.lon));
+                            startActivity(openMap);
+                            overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+                        } else {
+                            new ShowToast(getApplicationContext(), "No geo-location data found !", Color.WHITE, 0, Color.RED, Toast.LENGTH_SHORT, Gravity.BOTTOM);
+                        }
                     } else {
-                        new ShowToast(getApplicationContext(), "No geo-location data found !", Color.WHITE, 0, Color.RED, Toast.LENGTH_SHORT, Gravity.BOTTOM);
+                        new android.support.v7.app.AlertDialog.Builder(DnsLookupActivity.this).setTitle("Net Analyzer Lite").
+                                setMessage("This feature requires Full Version of Net Analyzer.").
+                                setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        new UpgradeToPro(DnsLookupActivity.this);
+                                    }
+                                }).setNegativeButton("Cancel", null).show();
+
                     }
+
+
                 }
                 if (which == 7) {
                     //Port Scan
-                    new PortScanRequest(myItem.ip, DnsLookupActivity.this).execute();
+                    if (getPackageName().contentEquals("com.thapasujan5.serversearch") == false) {
+                        new PortScanRequest(myItem.ip, DnsLookupActivity.this).execute();
+                    } else {
+                        new android.support.v7.app.AlertDialog.Builder(DnsLookupActivity.this).setTitle("Net Analyzer Lite").
+                                setMessage("This feature requires Full Version of Net Analyzer.").
+                                setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        new UpgradeToPro(DnsLookupActivity.this);
+                                    }
+                                }).setNegativeButton("Cancel", null).show();
+
+                    }
+
+
                 }
                 if (which == 6) {
                     //Details
@@ -744,7 +775,7 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onResume() {
         reValidate();
-        new Notify(this);
+        new NotificationISP(this);
         new ShowBannerAd(this, adView);
         super.onResume();
     }
@@ -802,19 +833,6 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
         getMenuInflater().inflate(R.menu.activiy_dnslookup_menu, menu);
         return true;
     }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-//    @Override
-//    public void onBackPressed() {
-//        finish();
-//        startActivity(new Intent(this, MainActivity.class));
-//        super.onBackPressed();
-//    }
-
     @Override
     protected void onDestroy() {
         Log.i(DnsLookupActivity.class.getSimpleName(), "onDestroy");

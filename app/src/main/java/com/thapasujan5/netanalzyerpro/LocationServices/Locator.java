@@ -47,7 +47,7 @@ public class Locator implements LocationListener {
         super();
         this.context = context;
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        this.TIME_INTERVAL = Integer.parseInt(sp.getString(context.getString(R.string.key_time_interval), 1 + "")) * 60 * 1000; //default is 1 min
+        this.TIME_INTERVAL = Integer.parseInt(sp.getString(context.getString(R.string.key_time_interval), 1 + "")) * 10 * 1000; //default is 10 min
         this.DISTANCE_INTERVAL = Integer.parseInt(sp.getString(context.getString(R.string.key_distance_interval), 10 + "")); //default is 10 meter
 
         Log.i("tim/dis", TIME_INTERVAL + "/" + DISTANCE_INTERVAL);

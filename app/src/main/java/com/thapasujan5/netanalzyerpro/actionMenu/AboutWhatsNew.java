@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.thapasujan5.netanalyzerpro.R;
+import com.thapasujan5.netanalzyerpro.Tools.GetVersionName;
 
 /**
  * Created by Suzan on 11/8/2015.
@@ -46,7 +47,7 @@ public class AboutWhatsNew {
 
             TextView title, message;
             title = (TextView) d.findViewById(R.id.titleText);
-            title.setText("What's new in " + context.getString(R.string.version));
+            title.setText("What's new in " + GetVersionName.getAppVersionName(context));
 
             message = (TextView) d.findViewById(R.id.message);
             message.setText(R.string.newFeatures);

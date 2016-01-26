@@ -1,12 +1,14 @@
 package com.thapasujan5.netanalzyerpro.LocationServices;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.thapasujan5.netanalyzerpro.R;
+import com.thapasujan5.netanalzyerpro.MainActivity;
 import com.thapasujan5.netanalzyerpro.Notification.ReceiverReboot;
 
 /**
@@ -28,7 +30,7 @@ public class Locate {
                     editor.apply();
                     editor.commit();
                     Log.i("New Location Found", lat + " " + lon);
-                    new ReceiverReboot();
+                    new ReceiverReboot().onReceive(context, new Intent(context, MainActivity.class));
                 } else {
                     Log.i("Same Location", "Lat:" + lat + "|" + sp.getString(context.getString(R.string.lat), "") + " Lon:" + lon + "|" + sp.getString(context.getString(R.string.lon), ""));
                 }

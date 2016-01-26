@@ -27,11 +27,15 @@ public class ReceiverReboot extends BroadcastReceiver {
         serviceIntent.putExtra("receiver", "reboot");
         if (NetworkUtil.getConnectivityStatus(context) == AppConstants.TYPE_NOT_CONNECTED) {
             Log.i("RebootReceiver", "To Default notify");
-            new Notify(context);
+            new NotificationISP(context);
         } else if (NetworkUtil.getConnectivityStatus(context) == AppConstants.TYPE_WIFI || NetworkUtil.getConnectivityStatus(context) == AppConstants.TYPE_MOBILE) {
             Log.i("RebootReceiver", "To Service");
             context.startService(serviceIntent);
-            new Timer().scheduleAtFixedRate(new WeatherUpdater(context), new Date(), AppConstants.WEATHER_UPDATE_DURATION); //1Hour
+            try {
+                new Timer().scheduleAtFixedRate(new WeatherUpdater(context), new Date(), AppConstants.WEATHER_UPDATE_DURATION); //1Hour
+            } catch (OutOfMemoryError e) {
+                e.printStackTrace();
+            }
         }
     }
 }

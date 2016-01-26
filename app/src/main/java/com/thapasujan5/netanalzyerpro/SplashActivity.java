@@ -19,7 +19,7 @@ public class SplashActivity extends Activity {
 
     ImageView iv;
     Image icon;
-    TextView versionName;
+    TextView versionName, appName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,11 +28,18 @@ public class SplashActivity extends Activity {
         setContentView(R.layout.activity_splash);
         versionName = (TextView) findViewById(R.id.projectversion);
         versionName.setText(GetVersionName.getAppVersionName(this));
+        appName = (TextView) findViewById(R.id.appName);
+        if (this.getPackageName().contentEquals("com.thapasujan5.serversearch")) {
+            appName.setText(this.getString(R.string.app_name)+" Lite");
+        } else {
+            appName.setText(this.getString(R.string.app_name));
+        }
         iv = (ImageView) findViewById(R.id.icon);
         Animation an2 = AnimationUtils.loadAnimation(this, R.anim.splash);
         iv.startAnimation(an2);
         startMainActivity();
     }
+
     @Override
     protected void onPause() {
         super.onPause();
