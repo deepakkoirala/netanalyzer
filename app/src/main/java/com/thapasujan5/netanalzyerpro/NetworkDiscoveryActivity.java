@@ -94,10 +94,8 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_network_discovery);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         adView = (AdView) findViewById(R.id.adView);
-        new ShowBannerAd(this, adView);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,16 +163,12 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
         filter = new IntentFilter();
         filter.addAction(WifiManager.RSSI_CHANGED_ACTION);
         filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-        filter.addAction(WifiManager.EXTRA_NETWORK_INFO);
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-
         registerReceiver(receiver, filter);
-
     }
 
     @Override
     protected void onResume() {
-        new NotificationISP(this);
         new ShowBannerAd(this, adView);
         super.onResume();
     }
@@ -273,13 +267,14 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
         if (id == R.id.scan) {
             ns = new NetworkDiscovery(this);
             ns.execute();
+            return  true;
         }
 
         if (id == R.id.snapshot) {
             new SnapShot(this, getWindow().getDecorView().getRootView());
             return true;
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     ImageView.OnClickListener ScanCancelled = new View.OnClickListener() {
@@ -324,6 +319,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
 
         @Override
         protected void onCancelled() {
+            Toast.makeText(getApplicationContext(), "Scan Aborted.", Toast.LENGTH_SHORT).show();
             llPb.setVisibility(View.GONE);
             if (swipeRefreshLayout.isRefreshing())
                 swipeRefreshLayout.setRefreshing(false);
@@ -404,14 +400,13 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(ItemsDiscovered itemsDiscovered) {
+            adapter.notifyDataSetChanged();
             restoreWifiDetails();
             if (items.size() > 1 == false) {
                 tvInfo.setVisibility(View.VISIBLE);
             } else {
                 tvInfo.setVisibility(View.GONE);
             }
-
-
             llPb.setVisibility(View.GONE);
             if (swipeRefreshLayout.isRefreshing()) {
                 swipeRefreshLayout.setRefreshing(false);

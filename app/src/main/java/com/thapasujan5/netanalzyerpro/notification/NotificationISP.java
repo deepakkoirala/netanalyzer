@@ -207,7 +207,18 @@ public class NotificationISP {
     private String getWeather() {
         if (sp.getString(context.getString(R.string.weather_source), "isp").contains(context.getString(R.string.isp))) {
             if (sp.getString("lat", "").length() > 0 == false || sp.getString("lon", "").length() > 0 == false) {
-                new GetWeaather(context).getInfo();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new GetWeaather(context).getInfo();
+                        try {
+                            Thread.sleep(3000);                 //1000 milliseconds is one second.
+                        } catch (InterruptedException ex) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                });
+
                 return "";
             }
         }

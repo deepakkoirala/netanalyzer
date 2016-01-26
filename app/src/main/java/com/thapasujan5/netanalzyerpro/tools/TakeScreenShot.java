@@ -14,10 +14,10 @@ public class TakeScreenShot {
 
 	public static Bitmap getBitmapFromScreen(View view, String path) {
 		View v = view.getRootView();
-		v.setDrawingCacheEnabled(true);
 		Bitmap bmp = Bitmap.createBitmap(v.getDrawingCache());
-		v.setDrawingCacheEnabled(false);
 		try {
+			v.setDrawingCacheEnabled(true);
+			v.setDrawingCacheEnabled(false);
 			FileOutputStream fos = new FileOutputStream(new File(path));
 			bmp.compress(CompressFormat.PNG, 100, fos);
 			Log.i("TakeScreenShotClass", "Compressed");

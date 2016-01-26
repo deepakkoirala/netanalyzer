@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity
         requestPermissions.getPermission(Manifest.permission.READ_PHONE_STATE, AppConstants.READ_PHONE_STATE);
         requestPermissions.getPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, AppConstants.WRITE_EXTERNAL_STORAGE);
         requestPermissions.getPermission(Manifest.permission.SYSTEM_ALERT_WINDOW, AppConstants.SYSTEM_ALERT_WINDOW);
+        requestPermissions.getPermission(Manifest.permission.CHANGE_NETWORK_STATE, AppConstants.CHANGE_NETWORK_STATE);
         try {
             initView();
             new ShowBannerAd(this, adView);
@@ -386,7 +387,7 @@ public class MainActivity extends AppCompatActivity
             onDestroy();
         }
         if (id == R.id.nav_portscanner) {
-            if (this.getPackageName().contentEquals("com.thapasujan5.serversearch")==false) {
+            if (this.getPackageName().contentEquals("com.thapasujan5.serversearch") == false) {
                 new FabPortScan(MainActivity.this);
             } else {
                 new AlertDialog.Builder(this).setTitle("Net Analyzer Lite").

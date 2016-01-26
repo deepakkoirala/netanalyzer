@@ -43,6 +43,7 @@ public class AppConstants {
     public static final int READ_EXTERNAL_STORAGE = 5;
     public static final int WRITE_EXTERNAL_STORAGE = 6;
     public static final int SYSTEM_ALERT_WINDOW = 7;
+    public static final int CHANGE_NETWORK_STATE = 8;
 
     public enum MonetizationType {
         PAID, FREE

@@ -22,7 +22,7 @@ import java.io.File;
  * Created by Suzan on 12/23/2015.
  */
 public class SnapShot {
-    public SnapShot(final Context context,final View view)
+    public SnapShot(final Context context, final View view)
 
     {
 
@@ -37,7 +37,6 @@ public class SnapShot {
                 final JSONObject location = new GetPath(context).getPathAndName();
                 if (location != null) {
                     try {
-
                         final Bitmap mBitmap = TakeScreenShot.getBitmapFromScreen(
                                 view,
                                 location.getString("path") + location.getString("name") + ".png");
@@ -66,8 +65,12 @@ public class SnapShot {
 
                                     context.startActivity(Intent.createChooser(intent,
                                             "Share Image with:"));
-                                    if (mBitmap != null && !mBitmap.isRecycled()) {
-                                        mBitmap.recycle();
+                                    try {
+                                        if (mBitmap != null && !mBitmap.isRecycled()) {
+                                            mBitmap.recycle();
+                                        }
+                                    } catch (Exception e) {
+
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();

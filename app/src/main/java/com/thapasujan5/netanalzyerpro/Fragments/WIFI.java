@@ -1,5 +1,7 @@
 package com.thapasujan5.netanalzyerpro.Fragments;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -18,6 +20,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -35,7 +38,6 @@ import android.widget.Toast;
 import com.thapasujan5.netanalyzerpro.R;
 import com.thapasujan5.netanalzyerpro.AppConstants;
 import com.thapasujan5.netanalzyerpro.MainActivity;
-import com.thapasujan5.netanalzyerpro.Notification.NotificationISP;
 import com.thapasujan5.netanalzyerpro.Notification.ReceiverReboot;
 import com.thapasujan5.netanalzyerpro.Tools.Clipboard;
 import com.thapasujan5.netanalzyerpro.Tools.ConnectionDetector;
@@ -50,7 +52,7 @@ import java.util.List;
 /**
  * Created by Suzan on 12/14/2015.
  */
-public class WIFI extends Fragment implements View.OnLongClickListener {
+public class WIFI extends Fragment implements View.OnLongClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
     TextView tvChannel, tvChannel1, tvMacSelf, tvSSID, tvIp, tvGateway, tvSubnet, tvDns1, tvDns2, tvLease, tvStatus, tvStrength, tvSpeed, tvFrequency, tvSecurity;
     TextView tvPercent;
     TextView tvRouterMac, tvRouterIP;
@@ -302,6 +304,21 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case AppConstants.ACCESS_FINE_LOCATION: {
+                break;
+            }
+            case AppConstants.ACCESS_CORASE_LOCATION: {
+                break;
+            }
+            case AppConstants.CHANGE_NETWORK_STATE: {
+                break;
+            }
+        }
+    }
+
     private void updateSecurity() throws Exception {
         WifiManager wifi = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
         if (Build.VERSION.SDK_INT >= 23 &&
@@ -358,6 +375,16 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
         }
     };
 
+    public void getPermission(String permissions, int code) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (getContext().checkSelfPermission(permissions)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ((Activity) getContext()).requestPermissions(new String[]{permissions},
+                        code);
+            }
+        }
+    }
+
     public static void alertWifiStatus(final Context context, final SwipeRefreshLayout swipeRefreshLayout) {
         final WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         if (wifi.isWifiEnabled() == false) {
@@ -368,7 +395,13 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     Toast.makeText(context.getApplicationContext(), "Enabling WIFI...", Toast.LENGTH_LONG).show();
-                    wifi.setWifiEnabled(true);
+                    if (Build.VERSION.SDK_INT >= 23 &&
+                            ContextCompat.checkSelfPermission(context, Manifest.permission.CHANGE_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    } else {
+                        wifi.setWifiEnabled(true);
+                    }
+
                     if (swipeRefreshLayout.isRefreshing())
                         swipeRefreshLayout.setRefreshing(false);
 
