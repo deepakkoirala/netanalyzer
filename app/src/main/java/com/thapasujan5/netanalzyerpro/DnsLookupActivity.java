@@ -821,7 +821,7 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
                 return true;
         }
         if (id == R.id.snapshot) {
-            new SnapShot(this, getWindow().getDecorView().getRootView());
+            new SnapShot(this, findViewById(android.R.id.content).getRootView());
             return true;
         }
         return super.onOptionsItemSelected(item);

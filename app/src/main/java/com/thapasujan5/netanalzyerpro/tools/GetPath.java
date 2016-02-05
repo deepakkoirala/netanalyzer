@@ -61,7 +61,7 @@ public class GetPath {
             json.put("name", name);
 
         } catch (Exception e) {
-
+e.printStackTrace();
         }
     }
 }

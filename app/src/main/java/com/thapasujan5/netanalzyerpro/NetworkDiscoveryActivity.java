@@ -42,7 +42,6 @@ import com.thapasujan5.netanalzyerpro.ActionMenu.SnapShot;
 import com.thapasujan5.netanalzyerpro.DataStore.ItemsDiscovered;
 import com.thapasujan5.netanalzyerpro.DataStore.ItemsDiscoveredAdapter;
 import com.thapasujan5.netanalzyerpro.Fragments.WIFI;
-import com.thapasujan5.netanalzyerpro.Notification.NotificationISP;
 import com.thapasujan5.netanalzyerpro.PingService.PingRequest;
 import com.thapasujan5.netanalzyerpro.PortScanner.PortScanRequest;
 import com.thapasujan5.netanalzyerpro.Tools.Clipboard;
@@ -265,13 +264,13 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
                 return true;
         }
         if (id == R.id.scan) {
-            ns = new NetworkDiscovery(this);
-            ns.execute();
-            return  true;
+            newTask(id);
+            return true;
+
         }
 
         if (id == R.id.snapshot) {
-            new SnapShot(this, getWindow().getDecorView().getRootView());
+            new SnapShot(this, findViewById(android.R.id.content).getRootView());
             return true;
         }
         return true;
@@ -296,7 +295,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             if (NetworkUtil.getConnectivityStatus(context) == AppConstants.TYPE_WIFI) {
-
+                swipeRefreshLayout.setRefreshing(true);
                 llPb.setVisibility(View.VISIBLE);
                 items.clear();
                 if (items.size() > 1) {
@@ -319,6 +318,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
 
         @Override
         protected void onCancelled() {
+            adapter.notifyDataSetChanged();
             Toast.makeText(getApplicationContext(), "Scan Aborted.", Toast.LENGTH_SHORT).show();
             llPb.setVisibility(View.GONE);
             if (swipeRefreshLayout.isRefreshing())
@@ -330,7 +330,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
         protected void onProgressUpdate(Integer... values) {
             adapter.notifyDataSetChanged();
             double percent = (double) values[0] / (double) 255.0 * 100.0;
-            tvScanPercent.setText((new DecimalFormat("#.#").format(percent)) + "%" + "    " + values[0] + "/" + "255");
+            tvScanPercent.setText((new DecimalFormat("#.#").format(percent))+"%");
             tvScanPercent.setTextColor(colors[r.nextInt(colors.length)]);
             progressBar.setProgress((int) percent);
 
@@ -352,6 +352,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
                 for (int i = 1; i <= 255; i++) {
                     if (isCancelled()) {
                         Log.i("NDA", "cancelled");
+                        ns = null;
                         break;
                     }
                     if (gateway != null) {
@@ -370,7 +371,10 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
                         char[] buffer = new char[4096];
                         StringBuffer output = new StringBuffer();
                         while ((j = reader.read(buffer)) > 0) {
-
+                            if (isCancelled()) {
+                                Log.i("NDA", "cancelled");
+                                break;
+                            }
                             output.append(buffer, 0, j);
                         }
                         reader.close();
@@ -505,15 +509,32 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
             }
         }
     };
+
+    private void newTask(int source) {
+        if (wifiManager.isWifiEnabled() && NetworkUtil.getConnectivityStatus(NetworkDiscoveryActivity.this) == AppConstants.TYPE_WIFI) {
+            if (ns != null && ns.getStatus() != AsyncTask.Status.FINISHED) {
+                new AlertDialog.Builder(NetworkDiscoveryActivity.this).
+                        setMessage("Cancel current scan?").setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ns.cancel(true);
+                            }
+                        }).setNegativeButton("Cancel", null).show();
+            } else {
+                ns = new NetworkDiscovery(NetworkDiscoveryActivity.this);
+                ns.execute();
+            }
+
+        } else {
+            WIFI.alertWifiStatus(NetworkDiscoveryActivity.this, swipeRefreshLayout);
+        }
+    }
+
     SwipeRefreshLayout.OnRefreshListener SwipeListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
-            if (wifiManager.isWifiEnabled() && NetworkUtil.getConnectivityStatus(NetworkDiscoveryActivity.this) == AppConstants.TYPE_WIFI) {
-                ns = new NetworkDiscovery(NetworkDiscoveryActivity.this);
-                ns.execute();
-            } else {
-                WIFI.alertWifiStatus(NetworkDiscoveryActivity.this, swipeRefreshLayout);
-            }
+            newTask(R.id.swipeRefreshLayout);
         }
     };
 

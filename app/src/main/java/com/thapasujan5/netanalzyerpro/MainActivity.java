@@ -97,13 +97,13 @@ public class MainActivity extends AppCompatActivity
         if (BuildConfig.FLAVOR.contentEquals("free")) {
             this.setTitle("Net Analyzer Lite");
             new AlertDialog.Builder(this).setTitle("Net Analyzer Lite").
-                    setMessage("Get Full Version of this app now.").
-                    setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                    setMessage("You are one click away to get the full version...").
+                    setPositiveButton("Get It Now !", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             new UpgradeToPro(MainActivity.this);
                         }
-                    }).setNegativeButton("Cancel", null).show();
+                    }).setNegativeButton("I'm broke !", null).show();
         } else {
 
         }
@@ -112,13 +112,12 @@ public class MainActivity extends AppCompatActivity
         adView = (AdView) findViewById(R.id.adView);
         requestPermissions = new RequestPermissions(this);
         requestPermissions.getPermission(Manifest.permission.ACCESS_FINE_LOCATION, AppConstants.ACCESS_FINE_LOCATION);
-        requestPermissions.getPermission(Manifest.permission.READ_PHONE_STATE, AppConstants.READ_PHONE_STATE);
         requestPermissions.getPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, AppConstants.WRITE_EXTERNAL_STORAGE);
-        requestPermissions.getPermission(Manifest.permission.SYSTEM_ALERT_WINDOW, AppConstants.SYSTEM_ALERT_WINDOW);
+//        requestPermissions.getPermission(Manifest.permission.SYSTEM_ALERT_WINDOW, AppConstants.SYSTEM_ALERT_WINDOW);
         requestPermissions.getPermission(Manifest.permission.CHANGE_NETWORK_STATE, AppConstants.CHANGE_NETWORK_STATE);
         try {
             initView();
-            new ShowBannerAd(this, adView);
+            //new ShowBannerAd(this, adView);
             initialize();
             new AboutWhatsNew(this); //Run at first install
         } catch (Exception e) {
@@ -368,7 +367,7 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
         if (id == R.id.snapshot) {
-            new SnapShot(MainActivity.this, getWindow().getDecorView().getRootView());
+            new SnapShot(this, findViewById(android.R.id.content).getRootView());
             return true;
 
         }

@@ -1,16 +1,16 @@
 package com.thapasujan5.netanalzyerpro.ActionMenu;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.thapasujan5.netanalyzerpro.R;
 import com.thapasujan5.netanalzyerpro.Tools.GetPath;
 import com.thapasujan5.netanalzyerpro.Tools.TakeScreenShot;
 
@@ -37,6 +37,7 @@ public class SnapShot {
                 final JSONObject location = new GetPath(context).getPathAndName();
                 if (location != null) {
                     try {
+
                         final Bitmap mBitmap = TakeScreenShot.getBitmapFromScreen(
                                 view,
                                 location.getString("path") + location.getString("name") + ".png");
@@ -65,17 +66,11 @@ public class SnapShot {
 
                                     context.startActivity(Intent.createChooser(intent,
                                             "Share Image with:"));
-                                    try {
-                                        if (mBitmap != null && !mBitmap.isRecycled()) {
-                                            mBitmap.recycle();
-                                        }
-                                    } catch (Exception e) {
-
+                                    if (mBitmap != null && !mBitmap.isRecycled()) {
+                                        mBitmap.recycle();
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    Toast.makeText(context.getApplicationContext(), context.getResources().getString(R.string.general_err), Toast.LENGTH_SHORT
-                                    ).show();
 
                                 }
 
@@ -109,12 +104,9 @@ public class SnapShot {
 
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(context.getApplicationContext(), context.getResources().getString(R.string.general_err), Toast.LENGTH_SHORT
-                        ).show();
                     }
                 } else {
-                    Toast.makeText(context.getApplicationContext(), context.getResources().getString(R.string.general_err), Toast.LENGTH_SHORT
-                    ).show();
+                    Log.d("snapshot", "location null");
                 }
             }
         });
