@@ -27,16 +27,7 @@ public class RequestPermissions implements ActivityCompat.OnRequestPermissionsRe
         editor = sharedPreferences.edit();
     }
 
-    public void getPermission(String permissions, int code) {
-        this.code = code;
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (context.checkSelfPermission(permissions)
-                    != PackageManager.PERMISSION_GRANTED) {
-                ((Activity) context).requestPermissions(new String[]{permissions},
-                        code);
-            }
-        }
-    }
+
 
 
     @Override
@@ -149,9 +140,5 @@ public class RequestPermissions implements ActivityCompat.OnRequestPermissionsRe
 
 
         }
-    }
-
-    public interface listener {
-        void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults);
     }
 }

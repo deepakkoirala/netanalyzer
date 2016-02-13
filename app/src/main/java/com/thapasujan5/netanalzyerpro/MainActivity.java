@@ -7,16 +7,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -35,7 +37,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdView;
 import com.thapasujan5.netanalyzerpro.BuildConfig;
 import com.thapasujan5.netanalyzerpro.R;
 import com.thapasujan5.netanalzyerpro.ActionMenu.About;
@@ -45,7 +46,6 @@ import com.thapasujan5.netanalzyerpro.ActionMenu.Portal;
 import com.thapasujan5.netanalzyerpro.ActionMenu.RateApp;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SetISP;
 import com.thapasujan5.netanalzyerpro.ActionMenu.ShareApp;
-import com.thapasujan5.netanalzyerpro.ActionMenu.ShowBannerAd;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnackBarActions;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnapShot;
 import com.thapasujan5.netanalzyerpro.ActionMenu.UpgradeToPro;
@@ -57,7 +57,6 @@ import com.thapasujan5.netanalzyerpro.Tools.CheckDigit;
 import com.thapasujan5.netanalzyerpro.Tools.Clipboard;
 import com.thapasujan5.netanalzyerpro.Tools.ConnectionDetector;
 import com.thapasujan5.netanalzyerpro.Tools.NetworkUtil;
-import com.thapasujan5.netanalzyerpro.Tools.RequestPermissions;
 import com.thapasujan5.netanalzyerpro.Tools.ShowToast;
 import com.thapasujan5.netanalzyerpro.Tools.UserFunctions;
 import com.thapasujan5.netanalzyerpro.Tools.ZoomOutPageTransformer;
@@ -67,7 +66,7 @@ import org.json.JSONObject;
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, ActivityCompat.OnRequestPermissionsResultCallback {
     TextView tvExIpArea, navUpgrade, tvAppName;
     ConnectionDetector connectionDetector;
     String intIP;
@@ -81,8 +80,7 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView;
     ImageView navSetting;
     SharedPreferences.Editor editor;
-    RequestPermissions requestPermissions;
-    AdView adView;
+    //  AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,25 +101,58 @@ public class MainActivity extends AppCompatActivity
                         public void onClick(DialogInterface dialog, int which) {
                             new UpgradeToPro(MainActivity.this);
                         }
-                    }).setNegativeButton("I'm broke !", null).show();
+                    }).setNegativeButton("Later", null).show();
         } else {
 
         }
         if (this.getPackageName().contentEquals("com.thapasujan5.serversearch"))
             this.setTitle("Net Analyzer Lite");
-        adView = (AdView) findViewById(R.id.adView);
-        requestPermissions = new RequestPermissions(this);
-        requestPermissions.getPermission(Manifest.permission.ACCESS_FINE_LOCATION, AppConstants.ACCESS_FINE_LOCATION);
-        requestPermissions.getPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, AppConstants.WRITE_EXTERNAL_STORAGE);
+        //   adView = (AdView) findViewById(R.id.adView);
+        getPermission(Manifest.permission.ACCESS_FINE_LOCATION, AppConstants.ACCESS_FINE_LOCATION);
+        getPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, AppConstants.WRITE_EXTERNAL_STORAGE);
 //        requestPermissions.getPermission(Manifest.permission.SYSTEM_ALERT_WINDOW, AppConstants.SYSTEM_ALERT_WINDOW);
-        requestPermissions.getPermission(Manifest.permission.CHANGE_NETWORK_STATE, AppConstants.CHANGE_NETWORK_STATE);
+        getPermission(Manifest.permission.CHANGE_NETWORK_STATE, AppConstants.CHANGE_NETWORK_STATE);
         try {
             initView();
-            //new ShowBannerAd(this, adView);
+            //  new ShowBannerAd(this, adView);
             initialize();
             new AboutWhatsNew(this); //Run at first install
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void getPermission(String permissions, int code) {
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(permissions)
+                    != PackageManager.PERMISSION_GRANTED) {
+                this.requestPermissions(new String[]{permissions},
+                        code);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case AppConstants.ACCESS_FINE_LOCATION: {
+                Log.d("MainActivity", permissions[0] + " granted");
+                break;
+            }
+            case AppConstants.WRITE_EXTERNAL_STORAGE: {
+                Log.d("MainActivity", permissions[0] + " granted");
+                break;
+            }
+            case AppConstants.READ_PHONE_STATE: {
+                Log.d("MainActivity", permissions[0] + " granted");
+                try {
+                    viewPager.setAdapter(viewPagerAdapter);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
         }
     }
 
@@ -136,9 +167,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initialize() throws Exception {
-
         try {
-            viewPager.setAdapter(viewPagerAdapter);
             networkStateReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
@@ -205,6 +234,21 @@ public class MainActivity extends AppCompatActivity
                 drawer.closeDrawers();
             }
         });
+        navigationView.getMenu().getItem(1).setChecked(true);
+        viewPager = (ViewPager) findViewById(R.id.pager);
+        viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
+        // PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_title_strip);
+        //pagerTabStrip.setDrawFullUnderline(true);
+        //pagerTabStrip.setTabIndicatorColor(Color.RED);
+        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(viewPagerAdapter);
+        viewPager.setOffscreenPageLimit(1);
+        sharedpreferences = PreferenceManager
+                .getDefaultSharedPreferences(getBaseContext());
+        editor = sharedpreferences.edit();
+        pbExip = (ProgressBar) findViewById(R.id.pbExip);
+        connectionDetector = new ConnectionDetector(getApplicationContext());
+        tvExIpArea = (TextView) findViewById(R.id.extip);
         if (BuildConfig.FLAVOR.contentEquals("free") || (this.getPackageName().contentEquals("com.thapasujan5.serversearch"))) {
             navUpgrade = (TextView) header.findViewById(R.id.upgrade);
             tvAppName = (TextView) header.findViewById(R.id.tvAppName);
@@ -218,30 +262,17 @@ public class MainActivity extends AppCompatActivity
             });
             navUpgrade.setVisibility(View.VISIBLE);
         }
-        navigationView.getMenu().getItem(1).setChecked(true);
-        sharedpreferences = PreferenceManager
-                .getDefaultSharedPreferences(getBaseContext());
-        editor = sharedpreferences.edit();
-        pbExip = (ProgressBar) findViewById(R.id.pbExip);
-        connectionDetector = new ConnectionDetector(getApplicationContext());
-        viewPager = (ViewPager) findViewById(R.id.pager);
-        viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
-        PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_title_strip);
-        //pagerTabStrip.setDrawFullUnderline(true);
-        //pagerTabStrip.setTabIndicatorColor(Color.RED);
-        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        tvExIpArea = (TextView) findViewById(R.id.extip);
     }
 
 
     public void reValidate() {
         {
             try {
-                new ShowBannerAd(this, adView);
+                // new ShowBannerAd(this, adView);
                 android.support.v7.app.ActionBar ab = getSupportActionBar();
                 //ab.setDisplayHomeAsUpEnabled(true);
                 if (connectionDetector.isConnectingToInternet()) {
-                    // Get Local IP either from WIFI or Data
+                    // Get Local IP either from WIFI or DataOld
                     // WIFI
                     intIP = NetworkUtil.getIPAddress(true);
                     // Set Internal IP
@@ -346,8 +377,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         getMenuInflater().inflate(R.menu.activity_main_menu, menu);
+        if (this.getPackageName().contentEquals("com.thapasujan5.serversearch")) {
+            MenuItem item = menu.findItem(R.id.snapshot);
+            item.setTitle("Get Pro");
+            item.setIcon(null);
+        }
         return true;
     }
 
@@ -367,7 +402,11 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
         if (id == R.id.snapshot) {
-            new SnapShot(this, findViewById(android.R.id.content).getRootView());
+            if (getPackageName().contentEquals("com.thapasujan5.serversearch") == false)
+                new SnapShot(this, findViewById(android.R.id.content).getRootView());
+            else {
+                new UpgradeToPro(this);
+            }
             return true;
 
         }

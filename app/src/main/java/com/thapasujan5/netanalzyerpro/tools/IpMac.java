@@ -16,7 +16,7 @@ public class IpMac {
         if (wifiIP.length() > 7) {
             intIP = wifiIP;
         } else {
-            // Data
+            // DataOld
             intIP = NetworkUtil.getIPAddress(true);
         }
         return intIP;

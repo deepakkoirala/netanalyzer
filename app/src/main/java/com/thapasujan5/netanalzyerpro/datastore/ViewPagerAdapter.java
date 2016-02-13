@@ -29,6 +29,8 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 fragment = new Data();
                 return fragment;
+            default:
+                fragment = new WIFI();
         }
         return fragment;
 
@@ -49,13 +51,10 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         String title = "";
         switch (position) {
             case 0:
-                title = "WIFI";
+                title = "WiFi";
                 break;
             case 1:
-                title = "Data";
-                break;
-            case 2:
-                title = "WAN";
+                title = "Cellular";
                 break;
         }
         return title;

@@ -97,20 +97,20 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
     IntentFilter filter;
     protected SwipeRefreshLayout swipeRefreshLayout;
 
-    AdView adView;
+//    AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dnslookup);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        adView = (AdView) findViewById(R.id.adView);
-        new ShowBannerAd(this, adView);
+//        adView = (AdView) findViewById(R.id.adView);
+//        new ShowBannerAd(this, adView);
         Bundle fields = getIntent().getExtras();
         if (fields != null) {
             intentServiceResult = fields.getBoolean("isr");
         }
-        new ShowBannerAd(this, (AdView) findViewById(R.id.adView));
+//        new ShowBannerAd(this, (AdView) findViewById(R.id.adView));
         initialize();
     }
 
@@ -776,7 +776,7 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
     protected void onResume() {
         reValidate();
         new NotificationISP(this);
-        new ShowBannerAd(this, adView);
+//        new ShowBannerAd(this, adView);
         super.onResume();
     }
 
@@ -786,7 +786,7 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
             android.support.v7.app.ActionBar ab = getSupportActionBar();
             ab.setDisplayHomeAsUpEnabled(true);
             if (connectionDetector.isConnectingToInternet()) {
-                // Get Local IP either from WIFI or Data
+                // Get Local IP either from WIFI or DataOld
                 // WIFI
                 intIP = NetworkUtil.getIPAddress(true);
                 // Set Internal IP

@@ -1,7 +1,5 @@
 package com.thapasujan5.netanalzyerpro.Fragments;
 
-import android.Manifest;
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -20,7 +18,6 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -52,7 +49,7 @@ import java.util.List;
 /**
  * Created by Suzan on 12/14/2015.
  */
-public class WIFI extends Fragment implements View.OnLongClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
+public class WIFI extends Fragment implements View.OnLongClickListener {
     TextView tvChannel, tvChannel1, tvMacSelf, tvSSID, tvIp, tvGateway, tvSubnet, tvDns1, tvDns2, tvLease, tvStatus, tvStrength, tvSpeed, tvFrequency, tvSecurity;
     TextView tvPercent;
     TextView tvRouterMac, tvRouterIP;
@@ -159,14 +156,18 @@ public class WIFI extends Fragment implements View.OnLongClickListener, Activity
         receiverSwitch = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (new WifiUtil(getContext()).isWifiEnabled()) {
-                    tbWifiSwitch.setChecked(true);
-                } else {
-                    tbWifiSwitch.setChecked(false);
-                }
+//                if (new WifiUtil(getContext()).isWifiEnabled()) {
+//                    tbWifiSwitch.setPressed(true);
+//                    tbWifiSwitch.setChecked(true);
+//
+//                } else {
+//                    tbWifiSwitch.setPressed(true);
+//                    tbWifiSwitch.setChecked(false);
+//                }
                 try {
                     jsonObject.put("switch", tbWifiSwitch.isChecked());
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         };
@@ -272,12 +273,12 @@ public class WIFI extends Fragment implements View.OnLongClickListener, Activity
             tvChannel.setText(channel);
             tvChannel1.setText(channel);
             jsonObject.put("channel", channel);
+            tbWifiSwitch.setChecked(true);
         } else {
             if (new WifiUtil(getContext()).isWifiEnabled()) {
                 tvSSID.setText("Not Connected.");
             } else {
                 tvSSID.setText(R.string.desc_ssid);
-
             }
             tvIp.setText("n/a");
             tvGateway.setText("n/a");
@@ -296,26 +297,9 @@ public class WIFI extends Fragment implements View.OnLongClickListener, Activity
             tvRouterMac.setVisibility(View.GONE);
             tvRouterIP.setVisibility(View.GONE);
             tvPercent.setVisibility(View.GONE);
-
-
         }
         if (swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case AppConstants.ACCESS_FINE_LOCATION: {
-                break;
-            }
-            case AppConstants.ACCESS_CORASE_LOCATION: {
-                break;
-            }
-            case AppConstants.CHANGE_NETWORK_STATE: {
-                break;
-            }
         }
     }
 
@@ -370,38 +354,21 @@ public class WIFI extends Fragment implements View.OnLongClickListener, Activity
                     e.printStackTrace();
                 }
             } else {
-                alertWifiStatus(getContext(), swipeRefreshLayout);
+                new WIFI().alertWifiStatus(getContext(), swipeRefreshLayout);
             }
         }
     };
-
-    public void getPermission(String permissions, int code) {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (getContext().checkSelfPermission(permissions)
-                    != PackageManager.PERMISSION_GRANTED) {
-                ((Activity) getContext()).requestPermissions(new String[]{permissions},
-                        code);
-            }
-        }
-    }
 
     public static void alertWifiStatus(final Context context, final SwipeRefreshLayout swipeRefreshLayout) {
         final WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         if (wifi.isWifiEnabled() == false) {
             AlertDialog.Builder alert = new AlertDialog.Builder(context);
-            alert.setTitle("Network Change Alert");
-            alert.setMessage("WIFI is off. TURN ON now ?");
-            alert.setPositiveButton("Proceed", new DialogInterface.OnClickListener() {
+            alert.setTitle("WIFI is off. TURN ON now ?");
+            alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     Toast.makeText(context.getApplicationContext(), "Enabling WIFI...", Toast.LENGTH_LONG).show();
-                    if (Build.VERSION.SDK_INT >= 23 &&
-                            ContextCompat.checkSelfPermission(context, Manifest.permission.CHANGE_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
-                        return;
-                    } else {
-                        wifi.setWifiEnabled(true);
-                    }
-
+                    wifi.setWifiEnabled(true);
                     if (swipeRefreshLayout.isRefreshing())
                         swipeRefreshLayout.setRefreshing(false);
 

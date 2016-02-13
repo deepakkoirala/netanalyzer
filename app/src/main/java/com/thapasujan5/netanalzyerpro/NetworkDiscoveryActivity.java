@@ -34,11 +34,10 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdView;
 import com.thapasujan5.netanalyzerpro.R;
-import com.thapasujan5.netanalzyerpro.ActionMenu.ShowBannerAd;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnackBarActions;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnapShot;
+import com.thapasujan5.netanalzyerpro.ActionMenu.UpgradeToPro;
 import com.thapasujan5.netanalzyerpro.DataStore.ItemsDiscovered;
 import com.thapasujan5.netanalzyerpro.DataStore.ItemsDiscoveredAdapter;
 import com.thapasujan5.netanalzyerpro.Fragments.WIFI;
@@ -85,14 +84,14 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
     NetworkDiscovery ns;
     int[] colors = {Color.RED, Color.BLUE, Color.GREEN, Color.DKGRAY, Color.MAGENTA, Color.BLACK};
     Random r;
-    AdView adView;
+    //AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_network_discovery);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        adView = (AdView) findViewById(R.id.adView);
+        //adView = (AdView) findViewById(R.id.adView);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -168,7 +167,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        new ShowBannerAd(this, adView);
+//        new ShowBannerAd(this, adView);
         super.onResume();
     }
 
@@ -207,7 +206,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "No Internet Access !", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                //Type not wifi i.e., it's data. We can inform user that Discovery is not available for Data Connection in this app.
+                //Type not wifi i.e., it's data. We can inform user that Discovery is not available for DataOld Connection in this app.
                 AlertDialog.Builder alert = new AlertDialog.Builder(this);
                 alert.setTitle("Information");
                 alert.setMessage("Discovery unavailable for Cellular Networks.");
@@ -330,7 +329,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
         protected void onProgressUpdate(Integer... values) {
             adapter.notifyDataSetChanged();
             double percent = (double) values[0] / (double) 255.0 * 100.0;
-            tvScanPercent.setText((new DecimalFormat("#.#").format(percent))+"%");
+            tvScanPercent.setText((new DecimalFormat("#.#").format(percent)) + "%");
             tvScanPercent.setTextColor(colors[r.nextInt(colors.length)]);
             progressBar.setProgress((int) percent);
 
@@ -432,7 +431,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
             android.support.v7.app.ActionBar ab = getSupportActionBar();
             ab.setDisplayHomeAsUpEnabled(true);
             if (new ConnectionDetector(this).isConnectingToInternet()) {
-                // Get Local IP either from WIFI or Data
+                // Get Local IP either from WIFI or DataOld
                 // WIFI
                 String intIP = NetworkUtil.getIPAddress(true);
                 // Set Internal IP
@@ -484,7 +483,20 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
                             new PingRequest(item.ip, NetworkDiscoveryActivity.this).execute();
                             break;
                         case 4:
-                            new PortScanRequest(item.ip, NetworkDiscoveryActivity.this).execute();
+                            if (NetworkDiscoveryActivity.this.getPackageName().contentEquals("com.thapasujan5.serversearch") == false) {
+                                new PortScanRequest(item.ip, NetworkDiscoveryActivity.this).execute();
+                            } else {
+                                new android.support.v7.app.AlertDialog.Builder(NetworkDiscoveryActivity.this).setTitle("Net Analyzer Lite").
+                                        setMessage("This feature requires Full Version of Net Analyzer.").
+                                        setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                new UpgradeToPro(NetworkDiscoveryActivity.this);
+                                            }
+                                        }).setNegativeButton("Cancel", null).show();
+
+                            }
+
                     }
                     if (result != null)
                         Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();

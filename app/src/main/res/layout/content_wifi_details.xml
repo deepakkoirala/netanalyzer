@@ -41,10 +41,10 @@
             android:layout_weight="1"
             android:ellipsize="end"
             android:gravity="start"
-
             android:text="Check WIFI Connection !"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/app_theme_background" />
+            android:textColor="#99ff33"
+            />
 
         <TextView
             android:id="@+id/tvPercentage"
