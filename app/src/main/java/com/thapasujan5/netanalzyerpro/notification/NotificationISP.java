@@ -52,7 +52,7 @@ public class NotificationISP {
     PendingIntent pendingIntent;
     RemoteViews contentView;
     boolean weatherInfoAvailable = false, ispInfoAvailable = false;
-
+    int icon;
 
     public NotificationISP(Context context) {
         this.context = context;
@@ -64,6 +64,7 @@ public class NotificationISP {
         fc = new FileCache(context);
         imageLoader = new ImageLoader(context);
         sp = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        icon = R.drawable.iclauncher_notify;
         NotifyConnection();
     }
 
@@ -89,7 +90,7 @@ public class NotificationISP {
     }
 
     private void NotifyDefault() {
-        defaultNotify.setContentIntent(pendingIntent).setTicker("Net Analyzer Alert").setSmallIcon(R.drawable.ic_notifications_black_24dp).setContentTitle("Net Analyzer.").setContentText("You are not connected to the Internet.")
+        defaultNotify.setContentIntent(pendingIntent).setTicker("Net Analyzer Alert").setSmallIcon(icon).setContentTitle("Net Analyzer.").setContentText("You are not connected to the Internet.")
                 .setAutoCancel(true);
         defaultNotify.setAutoCancel(true);
         notificationManager.notify(GetCode.getCode(context), defaultNotify.build());
@@ -97,7 +98,6 @@ public class NotificationISP {
 
     private void NotifyWifi() {
         getWifiData();
-        int icon = R.drawable.iclauncher_notify;
         long when = System.currentTimeMillis();
         notification = new android.app.Notification(icon, context.getResources().getString(R.string.app_name), when);
 
@@ -144,7 +144,7 @@ public class NotificationISP {
 
     private void NotifyData() {
         getMobileData();
-        int icon = R.drawable.iclauncher_notify;
+
         long when = System.currentTimeMillis();
         notification = new android.app.Notification(icon, context.getResources().getString(R.string.app_name), when);
 

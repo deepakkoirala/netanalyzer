@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/dialog_bg"
     android:padding="10dp"
     tools:context="app.MainActivity">
 
@@ -14,7 +13,7 @@
         android:gravity="left"
         android:selectAllOnFocus="true"
         android:text="@string/ping_result_title"
-        android:textColor="#fff" />
+        android:textColor="@color/colorPrimary" />
 
     <View
         android:id="@+id/divider"
@@ -48,7 +47,7 @@
                 android:gravity="center"
                 android:selectAllOnFocus="true"
                 android:text="Pingresult area"
-                android:textColor="#fff" />
+                android:textColor="@color/colorPrimary" />
         </LinearLayout>
     </ScrollView>
 
@@ -66,7 +65,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Copy"></Button>
+            android:text="Copy"
+            android:textColor="@color/colorPrimary"></Button>
 
         <Button
             android:id="@+id/btnShare"
@@ -74,7 +74,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Share"></Button>
+            android:text="Share"
+            android:textColor="@color/colorPrimary"></Button>
 
         <Button
             android:id="@+id/btnClose"
@@ -82,7 +83,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Close"></Button>
+            android:text="Close"
+            android:textColor="@color/colorPrimary"></Button>
     </LinearLayout>
 </RelativeLayout>
 

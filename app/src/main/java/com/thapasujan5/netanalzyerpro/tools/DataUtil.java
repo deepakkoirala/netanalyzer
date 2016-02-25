@@ -20,9 +20,13 @@ public class DataUtil {
 
 
     public DataUtil(Context context) {
-        telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         this.context = context;
+        try {
+            telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
     }
 

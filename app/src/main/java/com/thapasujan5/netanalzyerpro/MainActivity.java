@@ -37,6 +37,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdView;
 import com.thapasujan5.netanalyzerpro.BuildConfig;
 import com.thapasujan5.netanalyzerpro.R;
 import com.thapasujan5.netanalzyerpro.ActionMenu.About;
@@ -46,6 +47,7 @@ import com.thapasujan5.netanalzyerpro.ActionMenu.Portal;
 import com.thapasujan5.netanalzyerpro.ActionMenu.RateApp;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SetISP;
 import com.thapasujan5.netanalzyerpro.ActionMenu.ShareApp;
+import com.thapasujan5.netanalzyerpro.ActionMenu.ShowBannerAd;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnackBarActions;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnapShot;
 import com.thapasujan5.netanalzyerpro.ActionMenu.UpgradeToPro;
@@ -80,7 +82,8 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView;
     ImageView navSetting;
     SharedPreferences.Editor editor;
-    //  AdView adView;
+    AdView adView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,14 +110,13 @@ public class MainActivity extends AppCompatActivity
         }
         if (this.getPackageName().contentEquals("com.thapasujan5.serversearch"))
             this.setTitle("Net Analyzer Lite");
-        //   adView = (AdView) findViewById(R.id.adView);
+        adView = (AdView) findViewById(R.id.adView);
         getPermission(Manifest.permission.ACCESS_FINE_LOCATION, AppConstants.ACCESS_FINE_LOCATION);
         getPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, AppConstants.WRITE_EXTERNAL_STORAGE);
 //        requestPermissions.getPermission(Manifest.permission.SYSTEM_ALERT_WINDOW, AppConstants.SYSTEM_ALERT_WINDOW);
         getPermission(Manifest.permission.CHANGE_NETWORK_STATE, AppConstants.CHANGE_NETWORK_STATE);
         try {
             initView();
-            //  new ShowBannerAd(this, adView);
             initialize();
             new AboutWhatsNew(this); //Run at first install
         } catch (Exception e) {
@@ -158,7 +160,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-        try {
+        try { new ShowBannerAd(this, adView);
             reValidate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -393,6 +395,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_exit) {
             finish();
             onDestroy();
+            android.os.Process.killProcess(android.os.Process.myPid());
         }
 
         if (id == R.id.nav_settings) {
@@ -421,8 +424,9 @@ public class MainActivity extends AppCompatActivity
         item.setChecked(true);
         int id = item.getItemId();
         if (id == R.id.nav_exit) {
-            finish();
             onDestroy();
+            finish();
+            android.os.Process.killProcess(android.os.Process.myPid());
         }
         if (id == R.id.nav_portscanner) {
             if (this.getPackageName().contentEquals("com.thapasujan5.serversearch") == false) {
@@ -442,9 +446,9 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_connectiondetails) {
             viewPager.setCurrentItem(0);
         } else if (id == R.id.nav_dnsip) {
-            startActivity(new Intent(this, DnsLookupActivity.class));
+            startActivity(new Intent(MainActivity.this, DnsLookupActivity.class));
         } else if (id == R.id.nav_networkdiscovery) {
-            startActivity(new Intent(this, NetworkDiscoveryActivity.class));
+            startActivity(new Intent(MainActivity.this, NetworkDiscoveryActivity.class));
         } else if (id == R.id.nav_ping) {
             new FabPing(MainActivity.this);
 
@@ -522,7 +526,6 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception e) {
             e.printStackTrace();
         }
-        android.os.Process.killProcess(android.os.Process.myPid());
         super.onDestroy();
     }
 }

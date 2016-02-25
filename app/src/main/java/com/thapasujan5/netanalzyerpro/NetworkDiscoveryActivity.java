@@ -34,7 +34,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdView;
 import com.thapasujan5.netanalyzerpro.R;
+import com.thapasujan5.netanalzyerpro.ActionMenu.ShowBannerAd;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnackBarActions;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnapShot;
 import com.thapasujan5.netanalzyerpro.ActionMenu.UpgradeToPro;
@@ -84,14 +86,13 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
     NetworkDiscovery ns;
     int[] colors = {Color.RED, Color.BLUE, Color.GREEN, Color.DKGRAY, Color.MAGENTA, Color.BLACK};
     Random r;
-    //AdView adView;
+    AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_network_discovery);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        //adView = (AdView) findViewById(R.id.adView);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -110,7 +111,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
             ns = new NetworkDiscovery(this);
             ns.execute();
         }
-
+        //new ShowBannerAd(this, adView);
     }
 
     private void init() {
@@ -120,6 +121,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
         listView.setOnItemLongClickListener(ItemLongClicked);
         //View Locate
+        adView = (AdView) findViewById(R.id.adView);
         tvSsid = (TextView) findViewById(R.id.tvNetworkName);
         tvPercent = (TextView) findViewById(R.id.tvPercentage);
         tvRouterip = (TextView) findViewById(R.id.tvIp);
@@ -167,7 +169,12 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-//        new ShowBannerAd(this, adView);
+        try {
+            new ShowBannerAd(this, adView);
+            restoreWifiDetails();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         super.onResume();
     }
 
@@ -558,6 +565,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
                 ns.cancel(true);
             }
         } catch (Exception e) {
+            e.printStackTrace();
 
         }
         super.onStop();

@@ -96,21 +96,21 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
     NotificationManager nm;
     IntentFilter filter;
     protected SwipeRefreshLayout swipeRefreshLayout;
-
-//    AdView adView;
+    AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dnslookup);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-//        adView = (AdView) findViewById(R.id.adView);
-//        new ShowBannerAd(this, adView);
         Bundle fields = getIntent().getExtras();
         if (fields != null) {
             intentServiceResult = fields.getBoolean("isr");
         }
-//        new ShowBannerAd(this, (AdView) findViewById(R.id.adView));
         initialize();
     }
 
@@ -120,27 +120,13 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
                     .getDefaultSharedPreferences(getBaseContext());
             nm = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
             editor = sharedpreferences.edit();
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-            fab.setOnClickListener(this);
 
-            networkStateReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    Log.w("Network Listener", "Network Type Changed");
-                    String status = NetworkUtil.getConnectivityStatusString(context);
-                    reValidate();
-                }
-            };
-            filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-            registerReceiver(networkStateReceiver, filter);
             etSearchBox = (EditText) findViewById(R.id.input);
             etSearchBox.setOnEditorActionListener(this);
             // Check if no view has focus:
             getWindow().setSoftInputMode(
                     WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
+            adView = (AdView) findViewById(R.id.adView);
             ivSearch = (ImageView) findViewById(R.id.find);
             ivSearch.setOnClickListener(this);
 
@@ -184,8 +170,17 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
             connectionDetector = new ConnectionDetector(getApplicationContext());
             dao = new DAO(getApplicationContext());
             new DBAsync().execute();
+            filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+            networkStateReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    Log.w("Network Listener", "Network Type Changed");
+                    String status = NetworkUtil.getConnectivityStatusString(context);
+                    reValidate();
+                }
+            };
+            registerReceiver(networkStateReceiver, filter);
         } catch (Exception e) {
-            finish();
             e.printStackTrace();
         }
     }
@@ -774,9 +769,13 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     protected void onResume() {
-        reValidate();
-        new NotificationISP(this);
-//        new ShowBannerAd(this, adView);
+        try {
+            new ShowBannerAd(this, adView);
+            reValidate();
+            new NotificationISP(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         super.onResume();
     }
 
@@ -833,15 +832,16 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
         getMenuInflater().inflate(R.menu.activiy_dnslookup_menu, menu);
         return true;
     }
+
     @Override
-    protected void onDestroy() {
-        Log.i(DnsLookupActivity.class.getSimpleName(), "onDestroy");
+    protected void onStop() {
+        Log.i(DnsLookupActivity.class.getSimpleName(), "onStop");
         try {
             unregisterReceiver(networkStateReceiver);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        super.onDestroy();
+        super.onStop();
     }
 }
 

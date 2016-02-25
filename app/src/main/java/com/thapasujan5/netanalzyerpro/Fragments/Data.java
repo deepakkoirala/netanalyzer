@@ -67,6 +67,16 @@ public class Data extends Fragment implements View.OnLongClickListener, Activity
     }
 
     @Override
+    public void onDestroy() {
+        try {
+            getContext().unregisterReceiver(receiver);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        super.onDestroy();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_data, container, false);
         try {
