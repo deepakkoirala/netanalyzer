@@ -36,7 +36,7 @@ public class ShowBannerAd {
                 @Override
                 public void run() {
                     // TODO Auto-generated method stub
-                    while (true) {
+
                         try {
                             //waits 10 sec. to load the admob, enough time
                             //to load the activity
@@ -62,7 +62,6 @@ public class ShowBannerAd {
                         } catch (Exception e) {
                             // TODO: handle exception
                         }
-                    }
                 }
             }).start();
 

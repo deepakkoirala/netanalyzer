@@ -12,30 +12,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thapasujan5.netanalyzerpro.R;
-import com.thapasujan5.netanalzyerpro.Tools.GetVersionName;
 
 public class SplashActivity extends Activity {
     public static final String MyPREFERENCES = "MyPrefs";
 
     ImageView iv;
     Image icon;
-    TextView versionName, appName;
+    TextView versionName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+     //   overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         setContentView(R.layout.activity_splash);
         versionName = (TextView) findViewById(R.id.projectversion);
-        versionName.setText(GetVersionName.getAppVersionName(this));
-        appName = (TextView) findViewById(R.id.appName);
-        if (this.getPackageName().contentEquals("com.thapasujan5.serversearch")) {
-            appName.setText(this.getString(R.string.app_name)+" Lite");
-        } else {
-            appName.setText(this.getString(R.string.app_name));
-        }
+        versionName.setText(getString(R.string.version));
         iv = (ImageView) findViewById(R.id.icon);
-        Animation an2 = AnimationUtils.loadAnimation(this, R.anim.splash);
+        Animation an2 = AnimationUtils.loadAnimation(this, R.anim.splash_anim1);
         iv.startAnimation(an2);
         startMainActivity();
     }
@@ -43,7 +36,7 @@ public class SplashActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+       // overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         finish();
     }
 

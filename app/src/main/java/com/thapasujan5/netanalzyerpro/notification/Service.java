@@ -60,14 +60,14 @@ public class Service extends IntentService {
                 if (intentType.contentEquals("reboot")) {
                     Log.i("service reboot", "To NotificationISP.");
                     if (new GetISP(this).getInfo() && new GetWeaather(this).getInfo()) {
+                        Log.i("service","ISP and WeatherData OK");
                         new NotificationISP(getApplicationContext());
                     } else {
-                        Log.i("st","some error in getisp or get weather");
+                        Log.i("service","some error in getisp or get weather");
                     }
-
                 }
             } catch (Exception e) {
-                Log.i("st","exception in service");
+                Log.i("service","exception in service");
             }
         } else {
             // User has disabled notfication service so no need to proced from this point.

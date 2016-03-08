@@ -22,9 +22,13 @@ public class ReceiverReboot extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
-        Intent serviceIntent = new Intent(context, Service.class);
-        serviceIntent.putExtra("receiver", "reboot");
+        Intent serviceIntent = null;
+        if (intent == null) {
+            serviceIntent = new Intent(context, Service.class);
+            serviceIntent.putExtra("receiver", "reboot");
+        } else {
+            serviceIntent = intent;
+        }
         if (NetworkUtil.getConnectivityStatus(context) == AppConstants.TYPE_NOT_CONNECTED) {
             Log.i("RebootReceiver", "To Default notify");
             new NotificationISP(context);

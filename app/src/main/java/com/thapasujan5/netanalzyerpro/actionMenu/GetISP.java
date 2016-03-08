@@ -27,8 +27,6 @@ public class GetISP {
 
     public boolean getInfo() {
         UserFunctions f = new UserFunctions();
-
-
         String org, city, country, extIPAdd;
         try {
             JSONObject json = f.getOwnInfo();

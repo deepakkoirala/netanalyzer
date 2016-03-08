@@ -53,6 +53,8 @@ import com.thapasujan5.netanalzyerpro.ActionMenu.SnapShot;
 import com.thapasujan5.netanalzyerpro.ActionMenu.UpgradeToPro;
 import com.thapasujan5.netanalzyerpro.DataStore.ViewPagerAdapter;
 import com.thapasujan5.netanalzyerpro.Notification.NotificationISP;
+import com.thapasujan5.netanalzyerpro.Notification.ReceiverReboot;
+import com.thapasujan5.netanalzyerpro.Notification.Service;
 import com.thapasujan5.netanalzyerpro.PingService.FabPing;
 import com.thapasujan5.netanalzyerpro.PortScanner.FabPortScan;
 import com.thapasujan5.netanalzyerpro.Tools.CheckDigit;
@@ -119,6 +121,7 @@ public class MainActivity extends AppCompatActivity
             initView();
             initialize();
             new AboutWhatsNew(this); //Run at first install
+            new ReceiverReboot().onReceive(this, new Intent(this, Service.class).putExtra("receiver", "reboot"));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -139,19 +142,30 @@ public class MainActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case AppConstants.ACCESS_FINE_LOCATION: {
-                Log.d("MainActivity", permissions[0] + " granted");
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    new ReceiverReboot().onReceive(this, new Intent(this, Service.class).putExtra("receiver", "reboot"));
+                    Log.d("MainActivity", permissions[0] + " granted");
+                }
                 break;
             }
             case AppConstants.WRITE_EXTERNAL_STORAGE: {
-                Log.d("MainActivity", permissions[0] + " granted");
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    new ReceiverReboot().onReceive(this, new Intent(this, Service.class).putExtra("receiver", "reboot"));
+                    Log.d("MainActivity", permissions[0] + " granted");
+                }
                 break;
             }
             case AppConstants.READ_PHONE_STATE: {
-                Log.d("MainActivity", permissions[0] + " granted");
-                try {
-                    viewPager.setAdapter(viewPagerAdapter);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d("MainActivity", permissions[0] + " granted");
+                    try {
+                        viewPager.setAdapter(viewPagerAdapter);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             }
@@ -160,7 +174,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-        try { new ShowBannerAd(this, adView);
+        try {
+            new ShowBannerAd(this, adView);
             reValidate();
         } catch (Exception e) {
             e.printStackTrace();
