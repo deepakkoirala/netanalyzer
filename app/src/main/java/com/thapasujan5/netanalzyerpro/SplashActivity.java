@@ -47,7 +47,7 @@ public class SplashActivity extends Activity {
                 Intent i = new Intent(getApplicationContext(),
                         MainActivity.class);
                 startActivity(i);
-                overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+              //  overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
             }
         }, AppConstants.SPLASH_TIME);
     }

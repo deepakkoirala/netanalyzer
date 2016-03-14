@@ -85,6 +85,18 @@
             android:value="AIzaSyAyeQFWzQT0hx6OBc96FZdsYWUwl0zbFoM" />
 
         <activity
+            android:name="com.thapasujan5.netanalzyerpro.SplashActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name="com.thapasujan5.netanalzyerpro.MapsActivity"
             android:label="@string/title_activity_maps"
             android:parentActivityName="com.thapasujan5.netanalzyerpro.DnsLookupActivity"
@@ -129,6 +141,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thapasujan5.netanalzyerpro.MainActivity" />
         </activity>
+
     </application>
 
 </manifest>

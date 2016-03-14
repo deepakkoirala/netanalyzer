@@ -461,8 +461,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="n/a"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@color/colorPrimary" />
+                        android:textColor="@color/app_theme_foreground" />
                 </TableRow>
             </TableLayout>
         </LinearLayout>

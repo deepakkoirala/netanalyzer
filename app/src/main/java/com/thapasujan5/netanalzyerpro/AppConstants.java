@@ -2,7 +2,7 @@ package com.thapasujan5.netanalzyerpro;
 
 public class AppConstants {
 
-    public static final long SPLASH_TIME = 1300;
+    public static final long SPLASH_TIME = 2000;
 
     public static final int DB_VERSION = 7;
     public static final String DB_NAME = "servers";

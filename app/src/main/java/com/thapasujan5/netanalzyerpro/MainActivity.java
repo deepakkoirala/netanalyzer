@@ -13,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
@@ -85,41 +86,163 @@ public class MainActivity extends AppCompatActivity
     ImageView navSetting;
     SharedPreferences.Editor editor;
     AdView adView;
-
+    FloatingActionButton fab;
+    ActionBarDrawerToggle toggle;
+    DrawerLayout drawer;
+    View header;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         setContentView(R.layout.activity_main);
+        try {
+            initView();
+            initVariable();
+            miscInit();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        runSession();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            },500);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        getPermission(Manifest.permission.ACCESS_FINE_LOCATION, AppConstants.ACCESS_FINE_LOCATION);
+        getPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, AppConstants.WRITE_EXTERNAL_STORAGE);
+        getPermission(Manifest.permission.CHANGE_NETWORK_STATE, AppConstants.CHANGE_NETWORK_STATE);
+
+    }
+
+    private void initView() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        header = navigationView.inflateHeaderView(R.layout.nav_header_main2);
+        navSetting = (ImageView) header.findViewById(R.id.nav_settings);
+        navUpgrade = (TextView) header.findViewById(R.id.upgrade);
+        tvAppName = (TextView) header.findViewById(R.id.tvAppName);
+
+        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.getMenu().getItem(1).setChecked(true);
+        navSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                drawer.closeDrawers();
+            }
+        });
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        viewPager = (ViewPager) findViewById(R.id.pager);
+        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+
+        viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
+        viewPager.setOffscreenPageLimit(1);
+        viewPager.setAdapter(viewPagerAdapter);
+    }
+
+    private void initVariable() {
+        connectionDetector = new ConnectionDetector(getApplicationContext());
+        sharedpreferences = PreferenceManager
+                .getDefaultSharedPreferences(getBaseContext());
+        editor = sharedpreferences.edit();
+
+        pbExip = (ProgressBar) findViewById(R.id.pbExip);
+        tvExIpArea = (TextView) findViewById(R.id.extip);
+        adView = (AdView) findViewById(R.id.adView);
+
+    }
+
+    private void miscInit() {
         if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        if (BuildConfig.FLAVOR.contentEquals("free")) {
-            this.setTitle("Net Analyzer Lite");
-            new AlertDialog.Builder(this).setTitle("Net Analyzer Lite").
-                    setMessage("You are one click away to get the full version...").
-                    setPositiveButton("Get It Now !", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            new UpgradeToPro(MainActivity.this);
-                        }
-                    }).setNegativeButton("Later", null).show();
-        } else {
+//        if (BuildConfig.FLAVOR.contentEquals("free")) {
+//            this.setTitle("Net Analyzer Lite");
+//            new AlertDialog.Builder(this).setTitle("Net Analyzer Lite").
+//                    setMessage("You are one click away to get the full version...").
+//                    setPositiveButton("Get It Now !", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            new UpgradeToPro(MainActivity.this);
+//                        }
+//                    }).setNegativeButton("Later", null).show();
+//        } else {
+//
+//        }
 
-        }
-        if (this.getPackageName().contentEquals("com.thapasujan5.serversearch"))
-            this.setTitle("Net Analyzer Lite");
-        adView = (AdView) findViewById(R.id.adView);
-        getPermission(Manifest.permission.ACCESS_FINE_LOCATION, AppConstants.ACCESS_FINE_LOCATION);
-        getPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, AppConstants.WRITE_EXTERNAL_STORAGE);
-//        requestPermissions.getPermission(Manifest.permission.SYSTEM_ALERT_WINDOW, AppConstants.SYSTEM_ALERT_WINDOW);
-        getPermission(Manifest.permission.CHANGE_NETWORK_STATE, AppConstants.CHANGE_NETWORK_STATE);
+    }
+
+    private void runSession() throws Exception {
         try {
-            initView();
-            initialize();
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new SnackBarActions(MainActivity.this, view);
+                }
+            });
+
+            networkStateReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    Log.w("Network Listener", "Network Type Changed");
+                    reValidate();
+                }
+            };
+            filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+            registerReceiver(networkStateReceiver, filter);
+
+            tvExIpArea.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    String value = tvExIpArea.getText().toString().trim();
+                    if (CheckDigit.containsDigit(value)) {
+                        // copy ip to clipboard
+                        boolean status = Clipboard.copyToClipboard(MainActivity.this,
+                                value);
+                        if (status) {
+                            new ShowToast(MainActivity.this, "Copied " + value
+                                    + " to Clipboard", Color.WHITE,
+                                    R.drawable.action_bar_bg, 0, Toast.LENGTH_LONG,
+                                    Gravity.BOTTOM);
+                        }
+                    }
+                    return true;
+                }
+            });
+
+            if (BuildConfig.FLAVOR.contentEquals("free") || (this.getPackageName().contentEquals("com.thapasujan5.serversearch"))) {
+                this.setTitle("Net Analyzer Lite");
+                tvAppName.setText("Net Analyzer Lite");
+                navUpgrade.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new UpgradeToPro(MainActivity.this);
+                        drawer.closeDrawers();
+                    }
+                });
+                navUpgrade.setVisibility(View.VISIBLE);
+            }
             new AboutWhatsNew(this); //Run at first install
             new ReceiverReboot().onReceive(this, new Intent(this, Service.class).putExtra("receiver", "reboot"));
         } catch (Exception e) {
@@ -181,104 +304,6 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
         super.onResume();
-    }
-
-    private void initialize() throws Exception {
-        try {
-            networkStateReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    Log.w("Network Listener", "Network Type Changed");
-                    reValidate();
-                }
-            };
-            filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-            registerReceiver(networkStateReceiver, filter);
-
-            tvExIpArea.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    String value = tvExIpArea.getText().toString().trim();
-                    if (CheckDigit.containsDigit(value)) {
-                        // copy ip to clipboard
-                        boolean status = Clipboard.copyToClipboard(MainActivity.this,
-                                value);
-                        if (status) {
-                            new ShowToast(MainActivity.this, "Copied " + value
-                                    + " to Clipboard", Color.WHITE,
-                                    R.drawable.action_bar_bg, 0, Toast.LENGTH_LONG,
-                                    Gravity.BOTTOM);
-                        }
-                    }
-                    return true;
-                }
-            });
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void initView() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new SnackBarActions(MainActivity.this, view);
-            }
-        });
-
-
-        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        View header = navigationView.inflateHeaderView(R.layout.nav_header_main2);
-        navSetting = (ImageView) header.findViewById(R.id.nav_settings);
-        navSetting.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-                drawer.closeDrawers();
-            }
-        });
-        navigationView.getMenu().getItem(1).setChecked(true);
-        viewPager = (ViewPager) findViewById(R.id.pager);
-        viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
-        // PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_title_strip);
-        //pagerTabStrip.setDrawFullUnderline(true);
-        //pagerTabStrip.setTabIndicatorColor(Color.RED);
-        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(viewPagerAdapter);
-        viewPager.setOffscreenPageLimit(1);
-        sharedpreferences = PreferenceManager
-                .getDefaultSharedPreferences(getBaseContext());
-        editor = sharedpreferences.edit();
-        pbExip = (ProgressBar) findViewById(R.id.pbExip);
-        connectionDetector = new ConnectionDetector(getApplicationContext());
-        tvExIpArea = (TextView) findViewById(R.id.extip);
-        if (BuildConfig.FLAVOR.contentEquals("free") || (this.getPackageName().contentEquals("com.thapasujan5.serversearch"))) {
-            navUpgrade = (TextView) header.findViewById(R.id.upgrade);
-            tvAppName = (TextView) header.findViewById(R.id.tvAppName);
-            tvAppName.setText("Net Analyzer Lite");
-            navUpgrade.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    new UpgradeToPro(MainActivity.this);
-                    drawer.closeDrawers();
-                }
-            });
-            navUpgrade.setVisibility(View.VISIBLE);
-        }
     }
 
 

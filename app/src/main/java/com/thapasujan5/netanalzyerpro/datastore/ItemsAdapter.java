@@ -71,23 +71,13 @@ public class ItemsAdapter extends ArrayAdapter<Items> {
                 ivLocation.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (getContext().getPackageName().contentEquals("com.thapasujan5.serversearch") == false) {
                             Intent openMap = new Intent(context, MapsActivity.class);
                             openMap.putExtra("location", item.location);
                             openMap.putExtra("lat", Double.parseDouble(item.lat));
                             openMap.putExtra("lon", Double.parseDouble(item.lon));
                             context.startActivity(openMap);
                             ((Activity) context).overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-                        } else {
-                            new AlertDialog.Builder(getContext()).setTitle("Net Analyzer Lite").
-                                    setMessage("This feature requires Full Version of Net Analyzer.").
-                                    setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            new UpgradeToPro(getContext());
-                                        }
-                                    }).setNegativeButton("Cancel", null).show();
-                        }
+
                     }
                 });
             } else {

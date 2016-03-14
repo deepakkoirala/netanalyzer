@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 
 def computeVersionName() {
-    return "1.5.2"
+    return "1.5.3"
 }
 
 def computeVersionCode() {
-    return 61
+    return 62
 }
 
 android {

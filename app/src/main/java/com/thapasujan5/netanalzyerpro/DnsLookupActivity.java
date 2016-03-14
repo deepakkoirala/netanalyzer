@@ -364,7 +364,7 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
                                    int position, long id) {
         //clicked Item
 
-        view.setBackgroundColor(Color.parseColor("#00ffffff"));
+        //view.setBackgroundColor(Color.parseColor("#00ffffff"));
         final Items myItem = dbItems.get(position);
 
         String[] choices = {"Open " + myItem.ip,
@@ -457,29 +457,17 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
                 }
                 if (which == 5) {
                     //map
-                    if (DnsLookupActivity.this.getPackageName().contentEquals("com.thapasujan5.serversearch") == false) {
-                        if (myItem.lon.length() > 0 && myItem.lat.length() > 0) {
-                            Intent openMap = new Intent(DnsLookupActivity.this, MapsActivity.class);
-                            openMap.putExtra("location", myItem.location);
-                            openMap.putExtra("lat", Double.parseDouble(myItem.lat));
-                            openMap.putExtra("lon", Double.parseDouble(myItem.lon));
-                            startActivity(openMap);
-                            overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-                        } else {
-                            new ShowToast(getApplicationContext(), "No geo-location data found !", Color.WHITE, 0, Color.RED, Toast.LENGTH_SHORT, Gravity.BOTTOM);
-                        }
+
+                    if (myItem.lon.length() > 0 && myItem.lat.length() > 0) {
+                        Intent openMap = new Intent(DnsLookupActivity.this, MapsActivity.class);
+                        openMap.putExtra("location", myItem.location);
+                        openMap.putExtra("lat", Double.parseDouble(myItem.lat));
+                        openMap.putExtra("lon", Double.parseDouble(myItem.lon));
+                        startActivity(openMap);
+                        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
                     } else {
-                        new android.support.v7.app.AlertDialog.Builder(DnsLookupActivity.this).setTitle("Net Analyzer Lite").
-                                setMessage("This feature requires Full Version of Net Analyzer.").
-                                setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        new UpgradeToPro(DnsLookupActivity.this);
-                                    }
-                                }).setNegativeButton("Cancel", null).show();
-
+                        new ShowToast(getApplicationContext(), "No geo-location data found !", Color.WHITE, 0, Color.RED, Toast.LENGTH_SHORT, Gravity.BOTTOM);
                     }
-
 
                 }
                 if (which == 7) {
@@ -834,14 +822,13 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
     }
 
     @Override
-    protected void onStop() {
-        Log.i(DnsLookupActivity.class.getSimpleName(), "onStop");
+    protected void onDestroy() {
         try {
             unregisterReceiver(networkStateReceiver);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        super.onStop();
+        super.onDestroy();
     }
 }
 
