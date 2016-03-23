@@ -246,17 +246,17 @@ public class NotificationISP {
                 DecimalFormat df = new DecimalFormat("#");
                 if (sp.getString(context.getString(R.string.key_temperature), "0").contains("1")) {
                     d = (double) convertCelciusToFahrenheit(d.floatValue());
-                    weather = sp.getString(context.getString(R.string.name_weather), "") + " " + sp.getString(context.getString(R.string.main_weather), "") + " " +
+                    weather = sp.getString(context.getString(R.string.name_weather), "") + ", " + sp.getString(context.getString(R.string.main_weather), "") + " " +
                             df.format(Math.round(d)) + "\u2109";
                     return weather;
                 } else {
                     rounded = Math.round(d);
-                    weather = sp.getString(context.getString(R.string.name_weather), "") + " " + sp.getString(context.getString(R.string.main_weather), "") + " " +
+                    weather = sp.getString(context.getString(R.string.name_weather), "") + ", " + sp.getString(context.getString(R.string.main_weather), "") + " " +
                             df.format(rounded) + "\u2103";
                     return weather;
                 }
             } catch (Exception e) {
-                weather = sp.getString(context.getString(R.string.name_weather), "") + " " + sp.getString(context.getString(R.string.main_weather), "") + " " + sp.getString(context.getString(R.string.temp_weather), "") + "\u2103";
+                weather = sp.getString(context.getString(R.string.name_weather), "") + ", " + sp.getString(context.getString(R.string.main_weather), "") + " " + sp.getString(context.getString(R.string.temp_weather), "") + "\u2103";
                 return weather;
             }
         } else {

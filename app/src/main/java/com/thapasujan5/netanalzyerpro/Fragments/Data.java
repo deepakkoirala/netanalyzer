@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.thapasujan5.netanalyzerpro.R;
 import com.thapasujan5.netanalzyerpro.AppConstants;
+import com.thapasujan5.netanalzyerpro.Tools.Clipboard;
 import com.thapasujan5.netanalzyerpro.Tools.DataUtil;
 import com.thapasujan5.netanalzyerpro.Tools.GetNetworkType;
 import com.thapasujan5.netanalzyerpro.Tools.NetworkUtil;
@@ -42,7 +43,7 @@ import java.lang.reflect.Method;
  * Created by Sujan Thapa on 8/02/2016.
  */
 public class Data extends Fragment implements View.OnLongClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
-    TextView tvNtName, tvNtType, tvCellularGateway, tvIp, tvPercent, tvGateway, tvDns1, tvDns2, tvPhone, tvImei, tvImeisv, tvSignalStrength, tvStatus;
+    TextView tvNtName, tvNtType, tvCellularGateway, tvIp, tvPercent, tvGateway, tvDns1, tvDns2, tvNumber, tvImei, tvImeisv, tvSignalStrength, tvStatus;
     TextView tvSimState, tvSimSerialNo, tvSimType;
     BroadcastReceiver receiver;
     IntentFilter filter;
@@ -127,8 +128,8 @@ public class Data extends Fragment implements View.OnLongClickListener, Activity
 
         tvDns2 = (TextView) rootView.findViewById(R.id.tvDns2Value);
 
-        tvPhone = (TextView) rootView.findViewById(R.id.tvMobileNo);
-        tvPhone.setOnLongClickListener(this);
+        tvNumber = (TextView) rootView.findViewById(R.id.tvNumber);
+        tvNumber.setOnLongClickListener(this);
 
         tvImei = (TextView) rootView.findViewById(R.id.tvImei);
         tvImei.setOnLongClickListener(this);
@@ -212,7 +213,7 @@ public class Data extends Fragment implements View.OnLongClickListener, Activity
         }
         tvNtName.setText(new DataUtil(getContext()).getOperatorName());
         tvSimType.setText(SimType);
-        tvPhone.setText(new DataUtil(getContext()).getLine1Number());
+        tvNumber.setText(new DataUtil(getContext()).getLine1Number());
         tvImei.setText(telephonyManager.getDeviceId() + "");
         tvImeisv.setText(telephonyManager.getDeviceSoftwareVersion());
         tvSimSerialNo.setText(telephonyManager.getSimSerialNumber().toString());
@@ -356,6 +357,39 @@ public class Data extends Fragment implements View.OnLongClickListener, Activity
 
     @Override
     public boolean onLongClick(View v) {
-        return false;
+        String value = null;
+        int id = v.getId();
+        switch (id) {
+            case R.id.tvSimSerialNo:
+                value = tvSimSerialNo.getText().toString().trim();
+                break;
+            case R.id.tvImei:
+                value = tvImei.getText().toString().trim();
+                break;
+            case R.id.tvNetworkName:
+                value = tvNtName.getText().toString().trim();
+                break;
+            case R.id.tvNumber:
+                value = tvNumber.getText().toString().trim();
+                break;
+            default:
+                return false;
+        }
+        if (value != null) {
+
+            boolean status = Clipboard.copyToClipboard(getContext(),
+                    value);
+            value += " to Clipboard.";
+            if (status) {
+                Toast.makeText(getContext().getApplicationContext(), "Copied " + value, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext().getApplicationContext(), "Try Again ! ", Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        } else {
+            Toast.makeText(getContext().getApplicationContext(), "Something went wrong! Try again.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
     }
 }
