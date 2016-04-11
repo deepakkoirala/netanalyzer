@@ -38,7 +38,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdView;
 import com.thapasujan5.netanalyzerpro.BuildConfig;
 import com.thapasujan5.netanalyzerpro.R;
 import com.thapasujan5.netanalzyerpro.ActionMenu.About;
@@ -48,7 +47,6 @@ import com.thapasujan5.netanalzyerpro.ActionMenu.Portal;
 import com.thapasujan5.netanalzyerpro.ActionMenu.RateApp;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SetISP;
 import com.thapasujan5.netanalzyerpro.ActionMenu.ShareApp;
-import com.thapasujan5.netanalzyerpro.ActionMenu.ShowBannerAd;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnackBarActions;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnapShot;
 import com.thapasujan5.netanalzyerpro.ActionMenu.UpgradeToPro;
@@ -57,7 +55,7 @@ import com.thapasujan5.netanalzyerpro.Notification.NotificationISP;
 import com.thapasujan5.netanalzyerpro.Notification.ReceiverReboot;
 import com.thapasujan5.netanalzyerpro.Notification.Service;
 import com.thapasujan5.netanalzyerpro.PingService.FabPing;
-import com.thapasujan5.netanalzyerpro.PortScanner.FabPortScan;
+import com.thapasujan5.netanalzyerpro.PortScanner.RunPortScanner;
 import com.thapasujan5.netanalzyerpro.Tools.CheckDigit;
 import com.thapasujan5.netanalzyerpro.Tools.Clipboard;
 import com.thapasujan5.netanalzyerpro.Tools.ConnectionDetector;
@@ -85,7 +83,7 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView;
     ImageView navSetting;
     SharedPreferences.Editor editor;
-    AdView adView;
+    //AdView adView;
     FloatingActionButton fab;
     ActionBarDrawerToggle toggle;
     DrawerLayout drawer;
@@ -109,7 +107,7 @@ public class MainActivity extends AppCompatActivity
                         e.printStackTrace();
                     }
                 }
-            },500);
+            }, 500);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -166,7 +164,7 @@ public class MainActivity extends AppCompatActivity
 
         pbExip = (ProgressBar) findViewById(R.id.pbExip);
         tvExIpArea = (TextView) findViewById(R.id.extip);
-        adView = (AdView) findViewById(R.id.adView);
+        //adView = (AdView) findViewById(R.id.adView);
 
     }
 
@@ -298,7 +296,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         try {
-            new ShowBannerAd(this, adView);
+            // new ShowBannerAd(this, adView);
             reValidate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -424,6 +422,7 @@ public class MainActivity extends AppCompatActivity
             MenuItem item = menu.findItem(R.id.snapshot);
             item.setTitle("Get Pro");
             item.setIcon(null);
+            menu.add(0, 1, 0, "Screenshot").setIcon(R.mipmap.screen_white);
         }
         return true;
     }
@@ -432,10 +431,15 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
+        if (id == 1) {
+            new SnapShot(this, findViewById(android.R.id.content).getRootView());
+            return true;
+        }
         if (id == R.id.nav_exit) {
             finish();
             onDestroy();
             android.os.Process.killProcess(android.os.Process.myPid());
+            return true;
         }
 
         if (id == R.id.nav_settings) {
@@ -469,19 +473,7 @@ public class MainActivity extends AppCompatActivity
             android.os.Process.killProcess(android.os.Process.myPid());
         }
         if (id == R.id.nav_portscanner) {
-            if (this.getPackageName().contentEquals("com.thapasujan5.serversearch") == false) {
-                new FabPortScan(MainActivity.this);
-            } else {
-                new AlertDialog.Builder(this).setTitle("Net Analyzer Lite").
-                        setMessage("This feature requires Full Version of Net Analyzer.").
-                        setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                new UpgradeToPro(MainActivity.this);
-                            }
-                        }).setNegativeButton("Cancel", null).show();
-
-            }
+            new RunPortScanner(MainActivity.this);
         }
         if (id == R.id.nav_connectiondetails) {
             viewPager.setCurrentItem(0);

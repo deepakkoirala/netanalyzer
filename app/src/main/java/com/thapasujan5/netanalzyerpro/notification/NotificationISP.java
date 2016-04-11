@@ -113,7 +113,7 @@ public class NotificationISP {
         contentView.setTextViewText(R.id.tvExip, extIpAdd);
         contentView.setTextViewText(R.id.tvIntIp, ip);
 
-        contentView.setTextViewText(R.id.tvNetworkName, name);
+        contentView.setTextViewText(R.id.tvEssidWig, name);
         contentView.setTextViewText(R.id.tvPercent, percent);
         contentView.setTextViewText(R.id.tvGateway, gateway);
         contentView.setTextViewText(R.id.tvMac, mac);
@@ -161,7 +161,7 @@ public class NotificationISP {
         contentView.setTextViewText(R.id.tvExip, extIpAdd);
         contentView.setTextViewText(R.id.tvIntIp, ip);
 
-        contentView.setTextViewText(R.id.tvNetworkName, name);
+        contentView.setTextViewText(R.id.tvEssidWig, name);
         contentView.setTextViewText(R.id.tvPercent, "");
         //contentView.setTextViewText(R.id.tvGateway, gateway);
         //contentView.setTextViewText(R.id.tvMac, mac);
@@ -233,7 +233,7 @@ public class NotificationISP {
                 return "";
             }
         } else {
-            Log.i("NotificationISP", "Using: " + AppConstants.url_weather_icon + sp.getString(context.getString(R.string.icon_weather), ""));
+            //Log.i("NotificationISP", "Using: " + AppConstants.url_weather_icon + sp.getString(context.getString(R.string.icon_weather), ""));
             bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
             weatherInfoAvailable = true;
         }

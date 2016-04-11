@@ -53,9 +53,9 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
     TextView tvChannel, tvChannel1, tvMacSelf, tvSSID, tvIp, tvGateway, tvSubnet, tvDns1, tvDns2, tvLease, tvStatus, tvStrength, tvSpeed, tvFrequency, tvSecurity;
     TextView tvPercent;
     TextView tvRouterMac, tvRouterIP;
+    TextView tvEssid, tvBssid;
 
     View rootView;
-    protected SwipeRefreshLayout swipeRefreshLayout;
     ImageView ivWifi;
     BroadcastReceiver receiver;
     BroadcastReceiver receiverSwitch;
@@ -80,7 +80,7 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
         rootView = inflater.inflate(R.layout.fragment_wifi, container, false);
         try {
             initialize(rootView);
-            alertWifiStatus(getContext(), swipeRefreshLayout);
+            //alertWifiStatus(getContext(), swipeRefreshLayout);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -93,10 +93,7 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
                 .getDefaultSharedPreferences(getActivity().getBaseContext());
 
 
-        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
-        swipeRefreshLayout.setOnRefreshListener(onSwipeListener);
-        swipeRefreshLayout.setColorSchemeColors(R.color.swipeRefresh1, R.color.swipeRefresh2, R.color.swipeRefresh3, R.color.swipeRefresh4);
-        tvSSID = (TextView) rootView.findViewById(R.id.tvNetworkName);
+        tvSSID = (TextView) rootView.findViewById(R.id.tvEssidWig);
         tvSSID.setOnLongClickListener(this);
         tvIp = (TextView) rootView.findViewById(R.id.tvIPValue);
         tvIp.setOnLongClickListener(this);
@@ -125,11 +122,17 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
         tvMacSelf = (TextView) rootView.findViewById(R.id.tvMacSelf);
         tvMacSelf.setOnLongClickListener(this);
 
+        tvBssid = (TextView) rootView.findViewById(R.id.tvBssid);
+        tvBssid.setOnLongClickListener(this);
+
+        tvEssid = (TextView) rootView.findViewById(R.id.tvEssid);
+        tvEssid.setOnLongClickListener(this);
+
         tvChannel1 = (TextView) rootView.findViewById(R.id.tvChannel1);
 
-        tvRouterMac = (TextView) rootView.findViewById(R.id.tvNetworkType);
+        tvRouterMac = (TextView) rootView.findViewById(R.id.tvBSSIdWig);
         tvRouterMac.setOnLongClickListener(this);
-        tvRouterIP = (TextView) rootView.findViewById(R.id.tvIp);
+        tvRouterIP = (TextView) rootView.findViewById(R.id.tvIpWig);
         tvRouterIP.setOnLongClickListener(this);
 
         ivWifi = (ImageView) rootView.findViewById(R.id.ivWifi);
@@ -208,6 +211,7 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
             //Fill DHCP Config Info
             String ssid = new WifiUtil(getContext()).getSsid();
             tvSSID.setText(ssid);
+            tvEssid.setText(ssid);
             jsonObject.put(getString(R.string.ssid), ssid);
 
             String ip = new WifiUtil(getContext()).getIpAddress();
@@ -251,7 +255,7 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
             }
             if (new ConnectionDetector(getContext()).isConnectingToInternet()) {
                 tvStatus.setText("Connected");
-                tvStatus.setTextColor(getContext().getResources().getColor(R.color.app_theme_foreground));
+                tvStatus.setTextColor(getContext().getResources().getColor(R.color.green_dark));
                 updateSecurity();
             } else {
                 tvStatus.setText("Disconnected");
@@ -263,6 +267,7 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
             String mac = new WifiUtil(getContext()).getMacAddress();
             tvRouterMac.setText(mac);
             tvRouterMac.setVisibility(View.VISIBLE);
+            tvBssid.setText(mac);
             jsonObject.put(getString(R.string.mac), mac);
 
             String routerip = tvGateway.getText().toString();
@@ -277,8 +282,9 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
         } else {
             if (new WifiUtil(getContext()).isWifiEnabled()) {
                 tvSSID.setText("Not Connected.");
+                tvEssid.setText("n/a");
             } else {
-                tvSSID.setText(R.string.desc_ssid);
+                tvSSID.setText("WiFi disconnected.");
             }
             tvIp.setText("n/a");
             tvGateway.setText("n/a");
@@ -295,12 +301,11 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
             tvChannel1.setText("n/a");
             tvChannel.setText("");
             tvRouterMac.setVisibility(View.GONE);
+            tvBssid.setText("n/a");
             tvRouterIP.setVisibility(View.GONE);
             tvPercent.setVisibility(View.GONE);
         }
-        if (swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(false);
-        }
+
     }
 
     private void updateSecurity() throws Exception {
@@ -354,7 +359,7 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
                     e.printStackTrace();
                 }
             } else {
-                new WIFI().alertWifiStatus(getContext(), swipeRefreshLayout);
+                //new WIFI().alertWifiStatus(getContext(), swipeRefreshLayout);
             }
         }
     };
@@ -407,7 +412,7 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
         if (new WifiUtil(getContext()).isWifiEnabled() && NetworkUtil.getConnectivityStatus(getContext()) == AppConstants.TYPE_WIFI) {
             String value = null;
             switch (v.getId()) {
-                case R.id.tvNetworkName:
+                case R.id.tvEssidWig:
                     value = tvSSID.getText().toString().trim();
                     break;
                 case R.id.tvIPValue:
@@ -425,10 +430,6 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
                 case R.id.tvLeaseValue:
                     value = tvLease.getText().toString().trim();
                     break;
-
-                case R.id.tvStatusValue:
-                    value = tvStatus.getText().toString().trim();
-                    break;
                 case R.id.tvSignalStrengthValue:
                     value = tvStrength.getText().toString().trim();
                     break;
@@ -438,14 +439,20 @@ public class WIFI extends Fragment implements View.OnLongClickListener {
                 case R.id.tvSecurityValue:
                     value = tvSecurity.getText().toString().trim();
                     break;
-                case R.id.tvNetworkType:
+                case R.id.tvBSSIdWig:
                     value = tvRouterMac.getText().toString().trim();
                     break;
-                case R.id.tvIp:
+                case R.id.tvIpWig:
                     value = tvRouterIP.getText().toString().trim();
                     break;
                 case R.id.tvMacSelf:
                     value = tvMacSelf.getText().toString().trim();
+                    break;
+                case R.id.tvEssid:
+                    value = tvEssid.getText().toString().trim();
+                    break;
+                case R.id.tvBssid:
+                    value = tvBssid.getText().toString().trim();
                     break;
 
 

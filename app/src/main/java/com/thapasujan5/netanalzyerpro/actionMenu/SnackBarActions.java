@@ -13,8 +13,10 @@ import android.widget.TextView;
 import com.thapasujan5.netanalyzerpro.R;
 import com.thapasujan5.netanalzyerpro.DataStore.SnackBarAdapter;
 import com.thapasujan5.netanalzyerpro.DataStore.SnackBarItems;
+import com.thapasujan5.netanalzyerpro.MainActivity;
 import com.thapasujan5.netanalzyerpro.PingService.FabPing;
 import com.thapasujan5.netanalzyerpro.PortScanner.FabPortScan;
+import com.thapasujan5.netanalzyerpro.PortScanner.RunPortScanner;
 
 import java.util.ArrayList;
 
@@ -57,7 +59,7 @@ public class SnackBarActions {
                     new FabPing(context);
                     break;
                 case 1:
-                    new FabPortScan(context);
+                    new RunPortScanner(context);
                     break;
             }
         }

@@ -106,13 +106,13 @@ public class Data extends Fragment implements View.OnLongClickListener, Activity
         tvSimType = (TextView) rootView.findViewById(R.id.tvSimType);
         tvSimType.setOnLongClickListener(this);
 
-        tvNtName = (TextView) rootView.findViewById(R.id.tvNetworkName);
+        tvNtName = (TextView) rootView.findViewById(R.id.tvEssidWig);
         tvNtName.setOnLongClickListener(this);
 
         tvCellularGateway = (TextView) rootView.findViewById(R.id.tvCellularGateway);
         tvCellularGateway.setOnLongClickListener(this);
 
-        tvNtType = (TextView) rootView.findViewById(R.id.tvNetworkType);
+        tvNtType = (TextView) rootView.findViewById(R.id.tvBSSIdWig);
         tvNtType.setOnLongClickListener(this);
 
         tvIp = (TextView) rootView.findViewById(R.id.tvIPValue);
@@ -181,7 +181,7 @@ public class Data extends Fragment implements View.OnLongClickListener, Activity
                 break;
             case TelephonyManager.SIM_STATE_READY:
                 tvSimState.setText("Ready");
-                tvSimState.setTextColor(Color.parseColor("#006400"));
+                tvSimState.setTextColor(getContext().getResources().getColor(R.color.green_dark));
                 getSimData();
                 break;
             case TelephonyManager.SIM_STATE_UNKNOWN:
@@ -366,7 +366,7 @@ public class Data extends Fragment implements View.OnLongClickListener, Activity
             case R.id.tvImei:
                 value = tvImei.getText().toString().trim();
                 break;
-            case R.id.tvNetworkName:
+            case R.id.tvEssidWig:
                 value = tvNtName.getText().toString().trim();
                 break;
             case R.id.tvNumber:

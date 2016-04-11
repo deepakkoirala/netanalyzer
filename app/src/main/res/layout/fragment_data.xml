@@ -22,7 +22,7 @@
                 android:tint="@color/app_theme_background" />
 
             <TextView
-                android:id="@+id/tvNetworkName"
+                android:id="@+id/tvEssidWig"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
@@ -36,7 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/tvNetworkName"
+                android:layout_toRightOf="@+id/tvEssidWig"
                 android:gravity="end"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/app_theme_background"
@@ -47,7 +47,7 @@
                 android:id="@+id/rlOperatorDetails"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvNetworkName"
+                android:layout_below="@+id/tvEssidWig"
                 android:layout_marginLeft="5dp"
                 android:layout_toRightOf="@+id/ivData">
 
@@ -62,7 +62,7 @@
                     android:textColor="@color/app_theme_background" />
 
                 <TextView
-                    android:id="@+id/tvNetworkType"
+                    android:id="@+id/tvBSSIdWig"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@+id/tvCellularGateway"
@@ -79,15 +79,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="5dp">
+            android:orientation="vertical">
 
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="10dp">
+                android:layout_marginLeft="@dimen/marginLeft_Table"
+                android:layout_marginTop="@dimen/marginTopTable">
 
                 <TableRow
                     android:layout_width="wrap_content"

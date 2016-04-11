@@ -1,404 +1,472 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/swipeRefreshLayout"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include layout="@layout/content_wifi_details"></include>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:orientation="vertical">
 
-            <include layout="@layout/content_wifi_details"></include>
-
-            <LinearLayout
+            <TableLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingTop="5dp">
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/marginLeft_Table">
 
-                <TableLayout
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="5dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="DHCP Configuration"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:typeface="serif" />
+                </TableRow>
+
+                <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginTop="10dp">
+                    android:layout_weight="1">
 
-                    <TableRow
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/common_action_bar_splitter"></View>
+
+                </TableRow>
+
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tvIP"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:gravity="center"
-                        android:padding="5dp">
+                        android:text="IP Address"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="DHCP Configuration"
-                            android:textAppearance="?android:attr/textAppearanceMedium" />
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/common_action_bar_splitter"></View>
-
-                    </TableRow>
-
-
-                    <TableRow
+                    <TextView
+                        android:id="@+id/tvIPValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:gravity="center"
-                        android:padding="5dp">
-
-                        <TextView
-                            android:id="@+id/tvIP"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="IP Address"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                        <TextView
-                            android:id="@+id/tvIPValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="n/a"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:textStyle="bold" />
+                        android:text="n/a"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/green_dark"
+                        android:textStyle="bold"
+                        android:typeface="serif" />
 
 
-                    </TableRow>
+                </TableRow>
 
-                    <TableRow
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/tvGateway"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:padding="5dp">
+                        android:text="Gateway"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
 
-                        <TextView
-                            android:id="@+id/tvGateway"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Gateway"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                        <TextView
-                            android:id="@+id/tvGatewayValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-
-                            android:text="n/a"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:padding="5dp"
-                        android:visibility="gone">
-
-                        <TextView
-                            android:id="@+id/tvSubnet"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Subnet"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                        <TextView
-                            android:id="@+id/tvSubnetValue"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="n/a"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
-                    </TableRow>
-
-                    <TableRow
+                    <TextView
+                        android:id="@+id/tvGatewayValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:gravity="center"
+                        android:text="n/a"
 
-                        android:padding="5dp">
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
+                </TableRow>
 
-                        <TextView
-                            android:id="@+id/tvDns1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Primary DNS"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    android:visibility="gone">
 
-                        <TextView
-                            android:id="@+id/tvDns1Value"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="n/a"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
-                    </TableRow>
+                    <TextView
+                        android:id="@+id/tvSubnet"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Subnet"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
 
-                    <TableRow
+                    <TextView
+                        android:id="@+id/tvSubnetValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="n/a"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tvDns1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:gravity="center"
+                        android:text="Primary DNS"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
 
-                        android:padding="5dp">
-
-                        <TextView
-                            android:id="@+id/tvDns2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Secondary DNS"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                        <TextView
-                            android:id="@+id/tvDns2Value"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="n/a"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
-                    </TableRow>
-
-                    <TableRow
+                    <TextView
+                        android:id="@+id/tvDns1Value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:gravity="center"
+                        android:text="n/a"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
+                </TableRow>
 
-                        android:padding="5dp">
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center">
 
-                        <TextView
-                            android:id="@+id/tvLease"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Lease Duration"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                        <TextView
-                            android:id="@+id/tvLeaseValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="n/a"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
-                    </TableRow>
-
-                    <TableRow
+                    <TextView
+                        android:id="@+id/tvDns2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:gravity="center"
-                        android:padding="5dp">
+                        android:text="Secondary DNS"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="WiFI Properties"
-                            android:textAppearance="?android:attr/textAppearanceMedium" />
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/common_action_bar_splitter"></View>
-
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/tvDns2Value"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:padding="5dp">
+                        android:text="n/a"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
+                </TableRow>
 
-                        <TextView
-                            android:id="@+id/tvStatus"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Status"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center">
 
-                        <TextView
-                            android:id="@+id/tvStatusValue"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="n/a"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:textColor="@color/colorPrimary" />
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/tvLease"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:padding="5dp">
+                        android:text="Lease Duration"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
 
-                        <TextView
-                            android:id="@+id/tvSignalStrength"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Signal Strength"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
 
-                        <TextView
-                            android:id="@+id/tvSignalStrengthValue"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="n/a"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/tvLeaseValue"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:padding="5dp">
+                        android:text="n/a"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
+                </TableRow>
 
-                        <TextView
-                            android:id="@+id/tvLinkSpeed"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Link Speed"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="5dp">
 
-                        <TextView
-                            android:id="@+id/tvLinkSpeedValue"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="n/a"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
-                    </TableRow>
-
-                    <TableRow
-                        android:id="@+id/trFrequency"
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:padding="5dp">
+                        android:text="WiFI Properties"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:typeface="serif" />
+                </TableRow>
 
-                        <TextView
-                            android:id="@+id/tvFrequency"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Frequency"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
 
-                        <TextView
-                            android:id="@+id/tvFrequencyValue"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="n/a"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
-                    </TableRow>
-
-                    <TableRow
-                        android:id="@+id/trChannel"
+                    <View
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:padding="5dp">
+                        android:layout_height="1dp"
+                        android:background="@color/common_action_bar_splitter"
+                        android:typeface="serif"></View>
 
-                        <TextView
+                </TableRow>
 
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Channel"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
+                <TableRow
 
-                        <TextView
-                            android:id="@+id/tvChannel1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="n/a"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
-                    </TableRow>
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
 
-                    <TableRow
+                    <TextView
 
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:padding="5dp">
+                        android:ellipsize="end"
+                        android:freezesText="true"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:scrollHorizontally="true"
+                        android:selectAllOnFocus="true"
+                        android:singleLine="true"
+                        android:text="ESSID"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
 
-                        <TextView
-
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="MAC"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                        <TextView
-                            android:id="@+id/tvMacSelf"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="n/a"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
-                    </TableRow>
-
-                    <TableRow
+                    <TextView
+                        android:id="@+id/tvEssid"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:padding="5dp">
+                        android:text="n/a"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/green_dark"
+                        android:textStyle="bold"
+                        android:typeface="serif" />
+                </TableRow>
 
-                        <TextView
-                            android:id="@+id/tvSecurity"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Security Type"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
+                <TableRow
 
-                        <TextView
-                            android:id="@+id/tvSecurityValue"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="n/a"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
-                    </TableRow>
-                </TableLayout>
-            </LinearLayout>
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="BSSID"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
+
+                    <TextView
+                        android:id="@+id/tvBssid"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="n/a"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
+                </TableRow>
+
+                <TableRow
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="MAC"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
+
+                    <TextView
+                        android:id="@+id/tvMacSelf"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="n/a"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/tvStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Status"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
+
+                    <TextView
+                        android:id="@+id/tvStatusValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="n/a"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/colorPrimary"
+                        android:typeface="serif" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/tvSignalStrength"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Signal Strength"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
+
+                    <TextView
+                        android:id="@+id/tvSignalStrengthValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="n/a"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/tvLinkSpeed"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Link Speed"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
+
+                    <TextView
+                        android:id="@+id/tvLinkSpeedValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="n/a"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/trFrequency"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/tvFrequency"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Frequency"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
+
+                    <TextView
+                        android:id="@+id/tvFrequencyValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="n/a"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/trChannel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Channel"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
+
+                    <TextView
+                        android:id="@+id/tvChannel1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="n/a"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/tvSecurity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Security Type"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
+
+                    <TextView
+                        android:id="@+id/tvSecurityValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="n/a"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:typeface="serif" />
+                </TableRow>
+            </TableLayout>
         </LinearLayout>
-    </ScrollView>
-</android.support.v4.widget.SwipeRefreshLayout>
+
+    </LinearLayout>
+</ScrollView>

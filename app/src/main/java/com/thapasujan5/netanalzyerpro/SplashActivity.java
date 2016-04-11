@@ -11,6 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.thapasujan5.netanalyzerpro.BuildConfig;
 import com.thapasujan5.netanalyzerpro.R;
 
 public class SplashActivity extends Activity {
@@ -23,10 +24,11 @@ public class SplashActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-     //   overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+        //   overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         setContentView(R.layout.activity_splash);
         versionName = (TextView) findViewById(R.id.projectversion);
-        versionName.setText(getString(R.string.version));
+        //versionName.setText(getString(R.string.version));
+        versionName.setText(BuildConfig.VERSION_NAME);
         iv = (ImageView) findViewById(R.id.icon);
         Animation an2 = AnimationUtils.loadAnimation(this, R.anim.splash_anim1);
         iv.startAnimation(an2);
@@ -36,7 +38,7 @@ public class SplashActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-       // overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+        // overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         finish();
     }
 
@@ -47,7 +49,7 @@ public class SplashActivity extends Activity {
                 Intent i = new Intent(getApplicationContext(),
                         MainActivity.class);
                 startActivity(i);
-              //  overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+                //  overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
             }
         }, AppConstants.SPLASH_TIME);
     }

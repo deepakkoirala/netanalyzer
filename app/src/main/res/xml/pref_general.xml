@@ -25,7 +25,7 @@
 
 
     <ListPreference
-        android:defaultValue="1"
+        android:defaultValue="0"
         android:entries="@array/pref_temperatures"
         android:entryValues="@array/pref_temperature_values"
         android:icon="@mipmap/ic_brightness"

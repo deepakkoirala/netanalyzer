@@ -39,7 +39,7 @@ public class ItemsDiscoveredAdapter extends ArrayAdapter<ItemsDiscovered> {
             final ItemsDiscovered item = data.get(position);
             ((TextView) row.findViewById(R.id.count)).setText((Integer.toString(position + 1)));
             ((TextView) row.findViewById(R.id.tvDns)).setText(item.dns);
-            ((TextView) row.findViewById(R.id.tvIp)).setText(item.ip);
+            ((TextView) row.findViewById(R.id.tvIpWig)).setText(item.ip);
 
 
             ((TextView) row.findViewById(R.id.tvMac))

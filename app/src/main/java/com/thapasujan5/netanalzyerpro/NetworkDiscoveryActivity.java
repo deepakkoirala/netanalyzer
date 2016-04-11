@@ -36,7 +36,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdView;
 import com.thapasujan5.netanalyzerpro.R;
-import com.thapasujan5.netanalzyerpro.ActionMenu.ShowBannerAd;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnackBarActions;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnapShot;
 import com.thapasujan5.netanalzyerpro.ActionMenu.UpgradeToPro;
@@ -86,7 +85,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
     NetworkDiscovery ns;
     int[] colors = {Color.RED, Color.BLUE, Color.GREEN, Color.DKGRAY, Color.MAGENTA, Color.BLACK};
     Random r;
-    AdView adView;
+    //AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,11 +120,11 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
         listView.setOnItemLongClickListener(ItemLongClicked);
         //View Locate
-        adView = (AdView) findViewById(R.id.adView);
-        tvSsid = (TextView) findViewById(R.id.tvNetworkName);
+        //adView = (AdView) findViewById(R.id.adView);
+        tvSsid = (TextView) findViewById(R.id.tvEssidWig);
         tvPercent = (TextView) findViewById(R.id.tvPercentage);
-        tvRouterip = (TextView) findViewById(R.id.tvIp);
-        tvMac = (TextView) findViewById(R.id.tvNetworkType);
+        tvRouterip = (TextView) findViewById(R.id.tvIpWig);
+        tvMac = (TextView) findViewById(R.id.tvBSSIdWig);
         aSwitch = (Switch) findViewById(R.id.tbWifiSwitch);
         aSwitch.setOnCheckedChangeListener(WifiSwitchChanged);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
@@ -170,7 +169,7 @@ public class NetworkDiscoveryActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         try {
-            new ShowBannerAd(this, adView);
+            //new ShowBannerAd(this, adView);
             restoreWifiDetails();
         } catch (Exception e) {
             e.printStackTrace();

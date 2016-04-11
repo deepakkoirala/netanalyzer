@@ -15,8 +15,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.thapasujan5.netanalyzerpro.BuildConfig;
 import com.thapasujan5.netanalyzerpro.R;
-import com.thapasujan5.netanalzyerpro.Tools.GetVersionName;
 import com.thapasujan5.netanalzyerpro.Tools.SendEmail;
 import com.thapasujan5.netanalzyerpro.Tools.SocialIntentProvider;
 
@@ -33,9 +33,9 @@ public class About {
         tvTitle = (TextView) d.findViewById(R.id.titleText);
         if (context.getPackageName().contentEquals("com.thapasujan5.serversearch"))
             tvTitle.setText("Net Analyzer Lite "
-                    + GetVersionName.getAppVersionName(context));
+                    + BuildConfig.VERSION_NAME);
         else {
-            tvTitle.setText("Net Analyzer " + GetVersionName.getAppVersionName(context));
+            tvTitle.setText("Net Analyzer " + BuildConfig.VERSION_NAME);
         }
         tvMessage = (TextView) d.findViewById(R.id.message);
         ImageView icon = (ImageView) d.findViewById(R.id.icon);
@@ -98,7 +98,7 @@ public class About {
                 final Dialog d = new Dialog(context);
                 ImageView img = new ImageView(context);
 
-                img.setImageResource(R.drawable.search);
+                img.setImageResource(R.drawable.profile_picture_full);
                 d.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 RelativeLayout pictureHolder = new RelativeLayout(context);
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
@@ -112,9 +112,7 @@ public class About {
                         d.dismiss();
                     }
                 });
-
                 d.setContentView(pictureHolder);
-                d.setTitle("Sujan Thapa");
                 d.show();
             }
         });

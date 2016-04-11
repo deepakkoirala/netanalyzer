@@ -22,6 +22,8 @@
     <dimen name="inbox_vertical_margin">8dp</dimen>
     <dimen name="message_vertical_padding">8dp</dimen>
     <dimen name="padding_wifi_details">10dp</dimen>
+    <dimen name="marginTopTable">10dp</dimen>
+    <dimen name="marginLeft_Table">20dp</dimen>
 
 </resources>
 
