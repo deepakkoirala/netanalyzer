@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -21,7 +20,6 @@ import android.widget.Toast;
 
 import com.thapasujan5.netanalyzerpro.R;
 import com.thapasujan5.netanalzyerpro.Tools.Clipboard;
-import com.thapasujan5.netanalzyerpro.Tools.RequestPermissions;
 import com.thapasujan5.netanalzyerpro.Tools.ShowToast;
 
 import java.io.BufferedReader;

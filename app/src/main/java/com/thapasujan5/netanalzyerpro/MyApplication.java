@@ -1,8 +1,5 @@
 package com.thapasujan5.netanalzyerpro;
 
-import com.parse.Parse;
-import com.parse.ParseInstallation;
-
 import org.acra.ACRA;
 import org.acra.annotation.ReportsCrashes;
 
@@ -18,8 +15,8 @@ public class MyApplication extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Parse.initialize(this, "DSqX7ySU4sYBE23ZRFFFghIdmxI2SOlkEh4K67Cy", "wlZPVal6UEG6vrJnTESYFJ8rTy2WLYMHAc2OdeXZ");
-        ParseInstallation.getCurrentInstallation().saveInBackground();
+//        Parse.initialize(this, "DSqX7ySU4sYBE23ZRFFFghIdmxI2SOlkEh4K67Cy", "wlZPVal6UEG6vrJnTESYFJ8rTy2WLYMHAc2OdeXZ");
+//        ParseInstallation.getCurrentInstallation().saveInBackground();
         // The following line triggers the initialization of ACRA
         ACRA.init(this);
     }

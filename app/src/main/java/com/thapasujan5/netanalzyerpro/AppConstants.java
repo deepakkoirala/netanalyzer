@@ -34,18 +34,6 @@ public class AppConstants {
     public static final int MAX_SIGNAL_DBM_VALUE = 31;
     public static final int UNKNOW_CODE = 99;
     public static final long WEATHER_UPDATE_DURATION = 30 * 60000; //1hour because api is renewed every hour.
+    public static final int PermissionsRequestCode = 1;
 
-    public static final int READ_CONTACTS = 0;
-    public static final int READ_SMS = 1;
-    public static final int ACCESS_FINE_LOCATION = 2;
-    public static final int ACCESS_CORASE_LOCATION = 3;
-    public static final int READ_PHONE_STATE = 4;
-    public static final int READ_EXTERNAL_STORAGE = 5;
-    public static final int WRITE_EXTERNAL_STORAGE = 6;
-    public static final int SYSTEM_ALERT_WINDOW = 7;
-    public static final int CHANGE_NETWORK_STATE = 8;
-
-    public enum MonetizationType {
-        PAID, FREE
-    }
 }

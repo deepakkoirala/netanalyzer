@@ -1,7 +1,10 @@
 package com.thapasujan5.netanalzyerpro;
 
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -47,14 +50,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        if (Build.VERSION.SDK_INT >= 23 &&
+                ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            return;
+        }
+
         mMap.setMyLocationEnabled(true);
-
-
         // Add a marker in Sydney and move the camera
         LatLng latLng = new LatLng(lat, lon);
-        mMap.addMarker(new MarkerOptions().position(latLng).title(location));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.0f));
+        mMap.addMarker(new MarkerOptions().position(latLng).title(location)).showInfoWindow();
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.0f));
         mMap.getUiSettings().setMapToolbarEnabled(true);
         mMap.getUiSettings().setAllGesturesEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);

@@ -67,6 +67,7 @@ import com.thapasujan5.netanalzyerpro.Tools.ZoomOutPageTransformer;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -112,12 +113,9 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        getPermission(Manifest.permission.ACCESS_FINE_LOCATION, AppConstants.ACCESS_FINE_LOCATION);
-        getPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, AppConstants.WRITE_EXTERNAL_STORAGE);
-        getPermission(Manifest.permission.CHANGE_NETWORK_STATE, AppConstants.CHANGE_NETWORK_STATE);
-
+        askPermissions();
     }
+
 
     private void initView() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -150,7 +148,6 @@ public class MainActivity extends AppCompatActivity
 
         viewPager = (ViewPager) findViewById(R.id.pager);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-
         viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
         viewPager.setOffscreenPageLimit(1);
         viewPager.setAdapter(viewPagerAdapter);
@@ -248,48 +245,61 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void getPermission(String permissions, int code) {
+    private void askPermissions() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            ArrayList<String> permissions = new ArrayList<>();
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
+                permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+            }
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+            if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_DENIED) {
+                permissions.add(Manifest.permission.READ_PHONE_STATE);
+            }
+            if (permissions.size() > 0)
+                getPermission(permissions.toArray(new String[permissions.size()]));
+        }
+    }
+
+    public void getPermission(String[] permissions) {
 
         if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(permissions)
-                    != PackageManager.PERMISSION_GRANTED) {
-                this.requestPermissions(new String[]{permissions},
-                        code);
-            }
+            requestPermissions(permissions, AppConstants.PermissionsRequestCode);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
-            case AppConstants.ACCESS_FINE_LOCATION: {
+            case AppConstants.PermissionsRequestCode: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     new ReceiverReboot().onReceive(this, new Intent(this, Service.class).putExtra("receiver", "reboot"));
-                    Log.d("MainActivity", permissions[0] + " granted");
+                    Log.i("MainActivity", permissions[0] + " granted");
                 }
-                break;
-            }
-            case AppConstants.WRITE_EXTERNAL_STORAGE: {
+
+
                 if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     new ReceiverReboot().onReceive(this, new Intent(this, Service.class).putExtra("receiver", "reboot"));
-                    Log.d("MainActivity", permissions[0] + " granted");
+                    Log.i("MainActivity", permissions[0] + " granted");
                 }
-                break;
-            }
-            case AppConstants.READ_PHONE_STATE: {
+
                 if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d("MainActivity", permissions[0] + " granted");
+                        && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
                     try {
                         viewPager.setAdapter(viewPagerAdapter);
+                        Log.i("MainActivity", permissions[0] + " granted");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
                 break;
             }
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
         }
     }
 
@@ -401,6 +411,7 @@ public class MainActivity extends AppCompatActivity
             }
             super.onPostExecute(result);
         }
+
     }
 
     @Override

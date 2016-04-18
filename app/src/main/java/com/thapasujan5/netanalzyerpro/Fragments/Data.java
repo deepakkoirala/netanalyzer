@@ -142,13 +142,8 @@ public class Data extends Fragment implements View.OnLongClickListener, Activity
 //        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
 //        swipeRefreshLayout.setOnRefreshListener(onSwipeListener);
 //        swipeRefreshLayout.setColorSchemeColors(Color.RED, R.color.swipeRefresh2, R.color.swipeRefresh3, R.color.swipeRefresh4);
-        if (Build.VERSION.SDK_INT >= 23 &&
-                ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            getPermission(Manifest.permission.READ_PHONE_STATE, AppConstants.READ_PHONE_STATE);
-        } else {
-            setupValues();
-            registerNetworkLister();
-        }
+        setupValues();
+        registerNetworkLister();
     }
 
     private void setSIMDetails() {
