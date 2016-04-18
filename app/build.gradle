@@ -5,7 +5,7 @@ def computeVersionName() {
 }
 
 def computeVersionCode() {
-    return 72
+    return 74
 }
 
 android {
