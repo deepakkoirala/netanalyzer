@@ -42,9 +42,9 @@
             </intent-filter>
         </receiver>
 
-        <!--<activity-->
-        <!--android:name="com.google.android.gms.ads.AdActivity"-->
-        <!--android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />-->
+        <activity
+            android:name="com.google.android.gms.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

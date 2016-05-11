@@ -5,7 +5,7 @@ def computeVersionName() {
 }
 
 def computeVersionCode() {
-    return 74
+    return 78
 }
 
 android {
@@ -56,4 +56,5 @@ dependencies {
     compile 'com.android.support:support-v4:23.1.1'
     compile 'com.google.android.gms:play-services-identity:8.4.0'
     compile 'com.google.android.gms:play-services-gcm:8.4.0'
+    compile 'com.google.android.gms:play-services-ads:8.4.0'
 }

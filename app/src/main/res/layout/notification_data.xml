@@ -42,7 +42,8 @@
             android:ellipsize="marquee"
             android:singleLine="true"
             android:text="Vodafone Hurstville, Australia "
-            android:textColor="#FFF" />
+            android:textColor="#FFF"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvExip"

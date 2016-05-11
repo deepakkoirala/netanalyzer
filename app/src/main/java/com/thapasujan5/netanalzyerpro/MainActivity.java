@@ -38,6 +38,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdView;
 import com.thapasujan5.netanalyzerpro.BuildConfig;
 import com.thapasujan5.netanalyzerpro.R;
 import com.thapasujan5.netanalzyerpro.ActionMenu.About;
@@ -47,6 +48,7 @@ import com.thapasujan5.netanalzyerpro.ActionMenu.Portal;
 import com.thapasujan5.netanalzyerpro.ActionMenu.RateApp;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SetISP;
 import com.thapasujan5.netanalzyerpro.ActionMenu.ShareApp;
+import com.thapasujan5.netanalzyerpro.ActionMenu.ShowBannerAd;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnackBarActions;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnapShot;
 import com.thapasujan5.netanalzyerpro.ActionMenu.UpgradeToPro;
@@ -84,7 +86,7 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView;
     ImageView navSetting;
     SharedPreferences.Editor editor;
-    //AdView adView;
+    AdView adView;
     FloatingActionButton fab;
     ActionBarDrawerToggle toggle;
     DrawerLayout drawer;
@@ -129,6 +131,10 @@ public class MainActivity extends AppCompatActivity
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
 
+        pbExip = (ProgressBar) findViewById(R.id.pbExip);
+        tvExIpArea = (TextView) findViewById(R.id.extip);
+        adView = (AdView) findViewById(R.id.adView);
+
         header = navigationView.inflateHeaderView(R.layout.nav_header_main2);
         navSetting = (ImageView) header.findViewById(R.id.nav_settings);
         navUpgrade = (TextView) header.findViewById(R.id.upgrade);
@@ -159,9 +165,9 @@ public class MainActivity extends AppCompatActivity
                 .getDefaultSharedPreferences(getBaseContext());
         editor = sharedpreferences.edit();
 
-        pbExip = (ProgressBar) findViewById(R.id.pbExip);
-        tvExIpArea = (TextView) findViewById(R.id.extip);
-        //adView = (AdView) findViewById(R.id.adView);
+
+
+
 
     }
 
@@ -306,7 +312,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         try {
-            // new ShowBannerAd(this, adView);
+            new ShowBannerAd(this, adView);
             reValidate();
         } catch (Exception e) {
             e.printStackTrace();

@@ -44,6 +44,7 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdView;
 import com.thapasujan5.netanalyzerpro.R;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SetISP;
+import com.thapasujan5.netanalzyerpro.ActionMenu.ShowBannerAd;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnackBarActions;
 import com.thapasujan5.netanalzyerpro.ActionMenu.SnapShot;
 import com.thapasujan5.netanalzyerpro.ActionMenu.UpgradeToPro;
@@ -95,7 +96,7 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
     NotificationManager nm;
     IntentFilter filter;
     protected SwipeRefreshLayout swipeRefreshLayout;
-    //AdView adView;
+    AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,7 +126,7 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
             // Check if no view has focus:
             getWindow().setSoftInputMode(
                     WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-            //adView = (AdView) findViewById(R.id.adView);
+            adView = (AdView) findViewById(R.id.adView);
             ivSearch = (ImageView) findViewById(R.id.find);
             ivSearch.setOnClickListener(this);
 
@@ -757,7 +758,7 @@ public class DnsLookupActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onResume() {
         try {
-            //new ShowBannerAd(this, adView);
+            new ShowBannerAd(this, adView);
             reValidate();
             new NotificationISP(this);
         } catch (Exception e) {

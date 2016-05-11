@@ -146,12 +146,9 @@ public class About {
             public void onClick(View v) {
                 Toast.makeText(context, "Please Wait !", Toast.LENGTH_SHORT)
                         .show();
-                SendEmail.startEmailActivity(context,
-                        "About:" + context.getString(R.string.app_name),
-                        new String[]{context.getString(R.string.email) + ""});
+                new SendEmail(context, context.getString(R.string.email) + "", "About:" + context.getString(R.string.app_name), "");
                 ((Activity) context).overridePendingTransition(R.anim.slide_in,
                         R.anim.slide_out);
-
             }
         });
 

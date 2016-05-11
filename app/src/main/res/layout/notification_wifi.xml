@@ -50,7 +50,8 @@
             android:ellipsize="marquee"
             android:singleLine="true"
             android:text="TPG Internet, Hurstville, Australia dfd ddf dfd dfd dfd dd "
-            android:textColor="#FFF" />
+            android:textColor="#FFF"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvExip"

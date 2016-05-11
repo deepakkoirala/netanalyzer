@@ -3,6 +3,8 @@ package com.thapasujan5.netanalzyerpro;
 import org.acra.ACRA;
 import org.acra.annotation.ReportsCrashes;
 
+import java.util.jar.Manifest;
+
 
 /**
  * Created by Sujan Thapa on 6/01/2016.
@@ -19,6 +21,9 @@ public class MyApplication extends android.app.Application {
 //        ParseInstallation.getCurrentInstallation().saveInBackground();
         // The following line triggers the initialization of ACRA
         ACRA.init(this);
+        if (getPackageName().contentEquals("com.thapasujan5.serversearch")) {
+
+        }
     }
 }
 
